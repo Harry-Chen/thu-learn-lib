@@ -1,0 +1,24 @@
+{
+  "name": "thu-learn2018-lib",
+  "version": "1.0.0",
+  "description": "a JavaScript library to provide a program-friendly interface to learn 2018 of Tsinghua University",
+  "main": "lib/index.js",
+  "scripts": {
+    "build": "tsc",
+    "format": "prettier --write \"src/**/*.ts\" \"src/**/*.js\"",
+    "lint": "tslint -p tsconfig.json"
+  },
+  "keywords": [],
+  "author": "Shengqi Chen <shengqi.chen@tuna.tsinghua.edu.cn>",
+  "license": "MIT",
+  "devDependencies": {
+    "@types/cheerio": "^0.22.10",
+    "prettier": "^1.16.3",
+    "tslint": "^5.12.1",
+    "tslint-config-prettier": "^1.17.0",
+    "typescript": "^3.3.1"
+  },
+  "dependencies": {
+    "cheerio": "^1.0.0-rc.2"
+  }
+}

@@ -27,17 +27,22 @@ interface ICourseInfo {
 
 export type CourseInfo = ICourseInfo;
 
-interface INotification {
+export interface INotification {
   _id: string;
   title: string;
   content: string;
+  hasRead: boolean;
+  markedImportant: boolean;
   publishTime: Date;
   publisher: string;
-  attachmentName ?: string;
+  attachmentName?: string;
+}
+
+export interface INotificationDetail {
   attachmentUrl?: string;
 }
 
-export type Notification = INotification;
+export type Notification = INotification & INotificationDetail;
 
 interface IFile {
   _id: string;
@@ -46,6 +51,37 @@ interface IFile {
   description: string;
   uploadTime: Date;
   downloadUrl: string;
+  isNew: boolean;
+  markedImportant: boolean;
+  visitCount: number;
+  downloadCount: number;
+  fileType: string;
 }
 
 export type File = IFile;
+
+export interface IHomework {
+  _id: string;
+  studentHomeworkId: string;
+  title: string;
+  deadline: Date;
+  attachmentUrl?: string;
+  submitted: boolean;
+  submitTime?: Date;
+  graded: boolean;
+  grade?: number;
+  gradeTime?: Date;
+  gradeContent?: string;
+  graderName?: string;
+  gradeAttachmentUrl?: string;
+}
+
+export interface IHomeworkDetail {
+  description: string;
+  answerContent?: string;
+  answerAttachmentUrl?: string;
+  submittedContent?: string;
+  submittedAttachmentUrl?: string;
+}
+
+export type Homework = IHomework & IHomeworkDetail;

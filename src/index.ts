@@ -1,7 +1,9 @@
 import 'cheerio';
 
 import * as URL from './urls';
-import { CourseInfo, SemesterInfo, Notification, File } from './types';
+import { CourseInfo, SemesterInfo, Notification, File, Homework } from './types';
+import { INotification, INotificationDetail } from './types';
+import { IHomework, IHomeworkDetail } from './types';
 import { parseSemesterType, decodeHTMLEntities } from './utils';
 
 const FETCH_COMMON_CONFIG: RequestInit = {
@@ -86,19 +88,21 @@ export class Learn2018Helper {
         const notifications: Notification[] = [];
 
         await Promise.all(result.map(async (n) => {
-            let notification: Notification = {
+            const notification: INotification = {
                 _id: n.ggid,
                 content: decodeHTMLEntities(n.ggnrStr),
                 title: n.bt,
                 publisher: n.fbrxm,
+                hasRead: n.sfyd === '是',
+                markedImportant: n.sfqd === '1',
                 publishTime: new Date(n.fbsjStr),
             };
+            let detail: INotificationDetail = {};
             if (n.fjmc !== null) {
                 notification.attachmentName = n.fjmc;
-                const detail = await this.parseNotificationDetail(courseID, notification._id);
-                notification.attachmentUrl = detail.attachmentUrl;
+                detail = await this.parseNotificationDetail(courseID, notification._id);
             }
-            notifications.push(notification);
+            notifications.push({...notification, ...detail});
         }));
 
         return notifications;
@@ -119,7 +123,12 @@ export class Learn2018Helper {
                 description: f.ms,
                 size: f.fileSize,
                 uploadTime: new Date(f.scsj),
-                downloadUrl: URL.LEARN_FILE_DOWNLOAD(f.wjid)
+                downloadUrl: URL.LEARN_FILE_DOWNLOAD(f.wjid),
+                isNew: f.isNew,
+                markedImportant: f.sfqd === '1',
+                visitCount: f.llcs,
+                downloadCount: f.xzcs,
+                fileType: f.wjlx,
             });
         }));
 
@@ -133,7 +142,7 @@ export class Learn2018Helper {
         }
     }
 
-    private async parseNotificationDetail(courseID: string, id: string): Promise<{ attachmentUrl?: string }>{
+    private async parseNotificationDetail(courseID: string, id: string): Promise<INotificationDetail>{
         const response = await myFetch(URL.LEARN_NOTIFICATION_DETAIL(courseID, id));
         const result = cheerio.load(await response.text());
         return { attachmentUrl: result('.ml-10').attr('href') };

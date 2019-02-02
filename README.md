@@ -14,6 +14,12 @@ I don't like polyfill. Just upgrade your browser, then problems will go away.
 
 `npm install --save thu-learn2018-lib`
 
+## Build from source
+
+`npm i && npm run build`
+
+You can find the library in `lib/`.
+
 ## Usage
 
 // TODO.

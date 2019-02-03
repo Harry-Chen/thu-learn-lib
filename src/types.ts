@@ -18,7 +18,7 @@ interface ISemesterInfo {
 export type SemesterInfo = ISemesterInfo;
 
 interface ICourseInfo {
-  _id: string;
+  id: string;
   name: string;
   teacherName: string;
   courseNumber: string;
@@ -28,7 +28,7 @@ interface ICourseInfo {
 export type CourseInfo = ICourseInfo;
 
 export interface INotification {
-  _id: string;
+  id: string;
   title: string;
   content: string;
   hasRead: boolean;
@@ -46,7 +46,7 @@ export interface INotificationDetail {
 export type Notification = INotification & INotificationDetail;
 
 interface IFile {
-  _id: string;
+  id: string;
   size: string;
   title: string;
   description: string;
@@ -67,7 +67,7 @@ export interface IHomeworkStatus {
 }
 
 export interface IHomework extends IHomeworkStatus {
-  _id: string;
+  id: string;
   studentHomeworkId: string;
   title: string;
   deadline: Date;
@@ -97,7 +97,7 @@ export interface IHomeworkDetail {
 export type Homework = IHomework & IHomeworkDetail;
 
 export interface IDiscussionBase {
-  _id: string;
+  id: string;
   title: string;
   url: string;
   publisherName: string;

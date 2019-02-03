@@ -23,10 +23,10 @@ const $ = (html: string) => {
     return cheerio.load(html, CHEERIO_CONFIG);
 };
 
-export class Learn2018Helper {
+export default class Learn2018Helper {
 
-    private readonly username: string = "";
-    private readonly password: string = "";
+    private username: string = "";
+    private password: string = "";
     private hasLogin: boolean = false;
 
     constructor(username: string, password: string) {
@@ -49,6 +49,14 @@ export class Learn2018Helper {
 
         const loginResponse = await myFetch(URL.LEARN_AUTH_ROAM(ticket));
         return (this.hasLogin = loginResponse.ok);
+
+    }
+
+    public logout() {
+
+        this.username = "";
+        this.password = "";
+        this.hasLogin = false;
 
     }
 
@@ -77,7 +85,7 @@ export class Learn2018Helper {
 
         await Promise.all(result.map(async (c) => {
             courses.push({
-                _id: c.wlkcid,
+                id: c.wlkcid,
                 name: c.kcm,
                 teacherName: c.jsm,
                 courseNumber: c.kch,
@@ -98,7 +106,7 @@ export class Learn2018Helper {
 
         await Promise.all(result.map(async (n) => {
             const notification: INotification = {
-                _id: n.ggid,
+                id: n.ggid,
                 content: decodeHTMLEntities(Base64.decode(n.ggnr)),
                 title: n.bt,
                 url: URL.LEARN_NOTIFICATION_DETAIL(courseID, n.ggid),
@@ -110,7 +118,7 @@ export class Learn2018Helper {
             let detail: INotificationDetail = {};
             if (n.fjmc !== null) {
                 notification.attachmentName = n.fjmc;
-                detail = await this.parseNotificationDetail(courseID, notification._id);
+                detail = await this.parseNotificationDetail(courseID, notification.id);
             }
             notifications.push({...notification, ...detail});
         }));
@@ -128,7 +136,7 @@ export class Learn2018Helper {
 
         await Promise.all(result.map(async (f) => {
             files.push({
-                _id: f.wjid,
+                id: f.wjid,
                 title: f.bt,
                 description: f.ms,
                 size: f.fileSize,
@@ -210,7 +218,7 @@ export class Learn2018Helper {
 
         await Promise.all(result.map(async (h) => {
             homeworks.push({
-                _id: h.zyid,
+                id: h.zyid,
                 studentHomeworkId: h.xszyid,
                 title: h.bt,
                 url: URL.LEARN_HOMEWORK_DETAIL(h.wlkcid, h.zyid, h.xszyid),
@@ -271,7 +279,7 @@ export class Learn2018Helper {
 
     private parseDiscussionBase = (d: any): IDiscussionBase => {
         return {
-            _id: d.id,
+            id: d.id,
             title: d.bt,
             url: URL.LEARN_DISCUSSION_DETAIL(d.wlkcid, d.bqid, d.id),
             publisherName: d.fbrxm,

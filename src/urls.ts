@@ -1,4 +1,4 @@
-const LEARN_PREFIX = 'https://learn2018.tsinghua.edu.cn';
+export const LEARN_PREFIX = 'https://learn2018.tsinghua.edu.cn';
 const MAX_SIZE = 200;
 
 // const generateQueryFormData = (query: object) => {
@@ -102,6 +102,30 @@ export const LEARN_NOTIFICATION_LIST = (courseID: string) => {
 
 export const LEARN_NOTIFICATION_DETAIL = (courseID: string, notificationID: string) => {
   return `${LEARN_PREFIX}/f/wlxt/kcgg/wlkc_ggb/student/beforeViewXs?wlkcid=${courseID}&id=${notificationID}`;
+}
+
+export const LEARN_HOMEWORK_LIST_SOURCE = (courseID: string) => {
+  return [
+    {
+      url: LEARN_HOMEWORK_LIST_NEW(courseID),
+      status: {
+        submitted: false,
+        graded: false,
+      }
+    }, {
+      url: LEARN_HOMEWORK_LIST_SUBMITTED(courseID),
+      status: {
+        submitted: true,
+        graded: false,
+      }
+    }, {
+      url: LEARN_HOMEWORK_LIST_GRADED(courseID),
+      status: {
+        submitted: true,
+        graded: true,
+      }
+    }
+  ];
 };
 
 export const LEARN_HOMEWORK_LIST_NEW = (courseID: string) => {
@@ -224,6 +248,10 @@ export const LEARN_HOMEWORK_LIST_GRADED = (courseID: string) => {
 
 export const LEARN_HOMEWORK_DETAIL = (courseID: string, homeworkID: string, studentHomeworkID: string) => {
   return `${LEARN_PREFIX}/f/wlxt/kczy/zy/student/viewCj?wlkcid=${courseID}&zyid=${homeworkID}&xszyid=${studentHomeworkID}`;
+};
+
+export const LEARN_HOMEWORK_DOWNLOAD = (courseID: string, attachmentID: string) => {
+  return `${LEARN_PREFIX}/b/wlxt/kczy/zy/student/downloadFile/${courseID}/${attachmentID}`;
 };
 
 export const LEARN_HOMEWORK_SUBMIT = (courseID: string, studentHomeworkID: string) => {

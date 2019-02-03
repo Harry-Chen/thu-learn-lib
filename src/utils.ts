@@ -4,7 +4,7 @@ export function parseSemesterType(n: number): SemesterType {
   if (n === 1) {
     return SemesterType.FALL;
   } else if (n === 2) {
-    return SemesterType.SRPING;
+    return SemesterType.SPRING;
   } else if (n === 3) {
     return SemesterType.SUMMER;
   } else {
@@ -27,8 +27,16 @@ const HTML_ENTITIES: {
   'quot': '"'
 };
 
-export function decodeHTMLEntities (text: string): string {
+export function decodeHTMLEntities(text: string): string {
   return text.replace(/&([^;]+);/gm, (match, entity) => {
     return HTML_ENTITIES[entity] || match
   })
+}
+
+export function trimAndDefine(text: string | undefined | null): string | undefined {
+  if (text === undefined || text === null) {
+    return undefined;
+  }
+  const trimmed = text.trim();
+  return trimmed === '' ? undefined : trimmed;
 }

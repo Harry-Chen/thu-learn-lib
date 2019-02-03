@@ -3,8 +3,8 @@ import 'cheerio';
 import * as URL from './urls';
 import { CourseInfo, SemesterInfo, Notification, File, Homework } from './types';
 import { INotification, INotificationDetail } from './types';
-import { IHomework, IHomeworkDetail } from './types';
-import { parseSemesterType, decodeHTMLEntities } from './utils';
+import { IHomework, IHomeworkDetail, IHomeworkStatus } from './types';
+import { parseSemesterType, decodeHTMLEntities, trimAndDefine } from './utils';
 
 const FETCH_COMMON_CONFIG: RequestInit = {
     credentials: 'include',
@@ -12,6 +12,14 @@ const FETCH_COMMON_CONFIG: RequestInit = {
 
 const myFetch = (url: string, config: RequestInit = {}) => {
     return fetch(url, {...FETCH_COMMON_CONFIG, ...config});
+};
+
+const CHEERIO_CONFIG: CheerioOptionsInterface = {
+    decodeEntities: false,
+};
+
+const $ = (html: string) => {
+    return cheerio.load(html, CHEERIO_CONFIG);
 };
 
 export class Learn2018Helper {
@@ -34,7 +42,7 @@ export class Learn2018Helper {
         if (!ticketResponse.ok) {
             return false;
         }
-        const body = cheerio.load(await ticketResponse.text());
+        const body = $(await ticketResponse.text());
         const targetURL = body('a').attr('href');
         const ticket = targetURL.split('=').slice(-1)[0];
 
@@ -136,15 +144,88 @@ export class Learn2018Helper {
 
     }
 
+    public async getHomeworkList(courseID: string): Promise<Homework[]> {
+
+        const allHomework: Homework[] = [];
+
+        await Promise.all(URL.LEARN_HOMEWORK_LIST_SOURCE(courseID).map(async (s) => {
+            const homeworks = await this.getHomeworkListAtUrl(s.url, s.status);
+            allHomework.push(...homeworks);
+        }));
+
+        return allHomework;
+
+    }
+
     private ensureLogin() {
         if (!this.hasLogin) {
             throw new Error('Not logged in.');
         }
     }
 
-    private async parseNotificationDetail(courseID: string, id: string): Promise<INotificationDetail>{
+    private async getHomeworkListAtUrl(url: string, status: IHomeworkStatus): Promise<Homework[]> {
+
+        const response = await myFetch(url);
+        const result = (await response.json()).object.aaData as any[];
+        const homeworks: Homework[] = [];
+
+        await Promise.all(result.map(async (h) => {
+            homeworks.push({
+                _id: h.zyid,
+                studentHomeworkId: h.xszyid,
+                title: h.bt,
+                deadline: new Date(h.jssj),
+                submitUrl: URL.LEARN_HOMEWORK_SUBMIT(h.wlckid, h.xszyid),
+                submitTime: h.scsj === null ? undefined : new Date(h.scsj),
+                grade: h.cj === null ? undefined : h.cj,
+                graderName: trimAndDefine(h.jsm),
+                gradeContent: trimAndDefine(h.pynr),
+                gradeTime: h.pysj === null ? undefined : new Date(h.pysj),
+                submittedAttachmentUrl: h.zyfjid === '' ? undefined : URL.LEARN_HOMEWORK_DOWNLOAD(h.wlkcid, h.zyfjid),
+                ...status,
+                ...(await this.parseHomeworkDetail(h.wlckid, h.zyid, h.xszyid)),
+            });
+        }));
+
+        return homeworks;
+
+    }
+
+    private async parseNotificationDetail(courseID: string, id: string): Promise<INotificationDetail> {
         const response = await myFetch(URL.LEARN_NOTIFICATION_DETAIL(courseID, id));
-        const result = cheerio.load(await response.text());
+        const result = $(await response.text());
         return { attachmentUrl: result('.ml-10').attr('href') };
+    }
+
+    private async parseHomeworkDetail(courseID: string, id: string, studentHomeworkID: string):
+      Promise<IHomeworkDetail> {
+
+        const response = await myFetch(URL.LEARN_HOMEWORK_DETAIL(courseID, id, studentHomeworkID));
+        const result = $(await response.text());
+
+        const fileDivs = result('div.list.fujian.clearfix');
+
+        return {
+            description: trimAndDefine(result('div.list.calendar.clearfix>div.fl.right>div.c55').slice(0,1).html()),
+            answerContent: trimAndDefine(result('div.list.calendar.clearfix>div.fl.right>div.c55').slice(1,2).html()),
+            submittedContent: trimAndDefine(cheerio(('div.right'),result('div.boxbox').slice(1,2)).slice(2,3).html()),
+            ...this.parseHomeworkFile(fileDivs[0], 'attachmentName', 'attachmentUrl'),
+            ...this.parseHomeworkFile(fileDivs[1], 'answerAttachmentName', 'answerAttachmentUrl'),
+            ...this.parseHomeworkFile(fileDivs[2], 'submittedAttachmentName', 'submittedAttachmentUrl'),
+            ...this.parseHomeworkFile(fileDivs[3], 'gradeAttachmentName', 'gradeAttachmentUrl'),
+        }
+
+    }
+
+    private parseHomeworkFile = (fileDiv: CheerioElement, nameKey: string, urlKey: string) => {
+        const fileNode = cheerio('.ftitle', fileDiv).children('a')[0];
+        if (fileNode !== undefined) {
+            return {
+                [nameKey]: fileNode.children[0].data,
+                [urlKey]: `${URL.LEARN_PREFIX}${fileNode.attribs.href.split('=').slice(-1)[0]}`
+            }
+        } else {
+            return {};
+        }
     }
 }

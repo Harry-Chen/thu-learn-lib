@@ -1,7 +1,7 @@
 
 export enum SemesterType {
   FALL = '秋季学期',
-  SRPING = '春季学期',
+  SPRING = '春季学期',
   SUMMER = '夏季学期',
   UNKNOWN = '',
 }
@@ -60,28 +60,36 @@ interface IFile {
 
 export type File = IFile;
 
-export interface IHomework {
+export interface IHomeworkStatus {
+  submitted: boolean;
+  graded: boolean;
+}
+
+export interface IHomework extends IHomeworkStatus {
   _id: string;
   studentHomeworkId: string;
   title: string;
   deadline: Date;
-  attachmentUrl?: string;
-  submitted: boolean;
+  submitUrl: string;
   submitTime?: Date;
-  graded: boolean;
+  submittedAttachmentUrl?: string;
   grade?: number;
   gradeTime?: Date;
-  gradeContent?: string;
   graderName?: string;
-  gradeAttachmentUrl?: string;
+  gradeContent?: string;
 }
 
 export interface IHomeworkDetail {
-  description: string;
+  description?: string;
+  attachmentName?: string;
+  attachmentUrl?: string;
   answerContent?: string;
+  answerAttachmentName?: string;
   answerAttachmentUrl?: string;
   submittedContent?: string;
-  submittedAttachmentUrl?: string;
+  submittedAttachmentName?: string;
+  gradeAttachmentName?: string;
+  gradeAttachmentUrl?: string;
 }
 
 export type Homework = IHomework & IHomeworkDetail;

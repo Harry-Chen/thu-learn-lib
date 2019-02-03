@@ -13,12 +13,14 @@
   "license": "MIT",
   "devDependencies": {
     "@types/cheerio": "^0.22.10",
+    "@types/js-base64": "^2.3.1",
     "prettier": "^1.16.3",
     "tslint": "^5.12.1",
     "tslint-config-prettier": "^1.17.0",
     "typescript": "^3.3.1"
   },
   "dependencies": {
-    "cheerio": "^1.0.0-rc.2"
+    "cheerio": "^1.0.0-rc.2",
+    "js-base64": "^2.5.1"
   }
 }

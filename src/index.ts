@@ -1,9 +1,10 @@
 import 'cheerio';
+import { Base64 } from 'js-base64';
 
 import * as URL from './urls';
-import { CourseInfo, SemesterInfo, Notification, File, Homework } from './types';
+import { CourseInfo, SemesterInfo, Notification, File, Homework, Discussion, Question, IDiscussionBase } from './types';
 import { INotification, INotificationDetail } from './types';
-import { IHomework, IHomeworkDetail, IHomeworkStatus } from './types';
+import { IHomeworkDetail, IHomeworkStatus } from './types';
 import { parseSemesterType, decodeHTMLEntities, trimAndDefine } from './utils';
 
 const FETCH_COMMON_CONFIG: RequestInit = {
@@ -98,8 +99,9 @@ export class Learn2018Helper {
         await Promise.all(result.map(async (n) => {
             const notification: INotification = {
                 _id: n.ggid,
-                content: decodeHTMLEntities(n.ggnrStr),
+                content: decodeHTMLEntities(Base64.decode(n.ggnr)),
                 title: n.bt,
+                url: URL.LEARN_NOTIFICATION_DETAIL(courseID, n.ggid),
                 publisher: n.fbrxm,
                 hasRead: n.sfyd === '是',
                 markedImportant: n.sfqd === '1',
@@ -146,6 +148,7 @@ export class Learn2018Helper {
 
     public async getHomeworkList(courseID: string): Promise<Homework[]> {
 
+        this.ensureLogin();
         const allHomework: Homework[] = [];
 
         await Promise.all(URL.LEARN_HOMEWORK_LIST_SOURCE(courseID).map(async (s) => {
@@ -154,6 +157,42 @@ export class Learn2018Helper {
         }));
 
         return allHomework;
+
+    }
+
+    public async getDiscussionList(courseID: string): Promise<Discussion[]> {
+
+        this.ensureLogin();
+        const response = await myFetch(URL.LEARN_DISCUSSION_LIST(courseID));
+        const result = (await response.json()).object.resultsList as any[];
+        const discussions: Discussion[] = [];
+
+        await Promise.all(result.map(async (d) => {
+            discussions.push({
+                ...this.parseDiscussionBase(d),
+                boardId: d.bqid,
+            })
+        }));
+
+        return discussions;
+
+    }
+
+    public async getQuestionList(courseID: string): Promise<Question[]> {
+
+        this.ensureLogin();
+        const response = await myFetch(URL.LEARN_DISCUSSION_LIST(courseID));
+        const result = (await response.json()).object.resultsList as any[];
+        const questions: Question[] = [];
+
+        await Promise.all(result.map(async (q) => {
+            questions.push({
+                ...this.parseDiscussionBase(q),
+                question: Base64.decode(q.wtnr),
+            })
+        }));
+
+        return questions;
 
     }
 
@@ -174,8 +213,9 @@ export class Learn2018Helper {
                 _id: h.zyid,
                 studentHomeworkId: h.xszyid,
                 title: h.bt,
+                url: URL.LEARN_HOMEWORK_DETAIL(h.wlkcid, h.zyid, h.xszyid),
                 deadline: new Date(h.jssj),
-                submitUrl: URL.LEARN_HOMEWORK_SUBMIT(h.wlckid, h.xszyid),
+                submitUrl: URL.LEARN_HOMEWORK_SUBMIT(h.wlkcid, h.xszyid),
                 submitTime: h.scsj === null ? undefined : new Date(h.scsj),
                 grade: h.cj === null ? undefined : h.cj,
                 graderName: trimAndDefine(h.jsm),
@@ -183,7 +223,7 @@ export class Learn2018Helper {
                 gradeTime: h.pysj === null ? undefined : new Date(h.pysj),
                 submittedAttachmentUrl: h.zyfjid === '' ? undefined : URL.LEARN_HOMEWORK_DOWNLOAD(h.wlkcid, h.zyfjid),
                 ...status,
-                ...(await this.parseHomeworkDetail(h.wlckid, h.zyid, h.xszyid)),
+                ...(await this.parseHomeworkDetail(h.wlkcid, h.zyid, h.xszyid)),
             });
         }));
 
@@ -227,5 +267,20 @@ export class Learn2018Helper {
         } else {
             return {};
         }
-    }
+    };
+
+    private parseDiscussionBase = (d: any): IDiscussionBase => {
+        return {
+            _id: d.id,
+            title: d.bt,
+            url: URL.LEARN_DISCUSSION_DETAIL(d.wlkcid, d.bqid, d.id),
+            publisherName: d.fbrxm,
+            publishTime: new Date(d.fbsj),
+            lastReplyTime: new Date(d.zhhfsj),
+            lastReplierName: d.zhhfrxm,
+            visitCount: d.djs,
+            replyCount: d.hfcs,
+        };
+    };
+
 }

@@ -358,7 +358,7 @@ export const LEARN_DISCUSSION_LIST = (courseID: string) => {
 //   return generateQueryFormData(data);
 // };
 
-export const LEARN_DISCUSSION_DETAIL = (courseID: string, boardID: string, discussionID: string, tabId: number) => {
+export const LEARN_DISCUSSION_DETAIL = (courseID: string, boardID: string, discussionID: string, tabId: number = 1) => {
   return `${LEARN_PREFIX}/f/wlxt/bbs/bbs_tltb/student/viewTlById?wlkcid=${courseID}&id=${discussionID}&tabbh=${tabId}&bqid=${boardID}`;
 };
 

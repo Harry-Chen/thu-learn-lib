@@ -32,6 +32,7 @@ export interface INotification {
   title: string;
   content: string;
   hasRead: boolean;
+  url: string;
   markedImportant: boolean;
   publishTime: Date;
   publisher: string;
@@ -70,6 +71,7 @@ export interface IHomework extends IHomeworkStatus {
   studentHomeworkId: string;
   title: string;
   deadline: Date;
+  url: string;
   submitUrl: string;
   submitTime?: Date;
   submittedAttachmentUrl?: string;
@@ -93,3 +95,27 @@ export interface IHomeworkDetail {
 }
 
 export type Homework = IHomework & IHomeworkDetail;
+
+export interface IDiscussionBase {
+  _id: string;
+  title: string;
+  url: string;
+  publisherName: string;
+  publishTime: Date;
+  lastReplierName: string;
+  lastReplyTime: Date;
+  visitCount: number;
+  replyCount: number;
+}
+
+interface IDiscussion extends IDiscussionBase {
+  boardId: string;
+}
+
+export type Discussion = IDiscussion;
+
+interface IQuestion extends IDiscussionBase {
+  question: string;
+}
+
+export type Question = IQuestion;

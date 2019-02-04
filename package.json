@@ -1,7 +1,7 @@
 {
-  "name": "thu-learn2018-lib",
+  "name": "thu-learn-lib",
   "version": "1.0.0",
-  "description": "a JavaScript library to provide a program-friendly interface to learn 2018 of Tsinghua University",
+  "description": "a JavaScript library to provide a program-friendly interface to Web Learning (2018) of Tsinghua University",
   "main": "lib/index.js",
   "files": ["lib/**/*"],
   "scripts": {
@@ -16,7 +16,7 @@
   "license": "MIT",
   "repository": {
     "type" : "git",
-    "url" : "https://github.com/Harry-Chen/thu-learn2018-lib.git"
+    "url" : "https://github.com/Harry-Chen/thu-learn-lib.git"
   },
   "devDependencies": {
     "@types/cheerio": "^0.22.10",

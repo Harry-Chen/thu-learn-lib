@@ -1,6 +1,6 @@
-# thu-learn2018-lib
+# thu-learn-lib
 
-This is a JavaScript library aimed to provide a program-friendly interface of [learn 2018 of Tsinghua University](https://leran2018.tsinghua.edu.cn).
+This is a JavaScript library aimed to provide a program-friendly interface of [web Learning of Tsinghua University](https://leran.tsinghua.edu.cn). Only the newest version (learn2018) is supported.
 
 This project is licensed under MIT License.
 
@@ -12,7 +12,7 @@ I don't like polyfill. In case of any problems, just upgrade your browser / Node
 
 ## Installation
 
-`npm install --save thu-learn2018-lib`
+`npm install --save thu-learn-lib`
 
 ## Build from source
 
@@ -31,7 +31,7 @@ You can find the unpacked Chrome extension in `dist/`. Install it in Chrome and 
 ## Usage
 
 ```javascript
-import { Learn2018Helper } from 'thu-learn2018-lib';
+import { Learn2018Helper } from 'thu-learn-lib';
 
 // in JS engines, each instance owns different cookie jars
 const helper = new Learn2018Helper();

@@ -1,7 +1,9 @@
 import * as cheerio from 'cheerio';
 import { Base64 } from 'js-base64';
+
 import fetch from 'cross-fetch';
 const IsomorphicFetch = require('real-isomorphic-fetch');
+const tough = require('tough-cookie-no-native');
 
 import * as URL from './urls';
 import { CourseInfo, SemesterInfo, Notification, File, Homework, Discussion, Question, IDiscussionBase } from './types';
@@ -18,9 +20,14 @@ const $ = (html: string) => {
 };
 
 export class Learn2018Helper {
-  private myFetch = new IsomorphicFetch(fetch);
-
+  public readonly cookieJar: any;
+  private readonly myFetch: any;
   private loggedIn: boolean = false;
+
+  constructor(cookieJar = new tough.CookieJar()) {
+    this.cookieJar = cookieJar;
+    this.myFetch = new IsomorphicFetch(fetch, this.cookieJar);
+  }
 
   public async login(username: string, password: string): Promise<boolean> {
     const ticketResponse = await this.myFetch(URL.ID_LOGIN(), {
@@ -57,7 +64,7 @@ export class Learn2018Helper {
     };
   }
 
-  public async getCourseForSemester(semesterID: string): Promise<CourseInfo[]> {
+  public async getCourseList(semesterID: string): Promise<CourseInfo[]> {
     this.ensureLogin();
     const response = await this.myFetch(URL.LEARN_COURSE_LIST(semesterID));
     const result = (await response.json()).resultList as any[];
@@ -89,7 +96,7 @@ export class Learn2018Helper {
         const notification: INotification = {
           id: n.ggid,
           content: decodeHTMLEntities(Base64.decode(n.ggnr)),
-          title: n.bt,
+          title: decodeHTMLEntities(n.bt),
           url: URL.LEARN_NOTIFICATION_DETAIL(courseID, n.ggid),
           publisher: n.fbrxm,
           hasRead: n.sfyd === '是',
@@ -168,7 +175,7 @@ export class Learn2018Helper {
     return discussions;
   }
 
-  public async getQuestionList(courseID: string): Promise<Question[]> {
+  public async getAnsweredQuestionList(courseID: string): Promise<Question[]> {
     this.ensureLogin();
     const response = await this.myFetch(URL.LEARN_QUESTION_LIST_ANSWERED(courseID));
     const result = (await response.json()).object.resultsList as any[];

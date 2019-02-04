@@ -40,25 +40,27 @@ const helper = new Learn2018Helper();
 
 // first login
 const loginSuccess = await helper.login('user', 'pass');
+// take out cookies (e.g. for file download), which will not work in browsers
+// its type is require('tough-cookie-no-native').CookieJar
+console.log(helper.cookieJar);
 
 // get get semester info
 const semester = await helper.getCurrentSemester();
 
 // get courses of this semester
-const courses = await helper.getCourseForSemester(semester.id);
+const courses = await helper.getCourseList(semester.id);
+const course = courses[0];
 
 // get detail information about the course
-const discussions = await helper.getDiscussionList(courses.id);
-const notifications = await helper.getNotificationList(courses.id);
-const files = await helper.getFileList(courses.id);
-const homework = await helper.getHomeworkList(courses.id);
-const questions = await helper.getQuestionList(courses.id);
+const discussions = await helper.getDiscussionList(course.id);
+const notifications = await helper.getNotificationList(course.id);
+const files = await helper.getFileList(course.id);
+const homework = await helper.getHomeworkList(course.id);
+const questions = await helper.getAnsweredQuestionList(course.id);
 
-// logout if you want, has no effect in browsers
+// logout if you want, which has no effect in browsers
 helper.logout();
 ```
-
-In browsers, the class will be attached to `window.Learn2018Helper`.
 
 According to security strategies (CORS, CORB) of browsers, you might need to run the code in the page context of `https://learn2018.tsinghua.edu.cn` and `https://id.tsinghua.edu.cn`. The simplest way is to run the code as a browser extension.
 

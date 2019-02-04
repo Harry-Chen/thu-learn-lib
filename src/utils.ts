@@ -21,10 +21,15 @@ const HTML_ENTITIES: {
   '#x2F': '/',
   '#39': "'",
   '#47': '/',
+  mdash: '—',
+  middit: '·',
+  cap: '∩',
   lt: '<',
   gt: '>',
   nbsp: ' ',
   quot: '"',
+  ldquo: '“',
+  rdquo: '”',
 };
 
 export function decodeHTMLEntities(text: string): string {

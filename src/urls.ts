@@ -7,8 +7,8 @@ const MAX_SIZE = 200;
 //   return form;
 // };
 
-export const ID_LOGIN = () =>{
-  return 'https://id.tsinghua.edu.cn/do/off/ui/auth/login/post/bb5df85216504820be7bba2b0ae1535b/0?/login.do'
+export const ID_LOGIN = () => {
+  return 'https://id.tsinghua.edu.cn/do/off/ui/auth/login/post/bb5df85216504820be7bba2b0ae1535b/0?/login.do';
 };
 
 export const ID_LOGIN_FORM_DATA = (username: string, password: string) => {
@@ -40,7 +40,7 @@ export const LEARN_COURSE_LIST = (semester: string) => {
 // };
 
 export const LEARN_FILE_LIST = (courseID: string) => {
-  return `${LEARN_PREFIX}b/wlxt/kj/wlkc_kjxxb/student/kjxxbByWlkcidAndSizeForStudent?wlkcid=${courseID}&size=${MAX_SIZE}`;
+  return `${LEARN_PREFIX}/b/wlxt/kj/wlkc_kjxxb/student/kjxxbByWlkcidAndSizeForStudent?wlkcid=${courseID}&size=${MAX_SIZE}`;
 };
 
 export const LEARN_FILE_DOWNLOAD = (fileID: string) => {
@@ -97,12 +97,12 @@ export const LEARN_FILE_DOWNLOAD = (fileID: string) => {
 // };
 
 export const LEARN_NOTIFICATION_LIST = (courseID: string) => {
-  return `${LEARN_PREFIX}b/wlxt/kcgg/wlkc_ggb/student/kcggListXs?wlkcid=${courseID}&size=${MAX_SIZE}`;
+  return `${LEARN_PREFIX}/b/wlxt/kcgg/wlkc_ggb/student/kcggListXs?wlkcid=${courseID}&size=${MAX_SIZE}`;
 };
 
 export const LEARN_NOTIFICATION_DETAIL = (courseID: string, notificationID: string) => {
   return `${LEARN_PREFIX}/f/wlxt/kcgg/wlkc_ggb/student/beforeViewXs?wlkcid=${courseID}&id=${notificationID}`;
-}
+};
 
 export const LEARN_HOMEWORK_LIST_SOURCE = (courseID: string) => {
   return [
@@ -111,20 +111,22 @@ export const LEARN_HOMEWORK_LIST_SOURCE = (courseID: string) => {
       status: {
         submitted: false,
         graded: false,
-      }
-    }, {
+      },
+    },
+    {
       url: LEARN_HOMEWORK_LIST_SUBMITTED(courseID),
       status: {
         submitted: true,
         graded: false,
-      }
-    }, {
+      },
+    },
+    {
       url: LEARN_HOMEWORK_LIST_GRADED(courseID),
       status: {
         submitted: true,
         graded: true,
-      }
-    }
+      },
+    },
   ];
 };
 
@@ -133,7 +135,7 @@ export const LEARN_HOMEWORK_LIST_NEW = (courseID: string) => {
 };
 
 export const LEARN_HOMEWORK_LIST_SUBMITTED = (courseID: string) => {
-  return `${LEARN_PREFIX}/b/wlxt/kczy/zy/student/index/zyListYjWg?wlkcid=${courseID}&size=${MAX_SIZE}`;
+  return `${LEARN_PREFIX}/b/wlxt/kczy/zy/student/index/zyListYjwg?wlkcid=${courseID}&size=${MAX_SIZE}`;
 };
 
 export const LEARN_HOMEWORK_LIST_GRADED = (courseID: string) => {
@@ -255,7 +257,7 @@ export const LEARN_HOMEWORK_DOWNLOAD = (courseID: string, attachmentID: string) 
 };
 
 export const LEARN_HOMEWORK_SUBMIT = (courseID: string, studentHomeworkID: string) => {
-  return `${LEARN_PREFIX}/f/wlxt/kczy/zy/student/tijiao?wlkcid=${courseID}&xszyid=${studentHomeworkID}`
+  return `${LEARN_PREFIX}/f/wlxt/kczy/zy/student/tijiao?wlkcid=${courseID}&xszyid=${studentHomeworkID}`;
 };
 
 // export const LEARN_DISCUSSION_BOARD_LIST = () => {
@@ -476,7 +478,6 @@ export const LEARN_QUESTION_LIST_ANSWERED = (courseID: string) => {
 //   return generateQueryFormData(data);
 // };
 
-export const LEARN_QUESTION_DETAIL = (courseID: string, questionID: string, tabId: number) => {
+export const LEARN_QUESTION_DETAIL = (courseID: string, questionID: string, tabId: number = 1) => {
   return `${LEARN_PREFIX}/f/wlxt/bbs/bbs_kcdy/student/viewDyById?wlkcid=${courseID}&id=${questionID}&tabid=${tabId}`;
 };
-

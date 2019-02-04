@@ -1,4 +1,3 @@
-
 export enum SemesterType {
   FALL = '秋季学期',
   SPRING = '春季学期',
@@ -99,7 +98,6 @@ export type Homework = IHomework & IHomeworkDetail;
 export interface IDiscussionBase {
   id: string;
   title: string;
-  url: string;
   publisherName: string;
   publishTime: Date;
   lastReplierName: string;
@@ -109,12 +107,14 @@ export interface IDiscussionBase {
 }
 
 interface IDiscussion extends IDiscussionBase {
+  url: string;
   boardId: string;
 }
 
 export type Discussion = IDiscussion;
 
 interface IQuestion extends IDiscussionBase {
+  url: string;
   question: string;
 }
 

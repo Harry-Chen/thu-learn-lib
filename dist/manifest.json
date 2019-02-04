@@ -1,0 +1,21 @@
+{
+	"name" : "thu-learn2018-lib",
+	"version":"0.0.1",
+	"minimum_chrome_version" : "51",
+	"manifest_version" : 2,
+	"description":"清华大学网络学堂2018爬虫测试",
+	"content_scripts":[
+	],
+	"background" : {
+        "scripts": ["index.js"],
+        "persistent": false
+	},
+	"permissions" : ["storage",
+	                 "tabs",
+                     "https://learn.tsinghua.edu.cn/*",
+                     "https://learn2018.tsinghua.edu.cn/*",
+                     "https://id.tsinghua.edu.cn/*"],
+	"browser_action": {
+		"default_title": "thu-learn2018-lib tester"
+	}
+}

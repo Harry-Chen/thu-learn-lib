@@ -67,3 +67,15 @@ According to security strategies (CORS, CORB) of browsers, you might need to run
 ## Typing
 
 See `lib/types.d.ts` for type definitions.
+
+## Changelog
+
+- v1.0.1
+  - Expose CookieJar in helper class
+  - Fix some HTML entity decoding problems
+  - __Rename of some APIs__ (break compatibility before we have actual users)
+
+- v1.0.0
+  - First release
+  - Support parsing of notification, homework, file, discussion and __answered__ questions
+  

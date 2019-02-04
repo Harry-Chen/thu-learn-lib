@@ -16,6 +16,7 @@
   "devDependencies": {
     "@types/cheerio": "^0.22.10",
     "@types/chrome": "0.0.78",
+    "@types/form-data": "^2.2.1",
     "@types/js-base64": "^2.3.1",
     "html-webpack-plugin": "^3.2.0",
     "prettier": "^1.16.3",
@@ -31,6 +32,7 @@
     "cheerio": "^1.0.0-rc.2",
     "cross-fetch": "^3.0.1",
     "es6-denodeify": "^0.1.5",
+    "form-data": "^2.3.3",
     "js-base64": "^2.5.1",
     "real-isomorphic-fetch": "^2.0.5"
   }

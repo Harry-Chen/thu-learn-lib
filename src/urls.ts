@@ -1,3 +1,5 @@
+import * as FormData from 'form-data';
+
 export const LEARN_PREFIX = 'https://learn2018.tsinghua.edu.cn';
 const MAX_SIZE = 200;
 

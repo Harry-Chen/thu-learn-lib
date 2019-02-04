@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "description": "a JavaScript library to provide a program-friendly interface to learn 2018 of Tsinghua University",
   "main": "lib/index.js",
+  "files": ["lib/**/*"],
   "scripts": {
     "build": "tsc",
     "format": "prettier --write \"src/**/*.ts\" \"src/**/*.js\"",
@@ -11,8 +12,12 @@
     "start": "webpack-dev-server --config webpack.config.js --open"
   },
   "keywords": [],
-  "author": "Shengqi Chen <shengqi.chen@tuna.tsinghua.edu.cn>",
+  "author": "Harry Chen <harry-chen@outlook.com>",
   "license": "MIT",
+  "repository": {
+    "type" : "git",
+    "url" : "https://github.com/Harry-Chen/thu-learn2018-lib.git"
+  },
   "devDependencies": {
     "@types/cheerio": "^0.22.10",
     "@types/chrome": "0.0.78",

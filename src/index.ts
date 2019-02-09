@@ -31,7 +31,7 @@ const $ = (html: string) => {
 };
 
 export class Learn2018Helper {
-  public readonly cookieJar: any;
+  public cookieJar: any;
   private readonly myFetch: any;
   private loggedIn: boolean = false;
 
@@ -46,7 +46,7 @@ export class Learn2018Helper {
       method: 'POST',
     });
     if (!ticketResponse.ok) {
-      throw new Error('Ticket fetch error');
+      throw new Error('Error fetching ticket from id.tsinghua.edu.cn');
     }
     const ticketResult = await ticketResponse.text();
     const body = $(ticketResult);
@@ -58,9 +58,11 @@ export class Learn2018Helper {
   }
 
   public async logout() {
-    const logoutResponse = await this.myFetch(URL.ID_LOGOUT(), {method: 'POST'});
-    
-    return (this.loggedIn = ! logoutResponse.ok);
+    this.ensureLogin();
+    this.cookieJar = new tough.CookieJar();
+    const logoutResponse = await this.myFetch(URL.LEARN_LOGOUT(), { method: 'POST' });
+
+    return (this.loggedIn = !logoutResponse.ok);
   }
 
   public async getSemesterIdList(): Promise<string[]> {

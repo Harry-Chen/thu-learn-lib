@@ -6,9 +6,6 @@ const MAX_SIZE = 200;
 export const ID_LOGIN = () => {
   return 'https://id.tsinghua.edu.cn/do/off/ui/auth/login/post/bb5df85216504820be7bba2b0ae1535b/0?/login.do';
 };
-export const ID_LOGOUT = () => {
-  return `${LEARN_PREFIX}/f/j_spring_security_logout`;
-};
 
 export const ID_LOGIN_FORM_DATA = (username: string, password: string) => {
   const credential = new FormData();
@@ -20,6 +17,10 @@ export const ID_LOGIN_FORM_DATA = (username: string, password: string) => {
 
 export const LEARN_AUTH_ROAM = (ticket: string) => {
   return `${LEARN_PREFIX}/b/j_spring_security_thauth_roaming_entry?ticket=${ticket}`;
+};
+
+export const LEARN_LOGOUT = () => {
+  return `${LEARN_PREFIX}/f/j_spring_security_logout`;
 };
 
 export const LEARN_SEMESTER_LIST = () => {

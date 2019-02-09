@@ -61,8 +61,8 @@ const files = await helper.getFileList(course.id);
 const homework = await helper.getHomeworkList(course.id);
 const questions = await helper.getAnsweredQuestionList(course.id);
 
-// logout if you want, which has no effect in browsers
-helper.logout();
+// logout if you want, the cookie jar will be cleared in Node
+const logoutSuccess = await helper.logout();
 ```
 
 According to security strategies (CORS, CORB) of browsers, you might need to run the code in the page context of `https://learn2018.tsinghua.edu.cn` and `https://id.tsinghua.edu.cn`. The simplest way is to run the code as a browser extension.
@@ -73,8 +73,11 @@ See `lib/types.d.ts` for type definitions.
 
 ## Changelog
 
+- v1.0.3
+  - Add real logout API (thank @zhaofeng-shu33)
+
 - v1.0.2
-  - Add API to get IDs of all semesters (thanks @jiegec)
+  - Add API to get IDs of all semesters (thank @jiegec)
 
 - v1.0.1
   - Expose CookieJar in helper class

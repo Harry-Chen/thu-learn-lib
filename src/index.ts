@@ -57,8 +57,10 @@ export class Learn2018Helper {
     return (this.loggedIn = loginResponse.ok);
   }
 
-  public logout() {
-    this.loggedIn = false;
+  public async logout() {
+    const logoutResponse = await this.myFetch(URL.ID_LOGOUT(), {method: 'POST'});
+    
+    return (this.loggedIn = ! logoutResponse.ok);
   }
 
   public async getSemesterIdList(): Promise<string[]> {

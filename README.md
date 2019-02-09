@@ -44,6 +44,9 @@ const loginSuccess = await helper.login('user', 'pass');
 // its type is require('tough-cookie-no-native').CookieJar
 console.log(helper.cookieJar);
 
+// get ids of all semesters that current account has access to
+const semesters = await helper.getSemesterIdList();
+
 // get get semester info
 const semester = await helper.getCurrentSemester();
 
@@ -69,6 +72,9 @@ According to security strategies (CORS, CORB) of browsers, you might need to run
 See `lib/types.d.ts` for type definitions.
 
 ## Changelog
+
+- v1.0.2
+  - Add API to get IDs of all semesters (thanks @jiegec)
 
 - v1.0.1
   - Expose CookieJar in helper class

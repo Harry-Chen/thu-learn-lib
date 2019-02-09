@@ -2,14 +2,25 @@ import * as cheerio from 'cheerio';
 import { Base64 } from 'js-base64';
 
 import fetch from 'cross-fetch';
+import * as URL from './urls';
+import {
+  CourseInfo,
+  Discussion,
+  File,
+  Homework,
+  IDiscussionBase,
+  IHomeworkDetail,
+  IHomeworkStatus,
+  INotification,
+  INotificationDetail,
+  Notification,
+  Question,
+  SemesterInfo,
+} from './types';
+import { decodeHTMLEntities, parseSemesterType, trimAndDefine } from './utils';
+
 const IsomorphicFetch = require('real-isomorphic-fetch');
 const tough = require('tough-cookie-no-native');
-
-import * as URL from './urls';
-import { CourseInfo, SemesterInfo, Notification, File, Homework, Discussion, Question, IDiscussionBase } from './types';
-import { INotification, INotificationDetail } from './types';
-import { IHomeworkDetail, IHomeworkStatus } from './types';
-import { parseSemesterType, decodeHTMLEntities, trimAndDefine } from './utils';
 
 const CHEERIO_CONFIG: CheerioOptionsInterface = {
   decodeEntities: false,
@@ -48,6 +59,12 @@ export class Learn2018Helper {
 
   public logout() {
     this.loggedIn = false;
+  }
+
+  public async getSemesterIdList(): Promise<string[]> {
+    this.ensureLogin();
+    const response = await this.myFetch(URL.LEARN_SEMESTER_LIST());
+    return (await response.json()) as string[];
   }
 
   public async getCurrentSemester(): Promise<SemesterInfo> {

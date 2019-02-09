@@ -1,6 +1,6 @@
 {
   "name": "thu-learn-lib",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "a JavaScript library to provide a program-friendly interface to Web Learning (2018) of Tsinghua University",
   "main": "lib/index.js",
   "files": [
@@ -41,7 +41,6 @@
     "es6-denodeify": "^0.1.5",
     "form-data": "^2.3.3",
     "js-base64": "^2.5.1",
-    "real-isomorphic-fetch": "^2.0.5",
-    "tough-cookie-no-native": "^2.4.0"
+    "real-isomorphic-fetch": "^2.0.5"
   }
 }

@@ -19,6 +19,10 @@ export const LEARN_AUTH_ROAM = (ticket: string) => {
   return `${LEARN_PREFIX}/b/j_spring_security_thauth_roaming_entry?ticket=${ticket}`;
 };
 
+export const LEARN_SEMESTER_LIST = () => {
+  return `${LEARN_PREFIX}/b/wlxt/kc/v_wlkc_xs_xktjb_coassb/queryxnxq`;
+};
+
 export const LEARN_CURRENT_SEMESTER = () => {
   return `${LEARN_PREFIX}/b/kc/zhjw_v_code_xnxq/getCurrentAndNextSemester`;
 };

@@ -7,11 +7,11 @@
     "lib/**/*"
   ],
   "scripts": {
-    "build": "tsc",
+    "build-lib": "tsc",
+    "build-dist": "webpack --config webpack.config.js",
+    "watch-dist": "webpack -w --config webpack.config.js",
     "format": "prettier --write \"src/**/*.ts\" \"src/**/*.js\"",
-    "lint": "tslint -p tsconfig.json",
-    "watch": "webpack -w --config webpack.config.js",
-    "start": "webpack-dev-server --config webpack.config.js --open"
+    "lint": "tslint -p tsconfig.json"
   },
   "keywords": [],
   "author": "Harry Chen <harry-chen@outlook.com>",
@@ -32,8 +32,7 @@
     "tslint-config-prettier": "^1.17.0",
     "typescript": "^3.3.1",
     "webpack": "^4.29.0",
-    "webpack-cli": "^3.2.1",
-    "webpack-dev-server": "^3.1.14"
+    "webpack-cli": "^3.2.1"
   },
   "dependencies": {
     "cheerio": "^1.0.0-rc.2",

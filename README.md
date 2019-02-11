@@ -16,17 +16,24 @@ I don't like polyfill. In case of any problems, just upgrade your browser / Node
 
 ## Build from source
 
-### Release version
+### Library version (for development or Node)
 
-`npm i && npm run build`
+`npm i && npm run build-lib`
 
-You can find the library in `lib/`.
+You can find the library version in `lib/`.
+It can be used in web development or imported with NodeJS (with all dependencies installed).
+It __should not__ be directly used in browsers.
 
-### Test version
+### Bundled version (for browsers or Node)
 
-`npm i && npm run watch`
+`npm i && npm run build-dist`
 
-You can find the unpacked Chrome extension in `dist/`. Install it in Chrome and click the `t` icon in extension bar, then execute anything you want in the Console of Chrome Developer Tool. The helper class is attached as `window.Learn2018Helper` in this mode.
+You can find the bundled version in `dist/`.
+You can install it as an unpacked extension in Chrome and click the `t` icon in extension bar, then execute anything you want in the Console of Chrome Developer Tool.
+The helper class is attached as `window.Learn2018Helper` in this mode.
+Or you can just import `index.js` with NodeJS.
+
+Use `npm run watch-dist` for watching file changes.
 
 ## Usage
 

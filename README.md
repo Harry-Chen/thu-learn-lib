@@ -1,6 +1,6 @@
 # thu-learn-lib
 
-This is a JavaScript library aimed to provide a program-friendly interface of [web Learning of Tsinghua University](https://leran.tsinghua.edu.cn). Only the newest version (learn2018) is supported.
+This is a JavaScript library aimed to provide a program-friendly interface of [web Learning of Tsinghua University](https://learn.tsinghua.edu.cn). Only the newest version (learn2018) is supported.
 
 This project is licensed under MIT License.
 
@@ -80,6 +80,11 @@ See `lib/types.d.ts` for type definitions.
 
 ## Changelog
 
+- v1.0.4
+  - No change made to code
+  - Remove unused build commands
+  - Fix multiple typos in README
+
 - v1.0.3
   - Add real logout API (thank @zhaofeng-shu33)
 
@@ -95,3 +100,7 @@ See `lib/types.d.ts` for type definitions.
   - First release
   - Support parsing of notification, homework, file, discussion and __answered__ questions
   
+## Projects using this library
+
+- [Harry-Chen/Learn Project](https://github.com/Harry-Chen/Learn-Project)
+- [jiegec/clone-learn-tsinghua](https://github.com/jiegec/clone-learn-tsinghua)

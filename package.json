@@ -1,6 +1,6 @@
 {
   "name": "thu-learn-lib",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "description": "a JavaScript library to provide a program-friendly interface to Web Learning (2018) of Tsinghua University",
   "main": "lib/index.js",
   "files": [
@@ -13,7 +13,7 @@
     "format": "prettier --write \"src/**/*.ts\" \"src/**/*.js\"",
     "lint": "tslint -p tsconfig.json"
   },
-  "keywords": [],
+  "keywords": ["tsinghua", "learn2018"],
   "author": "Harry Chen <harry-chen@outlook.com>",
   "license": "MIT",
   "repository": {

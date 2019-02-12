@@ -22,7 +22,7 @@ const HTML_ENTITIES: {
   '#39': "'",
   '#47': '/',
   mdash: '—',
-  middit: '·',
+  middot: '·',
   cap: '∩',
   lt: '<',
   gt: '>',

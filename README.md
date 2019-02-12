@@ -80,6 +80,9 @@ See `lib/types.d.ts` for type definitions.
 
 ## Changelog
 
+- v1.0.5
+  - Fix HTML entity replacement.
+
 - v1.0.4
   - No change made to code
   - Remove unused build commands

@@ -129,3 +129,9 @@ interface IQuestion extends IDiscussionBase {
 export type Question = IQuestion;
 
 export type Content = Notification | File | Homework | Discussion | Question;
+
+interface ICourseContent {
+  [id: string]: Content[];
+}
+
+export type CourseContent = ICourseContent;

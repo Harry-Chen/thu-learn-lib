@@ -86,6 +86,9 @@ See `lib/types.d.ts` for type definitions.
 
 ## Changelog
 
+- v1.0.8
+  - Export type CourseContent
+
 - v1.0.7
   - No change made to code, update README
 

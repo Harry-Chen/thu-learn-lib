@@ -1,10 +1,11 @@
 {
   "name": "thu-learn-lib",
-  "version": "1.0.5",
+  "version": "1.0.6",
   "description": "a JavaScript library to provide a program-friendly interface to Web Learning (2018) of Tsinghua University",
   "main": "lib/index.js",
   "files": [
-    "lib/**/*"
+    "lib/**/*",
+    "src/**/*"
   ],
   "scripts": {
     "build-lib": "tsc",

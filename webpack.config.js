@@ -17,7 +17,10 @@ module.exports = {
   },
   plugins: [htmlPlugin],
   devServer: {
-    contentBase: './dist'
+    contentBase: './dist',
+    headers: {
+      'Access-Control-Allow-Origin': '*'
+    }
   },
   module: {
     rules: [
@@ -33,9 +36,4 @@ module.exports = {
   },
   mode: "development",
   devtool: "inline-source-map",
-  devServer: {
-    headers: {
-        'Access-Control-Allow-Origin': '*'
-    }
-  }
 };

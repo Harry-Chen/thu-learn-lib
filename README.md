@@ -39,6 +39,7 @@ Use `npm run watch-dist` for watching file changes.
 
 ```javascript
 import { Learn2018Helper } from 'thu-learn-lib';
+import { ContentType } from 'thu-learn-lib/lib/types'
 
 // in JS engines, each instance owns different cookie jars
 const helper = new Learn2018Helper();
@@ -68,6 +69,11 @@ const files = await helper.getFileList(course.id);
 const homework = await helper.getHomeworkList(course.id);
 const questions = await helper.getAnsweredQuestionList(course.id);
 
+// get content from bunches of courses
+// the return type will be { [id: string]: Content }
+// where Content = Notification | File | Homework | Discussion | Question
+const homeworks = await helper.getAllContents([1, 2, 3], ContentType.HOMEWORK);
+
 // logout if you want, the cookie jar will be cleared in Node
 const logoutSuccess = await helper.logout();
 ```
@@ -82,6 +88,7 @@ See `lib/types.d.ts` for type definitions.
 
 - v1.0.5
   - Fix HTML entity replacement.
+  - Add API to fetching content for a list of courses
 
 - v1.0.4
   - No change made to code

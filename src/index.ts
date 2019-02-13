@@ -4,6 +4,8 @@ import { Base64 } from 'js-base64';
 import fetch from 'cross-fetch';
 import * as URL from './urls';
 import {
+  Content,
+  ContentType,
   CourseInfo,
   Discussion,
   File,
@@ -29,6 +31,10 @@ const CHEERIO_CONFIG: CheerioOptionsInterface = {
 const $ = (html: string) => {
   return cheerio.load(html, CHEERIO_CONFIG);
 };
+
+interface ICourseContent {
+  [id: string]: Content[]
+}
 
 export class Learn2018Helper {
   public cookieJar: any;
@@ -104,6 +110,27 @@ export class Learn2018Helper {
     );
 
     return courses;
+  }
+
+  public async getAllContents(courseIDs: string[], type: ContentType): Promise<ICourseContent> {
+    let fetchFunc: (courseID: string) => Promise<Content[]>;
+    switch (type) {
+      case ContentType.NOTIFICATION: fetchFunc = this.getNotificationList; break;
+      case ContentType.FILE: fetchFunc = this.getFileList; break;
+      case ContentType.HOMEWORK: fetchFunc = this.getHomeworkList; break;
+      case ContentType.DISCUSSION: fetchFunc = this.getDiscussionList; break;
+      case ContentType.QUESTION: fetchFunc = this.getAnsweredQuestionList; break;
+    }
+
+    const contents: ICourseContent = {};
+
+    await Promise.all(
+      courseIDs.map(async id => {
+        contents[id] = await fetchFunc.bind(this)(id);
+      })
+    );
+
+    return contents;
   }
 
   public async getNotificationList(courseID: string): Promise<Notification[]> {

@@ -5,6 +5,14 @@ export enum SemesterType {
   UNKNOWN = '',
 }
 
+export enum ContentType {
+  NOTIFICATION = 'notification',
+  FILE = 'file',
+  HOMEWORK = 'homework',
+  DISCUSSION = 'discussion',
+  QUESTION = 'question',
+}
+
 interface ISemesterInfo {
   id: string;
   startDate: Date;
@@ -119,3 +127,5 @@ interface IQuestion extends IDiscussionBase {
 }
 
 export type Question = IQuestion;
+
+export type Content = Notification | File | Homework | Discussion | Question;

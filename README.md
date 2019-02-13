@@ -86,9 +86,14 @@ See `lib/types.d.ts` for type definitions.
 
 ## Changelog
 
+- v1.0.7
+  - No change made to code, update README
+
+- v1.0.6
+  - Add API to fetching content for a list of courses
+
 - v1.0.5
   - Fix HTML entity replacement.
-  - Add API to fetching content for a list of courses
 
 - v1.0.4
   - No change made to code

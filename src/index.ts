@@ -1,5 +1,6 @@
 import * as cheerio from 'cheerio';
 import { Base64 } from 'js-base64';
+import { decodeHTML } from 'entities';
 
 import fetch from 'cross-fetch';
 import * as URL from './urls';
@@ -20,7 +21,7 @@ import {
   Question,
   SemesterInfo,
 } from './types';
-import { decodeHTMLEntities, parseSemesterType, trimAndDefine } from './utils';
+import { parseSemesterType, trimAndDefine } from './utils';
 
 const IsomorphicFetch = require('real-isomorphic-fetch');
 const tough = require('tough-cookie-no-native');
@@ -150,8 +151,8 @@ export class Learn2018Helper {
       result.map(async n => {
         const notification: INotification = {
           id: n.ggid,
-          content: decodeHTMLEntities(Base64.decode(n.ggnr)),
-          title: decodeHTMLEntities(n.bt),
+          content: decodeHTML(Base64.decode(n.ggnr)),
+          title: decodeHTML(n.bt),
           url: URL.LEARN_NOTIFICATION_DETAIL(courseID, n.ggid),
           publisher: n.fbrxm,
           hasRead: n.sfyd === '是',

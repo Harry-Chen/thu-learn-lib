@@ -86,6 +86,9 @@ See `lib/types.d.ts` for type definitions.
 
 ## Changelog
 
+- v1.0.9
+  - Use `entities` to decode HTML entities
+
 - v1.0.8
   - Export type CourseContent
 

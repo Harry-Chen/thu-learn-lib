@@ -182,7 +182,7 @@ export class Learn2018Helper {
         files.push({
           id: f.wjid,
           title: f.bt,
-          description: f.ms,
+          description: decodeHTML(f.ms),
           size: f.fileSize,
           uploadTime: new Date(f.scsj),
           downloadUrl: URL.LEARN_FILE_DOWNLOAD(f.wjid),

@@ -86,6 +86,9 @@ See `lib/types.d.ts` for type definitions.
 
 ## Changelog
 
+- v1.0.10
+  - Decode the HTML entities in the `description` field of homework
+
 - v1.0.9
   - Use `entities` to decode HTML entities
 

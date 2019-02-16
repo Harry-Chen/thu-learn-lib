@@ -242,7 +242,7 @@ export class Learn2018Helper {
         questions.push({
           ...this.parseDiscussionBase(q),
           question: Base64.decode(q.wtnr),
-          url: URL.LEARN_QUESTION_DETAIL(q.wlckid, q.id),
+          url: URL.LEARN_QUESTION_DETAIL(q.wlkcid, q.id),
         });
       }),
     );

@@ -86,6 +86,9 @@ See `lib/types.d.ts` for type definitions.
 
 ## Changelog
 
+- v1.0.11
+  - Fix `url` error in Question
+
 - v1.0.10
   - Decode the HTML entities in the `description` field of homework
 

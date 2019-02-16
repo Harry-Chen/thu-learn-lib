@@ -86,6 +86,10 @@ See `lib/types.d.ts` for type definitions.
 
 ## Changelog
 
+- v1.0.12
+  - Add `url` for Course
+  - Fix `url` for Question (to display correct section name)
+
 - v1.0.11
   - Fix `url` error in Question
 

@@ -35,6 +35,10 @@ export const LEARN_COURSE_LIST = (semester: string) => {
   return `${LEARN_PREFIX}/b/wlxt/kc/v_wlkc_xs_xkb_kcb_extend/student/loadCourseBySemesterId/${semester}`;
 };
 
+export const LEARN_COURSE_URL = (courseID: string) => {
+  return `${LEARN_PREFIX}/f/wlxt/index/course/student/course?wlkcid=${courseID}`;
+};
+
 export const LEARN_FILE_LIST = (courseID: string) => {
   return `${LEARN_PREFIX}/b/wlxt/kj/wlkc_kjxxb/student/kjxxbByWlkcidAndSizeForStudent?wlkcid=${courseID}&size=${MAX_SIZE}`;
 };
@@ -113,6 +117,6 @@ export const LEARN_QUESTION_LIST_ANSWERED = (courseID: string) => {
   return `${LEARN_PREFIX}/b/wlxt/bbs/bbs_tltb/student/kcdyList?wlkcid=${courseID}&size=${MAX_SIZE}`;
 };
 
-export const LEARN_QUESTION_DETAIL = (courseID: string, questionID: string, tabId: number = 1) => {
-  return `${LEARN_PREFIX}/f/wlxt/bbs/bbs_kcdy/student/viewDyById?wlkcid=${courseID}&id=${questionID}&tabid=${tabId}`;
+export const LEARN_QUESTION_DETAIL = (courseID: string, questionID: string) => {
+  return `${LEARN_PREFIX}/f/wlxt/bbs/bbs_kcdy/student/viewDyById?wlkcid=${courseID}&id=${questionID}`;
 };

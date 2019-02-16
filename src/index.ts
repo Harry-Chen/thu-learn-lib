@@ -100,6 +100,7 @@ export class Learn2018Helper {
         courses.push({
           id: c.wlkcid,
           name: c.kcm,
+          url: URL.LEARN_COURSE_URL(c.wlkcid),
           teacherName: c.jsm,
           courseNumber: c.kch,
           courseIndex: c.kxh,

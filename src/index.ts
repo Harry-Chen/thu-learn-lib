@@ -182,7 +182,7 @@ export class Learn2018Helper {
       result.map(async f => {
         files.push({
           id: f.wjid,
-          title: f.bt,
+          title: decodeHTML(f.bt),
           description: decodeHTML(f.ms),
           size: f.fileSize,
           uploadTime: new Date(f.scsj),
@@ -267,7 +267,7 @@ export class Learn2018Helper {
         homeworks.push({
           id: h.zyid,
           studentHomeworkId: h.xszyid,
-          title: h.bt,
+          title: decodeHTML(h.bt),
           url: URL.LEARN_HOMEWORK_DETAIL(h.wlkcid, h.zyid, h.xszyid),
           deadline: new Date(h.jzsj),
           submitUrl: URL.LEARN_HOMEWORK_SUBMIT(h.wlkcid, h.xszyid),

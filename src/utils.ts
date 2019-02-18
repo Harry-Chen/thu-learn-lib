@@ -1,3 +1,5 @@
+import { decodeHTML } from 'entities';
+
 import { SemesterType } from './types';
 
 export function parseSemesterType(n: number): SemesterType {
@@ -12,36 +14,10 @@ export function parseSemesterType(n: number): SemesterType {
   }
 }
 
-const HTML_ENTITIES: {
-  [key: string]: string;
-} = {
-  amp: '&',
-  apos: "'",
-  '#x27': "'",
-  '#x2F': '/',
-  '#39': "'",
-  '#47': '/',
-  mdash: '—',
-  middot: '·',
-  cap: '∩',
-  lt: '<',
-  gt: '>',
-  nbsp: ' ',
-  quot: '"',
-  ldquo: '“',
-  rdquo: '”',
-};
-
-export function decodeHTMLEntities(text: string): string {
-  return text.replace(/&([^;]+);/gm, (match, entity) => {
-    return HTML_ENTITIES[entity] || match;
-  });
-}
-
 export function trimAndDefine(text: string | undefined | null): string | undefined {
   if (text === undefined || text === null) {
     return undefined;
   }
   const trimmed = text.trim();
-  return trimmed === '' ? undefined : trimmed;
+  return trimmed === '' ? undefined : decodeHTML(trimmed);
 }

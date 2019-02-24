@@ -289,7 +289,7 @@ export class Learn2018Helper {
   private async parseNotificationDetail(courseID: string, id: string): Promise<INotificationDetail> {
     const response = await this.myFetch(URL.LEARN_NOTIFICATION_DETAIL(courseID, id));
     const result = $(await response.text());
-    return { attachmentUrl: result('.ml-10').attr('href') };
+    return { attachmentUrl: `${URL.LEARN_PREFIX}${result('.ml-10').attr('href')}` };
   }
 
   private async parseHomeworkDetail(courseID: string, id: string, studentHomeworkID: string): Promise<IHomeworkDetail> {

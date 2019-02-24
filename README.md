@@ -86,6 +86,10 @@ See `lib/types.d.ts` for type definitions.
 
 ## Changelog
 
+- v1.0.14
+  - Add prefix for `attachmentUrl` filed of Notification
+  - Deprecate all old versions
+
 - v1.0.13
   - Decode HTML entities whenever possible
 

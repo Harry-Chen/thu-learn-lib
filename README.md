@@ -86,7 +86,7 @@ See `lib/types.d.ts` for type definitions.
 
 ## Changelog
 
-- v1.0.15
+- v1.0.16 (no v1.0.15 due to some publishing issues)
   - Switch to `yarn`
   - Add parsing of grade levels of homework (A+/A/.../F)
 

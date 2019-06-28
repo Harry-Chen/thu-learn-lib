@@ -337,7 +337,7 @@ export class Learn2018Helper {
   private parseDiscussionBase(d: any): IDiscussionBase {
     return {
       id: d.id,
-      title: d.bt,
+      title: decodeHTML(d.bt),
       publisherName: d.fbrxm,
       publishTime: new Date(d.fbsj),
       lastReplyTime: new Date(d.zhhfsj),

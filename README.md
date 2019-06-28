@@ -86,6 +86,9 @@ See `lib/types.d.ts` for type definitions.
 
 ## Changelog
 
+- v1.1.1
+  - Decode HTML entities in the title of disscussions (the last one, I promise!)
+
 - v1.1.0
   - Fix an typo in grade level mapping
   - Bump to a new minor version

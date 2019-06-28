@@ -86,6 +86,10 @@ See `lib/types.d.ts` for type definitions.
 
 ## Changelog
 
+- v1.0.15
+  - Switch to `yarn`
+  - Add parsing of grade levels of homework (A+/A/.../F)
+
 - v1.0.14
   - Add prefix for `attachmentUrl` filed of Notification
   - Deprecate all old versions

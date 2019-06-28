@@ -21,7 +21,7 @@ import {
   Question,
   SemesterInfo,
 } from './types';
-import { parseSemesterType, trimAndDefine } from './utils';
+import { mapGradeToLevel, parseSemesterType, trimAndDefine } from './utils';
 
 const IsomorphicFetch = require('real-isomorphic-fetch');
 const tough = require('tough-cookie-no-native');
@@ -273,6 +273,7 @@ export class Learn2018Helper {
           submitUrl: URL.LEARN_HOMEWORK_SUBMIT(h.wlkcid, h.xszyid),
           submitTime: h.scsj === null ? undefined : new Date(h.scsj),
           grade: h.cj === null ? undefined : h.cj,
+          gradeLevel: mapGradeToLevel(h.cj),
           graderName: trimAndDefine(h.jsm),
           gradeContent: trimAndDefine(h.pynr),
           gradeTime: h.pysj === null ? undefined : new Date(h.pysj),

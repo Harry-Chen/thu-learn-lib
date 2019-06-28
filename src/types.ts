@@ -84,6 +84,7 @@ export interface IHomework extends IHomeworkStatus {
   submitTime?: Date;
   submittedAttachmentUrl?: string;
   grade?: number;
+  gradeLevel?: string; // some homework has levels but not grades, like A/B/.../F
   gradeTime?: Date;
   graderName?: string;
   gradeContent?: string;

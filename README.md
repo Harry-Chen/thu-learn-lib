@@ -12,13 +12,13 @@ I don't like polyfill. In case of any problems, just upgrade your browser / Node
 
 ## Installation
 
-`npm install --save thu-learn-lib`
+`yarn add thu-learn-lib`
 
 ## Build from source
 
 ### Library version (for development or Node)
 
-`npm i && npm run build-lib`
+`yarn && yarn run build-lib`
 
 You can find the library version in `lib/`.
 It can be used in web development or imported with NodeJS (with all dependencies installed).
@@ -26,14 +26,14 @@ It __should not__ be directly used in browsers.
 
 ### Bundled version (for browsers or Node)
 
-`npm i && npm run build-dist`
+`yarn && yarn run build-dist`
 
 You can find the bundled version in `dist/`.
 You can install it as an unpacked extension in Chrome and click the `t` icon in extension bar, then execute anything you want in the Console of Chrome Developer Tool.
 The helper class is attached as `window.Learn2018Helper` in this mode.
 Or you can just import `index.js` with NodeJS.
 
-Use `npm run watch-dist` for watching file changes.
+Use `yarn run watch-dist` for watching file changes.
 
 ## Usage
 

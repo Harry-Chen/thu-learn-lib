@@ -86,6 +86,9 @@ See `lib/types.d.ts` for type definitions.
 
 ## Changelog
 
+- v1.1.2
+  - Switch to `Base64.js` instead of `js-base64`, which uses evil `eval`
+
 - v1.1.1
   - Decode HTML entities in the title of disscussions (the last one, I promise!)
 

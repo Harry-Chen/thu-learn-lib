@@ -20,6 +20,7 @@ import {
   Notification,
   Question,
   SemesterInfo,
+  CourseType,
 } from './types';
 import { mapGradeToLevel, parseSemesterType, trimAndDefine } from './utils';
 
@@ -100,10 +101,33 @@ export class Learn2018Helper {
         courses.push({
           id: c.wlkcid,
           name: c.kcm,
-          url: URL.LEARN_COURSE_URL(c.wlkcid),
+          url: URL.LEARN_COURSE_URL(c.wlkcid, CourseType.STUDENT),
           teacherName: c.jsm,
           courseNumber: c.kch,
           courseIndex: c.kxh,
+          courseType: CourseType.STUDENT,
+        });
+      }),
+    );
+
+    return courses;
+  }
+
+  public async getTACourseList(semesterID: string): Promise<CourseInfo[]> {
+    this.ensureLogin();
+    const response = await this.myFetch(URL.LEARN_TA_COURSE_LIST(semesterID));
+    const result = (await response.json()).resultList as any[];
+    const courses: CourseInfo[] = [];
+
+    await Promise.all(
+      result.map(async c => {
+        courses.push({
+          id: c.wlkcid,
+          name: c.kcm,
+          url: URL.LEARN_COURSE_URL(c.wlkcid, CourseType.TEACHER),
+          courseNumber: c.kch,
+          courseIndex: c.kxh,
+          courseType: CourseType.TEACHER,
         });
       }),
     );

@@ -1,4 +1,5 @@
 import * as FormData from 'form-data';
+import { CourseType } from './types';
 
 export const LEARN_PREFIX = 'https://learn2018.tsinghua.edu.cn';
 const MAX_SIZE = 200;
@@ -35,8 +36,16 @@ export const LEARN_COURSE_LIST = (semester: string) => {
   return `${LEARN_PREFIX}/b/wlxt/kc/v_wlkc_xs_xkb_kcb_extend/student/loadCourseBySemesterId/${semester}`;
 };
 
-export const LEARN_COURSE_URL = (courseID: string) => {
-  return `${LEARN_PREFIX}/f/wlxt/index/course/student/course?wlkcid=${courseID}`;
+export const LEARN_TA_COURSE_LIST = (semester: string) => {
+  return `${LEARN_PREFIX}/b/kc/v_wlkc_kcb/queryAsorCoCourseList/${semester}/0`;
+};
+
+export const LEARN_COURSE_URL = (courseID: string, courseType: CourseType) => {
+  return `${LEARN_PREFIX}/f/wlxt/index/course/${courseType}/course?wlkcid=${courseID}`;
+};
+
+export const LEARN_TEACHER_COURSE_URL = (courseID: string) => {
+  return `${LEARN_PREFIX}/f/wlxt/index/course/teacher/course?wlkcid=${courseID}`;
 };
 
 export const LEARN_FILE_LIST = (courseID: string) => {

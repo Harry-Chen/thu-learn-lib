@@ -24,13 +24,19 @@ interface ISemesterInfo {
 
 export type SemesterInfo = ISemesterInfo;
 
+export enum CourseType {
+  STUDENT = 'student',
+  TEACHER = 'teacher',
+}
+
 interface ICourseInfo {
   id: string;
   name: string;
   url: string;
-  teacherName: string;
+  teacherName?: string;
   courseNumber: string;
   courseIndex: number;
+  courseType: CourseType;
 }
 
 export type CourseInfo = ICourseInfo;

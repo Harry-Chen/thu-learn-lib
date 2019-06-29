@@ -86,6 +86,9 @@ See `lib/types.d.ts` for type definitions.
 
 ## Changelog
 
+- v1.1.3
+  - Emergency fix of wrongly decoded base64 string, add `js-base64` back
+
 - v1.1.2
   - Switch to `Base64.js` instead of `js-base64`, which uses evil `eval`
 

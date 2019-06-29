@@ -1,6 +1,6 @@
 import * as cheerio from 'cheerio';
 import { decodeHTML } from 'entities';
-import 'Base64';
+import { Base64 } from 'js-base64';
 
 import fetch from 'cross-fetch';
 import * as URL from './urls';
@@ -152,7 +152,7 @@ export class Learn2018Helper {
       result.map(async n => {
         const notification: INotification = {
           id: n.ggid,
-          content: decodeHTML(btoa(n.ggnr)),
+          content: decodeHTML(Base64.decode(n.ggnr)),
           title: decodeHTML(n.bt),
           url: URL.LEARN_NOTIFICATION_DETAIL(courseID, n.ggid),
           publisher: n.fbrxm,
@@ -242,7 +242,7 @@ export class Learn2018Helper {
       result.map(async q => {
         questions.push({
           ...this.parseDiscussionBase(q),
-          question: btoa(q.wtnr),
+          question: Base64.decode(q.wtnr),
           url: URL.LEARN_QUESTION_DETAIL(q.wlkcid, q.id),
         });
       }),

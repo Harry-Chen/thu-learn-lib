@@ -58,8 +58,9 @@ const semesters = await helper.getSemesterIdList();
 // get get semester info
 const semester = await helper.getCurrentSemester();
 
-// get courses of this semester
+// get courses of this semester (learned or assisted)
 const courses = await helper.getCourseList(semester.id);
+const TAcourses = await helper.getTACourseList(semester.id);
 const course = courses[0];
 
 // get detail information about the course
@@ -85,6 +86,10 @@ According to security strategies (CORS, CORB) of browsers, you might need to run
 See `lib/types.d.ts` for type definitions.
 
 ## Changelog
+
+- v1.1.4
+  - Return empty array if any content module is disabled
+  - Add `getTACourseList` to get TA's course list (temporarily can not be used by other functions)
 
 - v1.1.3
   - Emergency fix of wrongly decoded base64 string, add `js-base64` back

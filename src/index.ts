@@ -125,6 +125,7 @@ export class Learn2018Helper {
           id: c.wlkcid,
           name: c.kcm,
           url: URL.LEARN_COURSE_URL(c.wlkcid, CourseType.TEACHER),
+          teacherName: '', // FIXME: currently it can not be fetched
           courseNumber: c.kch,
           courseIndex: c.kxh,
           courseType: CourseType.TEACHER,
@@ -168,8 +169,11 @@ export class Learn2018Helper {
 
   public async getNotificationList(courseID: string): Promise<Notification[]> {
     this.ensureLogin();
-    const response = await this.myFetch(URL.LEARN_NOTIFICATION_LIST(courseID));
-    const result = (await response.json()).object.aaData as any[];
+    const json = await (await this.myFetch(URL.LEARN_NOTIFICATION_LIST(courseID))).json();
+    if (json.result !== 'success') {
+      return [];
+    }
+    const result = json.object.aaData as any[];
     const notifications: Notification[] = [];
 
     await Promise.all(
@@ -198,8 +202,11 @@ export class Learn2018Helper {
 
   public async getFileList(courseID: string): Promise<File[]> {
     this.ensureLogin();
-    const response = await this.myFetch(URL.LEARN_FILE_LIST(courseID));
-    const result = (await response.json()).object as any[];
+    const json = await (await this.myFetch(URL.LEARN_FILE_LIST(courseID))).json();
+    if (json.result !== 'success') {
+      return [];
+    }
+    const result = json.object as any[];
     const files: File[] = [];
 
     await Promise.all(
@@ -239,8 +246,11 @@ export class Learn2018Helper {
 
   public async getDiscussionList(courseID: string): Promise<Discussion[]> {
     this.ensureLogin();
-    const response = await this.myFetch(URL.LEARN_DISCUSSION_LIST(courseID));
-    const result = (await response.json()).object.resultsList as any[];
+    const json = await (await this.myFetch(URL.LEARN_DISCUSSION_LIST(courseID))).json();
+    if (json.result !== 'success') {
+      return [];
+    }
+    const result = json.object.resultsList as any[];
     const discussions: Discussion[] = [];
 
     await Promise.all(
@@ -258,8 +268,11 @@ export class Learn2018Helper {
 
   public async getAnsweredQuestionList(courseID: string): Promise<Question[]> {
     this.ensureLogin();
-    const response = await this.myFetch(URL.LEARN_QUESTION_LIST_ANSWERED(courseID));
-    const result = (await response.json()).object.resultsList as any[];
+    const json = await (await this.myFetch(URL.LEARN_QUESTION_LIST_ANSWERED(courseID))).json();
+    if (json.result !== 'success') {
+      return [];
+    }
+    const result = json.object.resultsList as any[];
     const questions: Question[] = [];
 
     await Promise.all(
@@ -282,8 +295,11 @@ export class Learn2018Helper {
   }
 
   private async getHomeworkListAtUrl(url: string, status: IHomeworkStatus): Promise<Homework[]> {
-    const response = await this.myFetch(url);
-    const result = (await response.json()).object.aaData as any[];
+    const json = await (await this.myFetch(url)).json();
+    if (json.result !== 'success') {
+      return [];
+    }
+    const result = json.object.aaData as any[];
     const homeworks: Homework[] = [];
 
     await Promise.all(

@@ -33,7 +33,7 @@ interface ICourseInfo {
   id: string;
   name: string;
   url: string;
-  teacherName?: string;
+  teacherName: string;
   courseNumber: string;
   courseIndex: number;
   courseType: CourseType;

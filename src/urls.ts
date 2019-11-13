@@ -2,6 +2,8 @@ import * as FormData from 'form-data';
 import { CourseType } from './types';
 
 export const LEARN_PREFIX = 'https://learn2018.tsinghua.edu.cn';
+export const REGISTRAR_PREFIX = 'https://zhjw.cic.tsinghua.edu.cn';
+
 const MAX_SIZE = 200;
 
 export const ID_LOGIN = () => {
@@ -128,4 +130,22 @@ export const LEARN_QUESTION_LIST_ANSWERED = (courseID: string) => {
 
 export const LEARN_QUESTION_DETAIL = (courseID: string, questionID: string) => {
   return `${LEARN_PREFIX}/f/wlxt/bbs/bbs_kcdy/student/viewDyById?wlkcid=${courseID}&id=${questionID}`;
+};
+
+export const REGISTRAR_TICKET_FORM_DATA = () => {
+  const form = new FormData();
+  form.append('appId', 'ALL_ZHJW');
+  return form;
+};
+
+export const REGISTRAR_TICKET = () => {
+  return 'https://learn.tsinghua.edu.cn/b/wlxt/common/auth/gnt';
+};
+
+export const REGISTRAR_AUTH = (ticket: string) => {
+  return `${REGISTRAR_PREFIX}/j_acegi_login.do?url=/&ticket=${ticket}`;
+};
+
+export const REGISTRAR_CALENDAR = (startDate: string, endDate: string) => {
+  return `${REGISTRAR_PREFIX}/jxmh_out.do?m=bks_jxrl_all&p_start_date=${startDate}&p_end_date=${endDate}&jsoncallback=no_such_method`;
 };

@@ -21,6 +21,7 @@ import {
   Question,
   SemesterInfo,
   CourseType,
+  CalendarEvent,
 } from './types';
 import { mapGradeToLevel, parseSemesterType, trimAndDefine } from './utils';
 
@@ -68,6 +69,44 @@ export class Learn2018Helper {
     const logoutResponse = await this.myFetch(URL.LEARN_LOGOUT(), { method: 'POST' });
 
     return (this.loggedIn = !logoutResponse.ok);
+  }
+  
+  public async getCalendar(startDate: string, endDate: string): Promise<CalendarEvent[]> {
+    this.ensureLogin();
+
+    const cookie = await new Promise(resolve =>
+      this.cookieJar.getCookies(URL.LEARN_PREFIX, (err: Error, cookies: string[]) => resolve(cookies.join('; '))),
+    );
+
+    const ticketResponse = await this.myFetch(URL.REGISTRAR_TICKET(), {
+      method: 'POST',
+      headers: {
+        cookie,
+      },
+      body: URL.REGISTRAR_TICKET_FORM_DATA(),
+    });
+
+    let ticket = (await ticketResponse.text()) as string;
+    ticket = ticket.substring(1, ticket.length - 1);
+
+    await this.myFetch(URL.REGISTRAR_AUTH(ticket));
+
+    const response = await this.myFetch(URL.REGISTRAR_CALENDAR(startDate, endDate));
+
+    let calendarString = (await response.text()) as string;
+    calendarString = calendarString.substring(15, calendarString.length - 1);
+
+    const rawCalendar = JSON.parse(calendarString) as any[];
+    const calendar = rawCalendar.map<CalendarEvent>(i => ({
+      location: i.dd,
+      status: i.fl,
+      startTime: i.kssj,
+      endTime: i.jssj,
+      date: i.nq,
+      courseName: i.nr,
+    }));
+
+    return calendar;
   }
 
   public async getSemesterIdList(): Promise<string[]> {

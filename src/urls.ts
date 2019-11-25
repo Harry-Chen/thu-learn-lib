@@ -139,7 +139,7 @@ export const REGISTRAR_TICKET_FORM_DATA = () => {
 };
 
 export const REGISTRAR_TICKET = () => {
-  return 'https://learn.tsinghua.edu.cn/b/wlxt/common/auth/gnt';
+  return `${LEARN_PREFIX}/b/wlxt/common/auth/gnt`;
 };
 
 export const REGISTRAR_AUTH = (ticket: string) => {

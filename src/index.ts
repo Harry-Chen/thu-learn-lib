@@ -74,15 +74,8 @@ export class Learn2018Helper {
   public async getCalendar(startDate: string, endDate: string): Promise<CalendarEvent[]> {
     this.ensureLogin();
 
-    const cookie = await new Promise(resolve =>
-      this.cookieJar.getCookies(URL.LEARN_PREFIX, (err: Error, cookies: string[]) => resolve(cookies.join('; '))),
-    );
-
     const ticketResponse = await this.myFetch(URL.REGISTRAR_TICKET(), {
       method: 'POST',
-      headers: {
-        cookie,
-      },
       body: URL.REGISTRAR_TICKET_FORM_DATA(),
     });
 

@@ -143,3 +143,12 @@ interface ICourseContent {
 }
 
 export type CourseContent = ICourseContent;
+
+export interface CalendarEvent {
+  location: string;
+  status: string;
+  startTime: string;
+  endTime: string;
+  date: string;
+  courseName: string;
+}

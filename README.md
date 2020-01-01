@@ -75,6 +75,9 @@ const questions = await helper.getAnsweredQuestionList(course.id);
 // where Content = Notification | File | Homework | Discussion | Question
 const homeworks = await helper.getAllContents([1, 2, 3], ContentType.HOMEWORK);
 
+// get course calendar
+const calendar = await helper.getCalendar('20191001', '20191201');
+
 // logout if you want, the cookie jar will be cleared in Node
 const logoutSuccess = await helper.logout();
 ```

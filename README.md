@@ -167,4 +167,5 @@ See `lib/types.d.ts` for type definitions.
 
 - [Harry-Chen/Learn Project](https://github.com/Harry-Chen/Learn-Project)
 - [jiegec/clone-learn-tsinghua](https://github.com/jiegec/clone-learn-tsinghua)
+- [robertying/learnX](https://github.com/robertying/learnX) (customized fork)
 - [Konano/thu-weblearn-tgbot](https://github.com/Konano/thu-weblearn-tgbot)

@@ -25,27 +25,25 @@
     "url": "https://github.com/Harry-Chen/thu-learn-lib.git"
   },
   "devDependencies": {
-    "@types/cheerio": "^0.22.10",
-    "@types/chrome": "0.0.86",
-    "@types/entities": "^1.1.0",
-    "@types/form-data": "^2.2.1",
+    "@types/cheerio": "^0.22.15",
+    "@types/chrome": "0.0.91",
     "@types/js-base64": "^2.3.1",
     "html-webpack-plugin": "^3.2.0",
-    "prettier": "^1.16.3",
-    "ts-loader": "^6.0.4",
-    "tslint": "^5.12.1",
+    "prettier": "^1.19.1",
+    "ts-loader": "^6.2.1",
+    "tslint": "^5.20.1",
     "tslint-config-prettier": "^1.17.0",
-    "typescript": "^3.3.1",
-    "webpack": "^4.29.0",
-    "webpack-cli": "^3.2.1"
+    "typescript": "^3.7.5",
+    "webpack": "^4.41.5",
+    "webpack-cli": "^3.3.10"
   },
   "dependencies": {
     "cheerio": "^1.0.0-rc.2",
     "cross-fetch": "^3.0.1",
-    "entities": "^1.1.2",
+    "entities": "^2.0.0",
     "es6-denodeify": "^0.1.5",
-    "form-data": "^2.3.3",
+    "form-data": "^3.0.0",
     "js-base64": "^2.5.1",
-    "real-isomorphic-fetch": "^2.0.5"
+    "real-isomorphic-fetch": "^3.0.0"
   }
 }

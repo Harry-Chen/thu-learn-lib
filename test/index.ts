@@ -4,9 +4,9 @@ if (window !== undefined) {
     (window as any).learn_2018_helper = Learn2018Helper;
   }
   
-if (chrome !== undefined) {
-    chrome.browserAction.onClicked.addListener(() => {
-        chrome.tabs.create({
+if (browser !== undefined) {
+    browser.browserAction.onClicked.addListener(() => {
+        browser.tabs.create({
         url: 'index.html',
         });
     });

@@ -56,7 +56,7 @@ export class Learn2018Helper {
     }
     const ticketResult = await ticketResponse.text();
     const body = $(ticketResult);
-    const targetURL = body('a').attr('href');
+    const targetURL = body('a').attr('href') as string;
     const ticket = targetURL.split('=').slice(-1)[0];
 
     const loginResponse = await this.myFetch(URL.LEARN_AUTH_ROAM(ticket));
@@ -70,7 +70,7 @@ export class Learn2018Helper {
 
     return (this.loggedIn = !logoutResponse.ok);
   }
-  
+
   public async getCalendar(startDate: string, endDate: string): Promise<CalendarEvent[]> {
     this.ensureLogin();
 

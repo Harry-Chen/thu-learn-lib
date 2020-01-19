@@ -1,5 +1,5 @@
 {
-	"name" : "thu-learn2018-lib",
+	"name" : "thu-learn-lib-test",
 	"version":"0.0.1",
 	"minimum_chrome_version" : "51",
 	"manifest_version" : 2,
@@ -16,6 +16,6 @@
                      "https://learn2018.tsinghua.edu.cn/*",
                      "https://id.tsinghua.edu.cn/*"],
 	"browser_action": {
-		"default_title": "thu-learn2018-lib tester"
+		"default_title": "thu-learn-lib tester"
 	}
 }

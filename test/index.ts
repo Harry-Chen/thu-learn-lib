@@ -1,7 +1,7 @@
 import { Learn2018Helper } from '../src';
 
 if (window !== undefined) {
-    (window as any).Learn2018Helper = Learn2018Helper;
+    (window as any).learn_2018_helper = Learn2018Helper;
   }
   
 if (chrome !== undefined) {

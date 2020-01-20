@@ -1,6 +1,9 @@
 # thu-learn-lib
 
+![Github version](https://img.shields.io/github/package-json/v/Harry-Chen/thu-learn-lib)
 ![npm version](https://img.shields.io/npm/v/thu-learn-lib)
+![npm size](https://img.shields.io/bundlephobia/min/thu-learn-lib)
+![npm downloads](https://img.shields.io/npm/dw/thu-learn-lib)
 
 This is a JavaScript library aimed to provide a program-friendly interface of [web Learning of Tsinghua University](https://learn.tsinghua.edu.cn). Only the newest version (learn2018) is supported.
 

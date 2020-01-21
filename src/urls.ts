@@ -1,7 +1,7 @@
 import * as FormData from 'form-data';
 import { CourseType } from './types';
 
-export const LEARN_PREFIX = 'https://learn2018.tsinghua.edu.cn';
+export const LEARN_PREFIX = 'https://learn.tsinghua.edu.cn';
 export const REGISTRAR_PREFIX = 'https://zhjw.cic.tsinghua.edu.cn';
 
 const MAX_SIZE = 200;

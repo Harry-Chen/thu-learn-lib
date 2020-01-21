@@ -3,13 +3,13 @@ const HtmlWebpackPlugin = require('html-webpack-plugin');
 
 
 const htmlPlugin = new HtmlWebpackPlugin({
-  template: "./test/index.html",
+  template: "./demo/index.html",
   filename: "./index.html"
 });
 
 module.exports = {
   entry: {
-    index: "./test/index.ts",
+    index: "./demo/index.ts",
   },
   output: {
     path: path.resolve("./dist"),

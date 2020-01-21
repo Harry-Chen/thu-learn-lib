@@ -11,7 +11,7 @@
     "build-lib": "tsc",
     "build-dist": "webpack --config webpack.config.js",
     "watch-dist": "webpack -w --config webpack.config.js",
-    "format": "prettier --write \"src/**/*.ts\" \"src/**/*.js\"",
+    "format": "prettier --write \"src/**/*.ts\" \"demo/**/*.ts\" \"src/**/*.js\"",
     "lint": "tslint -p tsconfig.json",
     "test": "jest"
   },

@@ -35,7 +35,7 @@ It __should not__ be directly used in browsers.
 
 You can find the bundled version in `dist/`.
 You can install it as an unpacked extension in Chrome and click the `t` icon in extension bar, then execute anything you want in the Console of Chrome Developer Tool.
-The helper class is attached as `window.learn_2018_helper` in this mode.
+The helper class is attached as `window.Learn2018Helper` in this mode.
 Or you can just import `index.js` with NodeJS.
 
 Use `yarn run watch-dist` for watching file changes.
@@ -56,8 +56,7 @@ const helper = new Learn2018Helper();
 // 3. provide a CredentialProvider function, which can be async
 const helper = new Learn2018Helper({provider: () => {return {username: 'xxx', password: 'xxx'};}});
 
-
-// Note that using the following two methods you may encounter problems like login time out.
+// Note that by using the following two methods you may encounter problems like login time out.
 // But if you provide a credential provider, the library will retry logging in when failing, automatically resolving the cookie expiry problem.
 // So we strongly recommend using this method.
 
@@ -104,7 +103,7 @@ const homeworks = await helper.getAllContents([1, 2, 3], ContentType.HOMEWORK);
 const calendar = await helper.getCalendar('20191001', '20191201');
 ```
 
-According to security strategies (CORS, CORB) of browsers, you might need to run the code in the page context of `https://learn2018.tsinghua.edu.cn` and `https://id.tsinghua.edu.cn`. The simplest way is to run the code as a browser extension.
+According to security strategies (CORS, CORB) of browsers, you might need to run the code in the page context of `https://learn.tsinghua.edu.cn` and `https://id.tsinghua.edu.cn`. The simplest way is to run the code as a browser extension (an example is in `demo/`).
 
 ## Typing
 
@@ -117,6 +116,8 @@ See `lib/types.d.ts` for type definitions.
   - Automatic retry logging in when fetching failed and `CredentialProvider` is provided (thanks to mayeths)
   - Add unit tests using `jest` (thanks to mayeths)
   - Filter out `null` values in `getSemesterIdList` API
+  - Switch to `https://learn.tsinghua.edu.cn/` from `learn2018` permanently
+  - Add extra permission in demo web extension to avoid problems caused be new default same-site policy in Chrome 80
 
 - v1.1.4
   - Return empty array if any content module is disabled

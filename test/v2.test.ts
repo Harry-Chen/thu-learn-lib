@@ -41,7 +41,7 @@ describe('v2helper config', () => {
     // Second get
     const semesters2 = await helper.getSemesterIdList();
     expect(Array.isArray(semesters2)).toEqual(true);
-  }, 10000) // This testcase take longer than before, give it more time.
+  })
 
 })
 

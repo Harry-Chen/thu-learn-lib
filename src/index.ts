@@ -46,10 +46,10 @@ export class Learn2018Helper {
   private readonly myFetch: Fetch;
 
   constructor(config?: HelperConfig) {
-    this.cookieJar = config && config.cookieJar ? config.cookieJar : new tough.CookieJar();
-    this.up = config && config.up ? config.up : undefined;
+    this.cookieJar = config?.cookieJar ?? new tough.CookieJar();
+    this.up = config?.up;
     this.rawFetch = new IsomorphicFetch(fetch, this.cookieJar);
-    this.myFetch = config ? this.withReAuth(this.rawFetch) : this.rawFetch;
+    this.myFetch = this.up ? this.withReAuth(this.rawFetch) : this.rawFetch;
   }
 
   private withReAuth(rawFetch: Fetch): Fetch {
@@ -92,7 +92,6 @@ export class Learn2018Helper {
   }
 
   public async getCalendar(startDate: string, endDate: string): Promise<CalendarEvent[]> {
-    this.ensureLogin();
 
     const ticketResponse = await this.myFetch(URL.REGISTRAR_TICKET(), {
       method: 'POST',

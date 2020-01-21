@@ -1,5 +1,10 @@
 # thu-learn-lib
 
+![Github version](https://img.shields.io/github/package-json/v/Harry-Chen/thu-learn-lib)
+![npm version](https://img.shields.io/npm/v/thu-learn-lib)
+![npm size](https://img.shields.io/bundlephobia/min/thu-learn-lib)
+![npm downloads](https://img.shields.io/npm/dw/thu-learn-lib)
+
 This is a JavaScript library aimed to provide a program-friendly interface of [web Learning of Tsinghua University](https://learn.tsinghua.edu.cn). Only the newest version (learn2018) is supported.
 
 This project is licensed under MIT License.
@@ -30,7 +35,7 @@ It __should not__ be directly used in browsers.
 
 You can find the bundled version in `dist/`.
 You can install it as an unpacked extension in Chrome and click the `t` icon in extension bar, then execute anything you want in the Console of Chrome Developer Tool.
-The helper class is attached as `window.Learn2018Helper` in this mode.
+The helper class is attached as `window.learn_2018_helper` in this mode.
 Or you can just import `index.js` with NodeJS.
 
 Use `yarn run watch-dist` for watching file changes.
@@ -74,6 +79,9 @@ const questions = await helper.getAnsweredQuestionList(course.id);
 // the return type will be { [id: string]: Content }
 // where Content = Notification | File | Homework | Discussion | Question
 const homeworks = await helper.getAllContents([1, 2, 3], ContentType.HOMEWORK);
+
+// get course calendar
+const calendar = await helper.getCalendar('20191001', '20191201');
 
 // logout if you want, the cookie jar will be cleared in Node
 const logoutSuccess = await helper.logout();
@@ -164,3 +172,5 @@ See `lib/types.d.ts` for type definitions.
 
 - [Harry-Chen/Learn Project](https://github.com/Harry-Chen/Learn-Project)
 - [jiegec/clone-learn-tsinghua](https://github.com/jiegec/clone-learn-tsinghua)
+- [robertying/learnX](https://github.com/robertying/learnX) (customized fork)
+- [Konano/thu-weblearn-tgbot](https://github.com/Konano/thu-weblearn-tgbot)

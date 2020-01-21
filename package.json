@@ -12,6 +12,7 @@
     "build-dist": "webpack --config webpack.config.js",
     "watch-dist": "webpack -w --config webpack.config.js",
     "format": "prettier --write \"src/**/*.ts\" \"src/**/*.js\"",
+    "test": "jest",
     "lint": "tslint -p tsconfig.json"
   },
   "keywords": [
@@ -25,13 +26,19 @@
     "url": "https://github.com/Harry-Chen/thu-learn-lib.git"
   },
   "devDependencies": {
-    "@types/cheerio": "^0.22.15",
-    "@types/firefox-webext-browser": "^70.0.1",
+    "@types/cheerio": "^0.22.10",
+    "@types/chrome": "0.0.86",
+    "@types/entities": "^1.1.0",
+    "@types/form-data": "^2.2.1",
+    "@types/jest": "^24.9.0",
     "@types/js-base64": "^2.3.1",
+    "dotenv": "^8.2.0",
     "html-webpack-plugin": "^3.2.0",
-    "prettier": "^1.19.1",
-    "ts-loader": "^6.2.1",
-    "tslint": "^5.20.1",
+    "jest": "^24.9.0",
+    "prettier": "^1.16.3",
+    "ts-jest": "^24.3.0",
+    "ts-loader": "^6.0.4",
+    "tslint": "^5.12.1",
     "tslint-config-prettier": "^1.17.0",
     "typescript": "^3.7.5",
     "webpack": "^4.41.5",

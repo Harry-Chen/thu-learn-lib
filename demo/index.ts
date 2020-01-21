@@ -28,9 +28,9 @@ if (!browser.webRequest.onHeadersReceived.hasListener(rewriteCookie)) {
 }
 
 browser.browserAction.onClicked.addListener(() => {
-    browser.tabs.create({
+  browser.tabs.create({
     url: 'index.html',
-    });
+  });
 });
 
 (window as any).Learn2018Helper = Learn2018Helper;

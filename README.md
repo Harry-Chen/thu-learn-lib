@@ -109,6 +109,14 @@ According to security strategies (CORS, CORB) of browsers, you might need to run
 
 See `lib/types.d.ts` for type definitions.
 
+## Testing
+
+`yarn test`
+
+Testing requires your personal credential since we don't have mocks for these APIs. To do this, you must touch a `.env` similar to `template.env` under /test folder.
+
+It's ok if you meet `Timeout - Async callback was not invoked within the 5000ms timeout...` error when running tests. Sometimes the network of Tsinghua is slow, rerun tests may resolve this problem. If you hate this happenning, just add the third argument `timeout` to every testcase `it("should...", async () => void, timeout)` and make sure it's greater than 5000.
+
 ## Changelog
 
 - v1.2.0

@@ -53,12 +53,12 @@ export class Learn2018Helper {
   }
 
   private withReAuth(rawFetch: Fetch): Fetch {
-    const login = this.login.bind(this);  // avoid `this` change inside arrow function
+    const login = this.login.bind(this); // avoid `this` change inside arrow function
     return async function wrappedFetch(...args) {
-      const noLogin = (url: string) => url.includes("login_timeout")
-      const retryAfterLogin = async () => await login().then(() => rawFetch(...args))
-      return await rawFetch(...args).then(res => noLogin(res.url) ? retryAfterLogin() : res);
-    }
+      const noLogin = (url: string) => url.includes('login_timeout');
+      const retryAfterLogin = async () => await login().then(() => rawFetch(...args));
+      return await rawFetch(...args).then(res => (noLogin(res.url) ? retryAfterLogin() : res));
+    };
   }
 
   public async login(username?: string, password?: string): Promise<boolean> {
@@ -92,7 +92,6 @@ export class Learn2018Helper {
   }
 
   public async getCalendar(startDate: string, endDate: string): Promise<CalendarEvent[]> {
-
     const ticketResponse = await this.myFetch(URL.REGISTRAR_TICKET(), {
       method: 'POST',
       body: URL.REGISTRAR_TICKET_FORM_DATA(),
@@ -329,7 +328,6 @@ export class Learn2018Helper {
 
     return questions;
   }
-
 
   private async getHomeworkListAtUrl(url: string, status: IHomeworkStatus): Promise<Homework[]> {
     const json = await (await this.myFetch(url)).json();

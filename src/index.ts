@@ -24,6 +24,7 @@ import {
   Question,
   SemesterInfo,
   CourseType,
+  CalendarEvent,
 } from './types';
 import { mapGradeToLevel, parseSemesterType, trimAndDefine } from './utils';
 
@@ -48,7 +49,7 @@ export class Learn2018Helper {
     this.cookieJar = config && config.cookieJar ? config.cookieJar : new tough.CookieJar();
     this.up = config && config.up ? config.up : undefined;
     this.rawFetch = new IsomorphicFetch(fetch, this.cookieJar);
-    this.myFetch = config ? this.withReAuth(this.rawFetch) : this.rawFetch;
+    this.myFetch = this.up ? this.withReAuth(this.rawFetch) : this.rawFetch;
   }
 
   private withReAuth(rawFetch: Fetch): Fetch {
@@ -76,7 +77,7 @@ export class Learn2018Helper {
     }
     const ticketResult = await ticketResponse.text();
     const body = $(ticketResult);
-    const targetURL = body('a').attr('href');
+    const targetURL = body('a').attr('href') as string;
     const ticket = targetURL.split('=').slice(-1)[0];
 
     const loginResponse = await this.rawFetch(URL.LEARN_AUTH_ROAM(ticket));
@@ -88,6 +89,36 @@ export class Learn2018Helper {
     await this.rawFetch(URL.LEARN_LOGOUT(), { method: 'POST' });
 
     return false;
+  }
+
+  public async getCalendar(startDate: string, endDate: string): Promise<CalendarEvent[]> {
+
+    const ticketResponse = await this.myFetch(URL.REGISTRAR_TICKET(), {
+      method: 'POST',
+      body: URL.REGISTRAR_TICKET_FORM_DATA(),
+    });
+
+    let ticket = (await ticketResponse.text()) as string;
+    ticket = ticket.substring(1, ticket.length - 1);
+
+    await this.myFetch(URL.REGISTRAR_AUTH(ticket));
+
+    const response = await this.myFetch(URL.REGISTRAR_CALENDAR(startDate, endDate));
+
+    let calendarString = (await response.text()) as string;
+    calendarString = calendarString.substring(15, calendarString.length - 1);
+
+    const rawCalendar = JSON.parse(calendarString) as any[];
+    const calendar = rawCalendar.map<CalendarEvent>(i => ({
+      location: i.dd,
+      status: i.fl,
+      startTime: i.kssj,
+      endTime: i.jssj,
+      date: i.nq,
+      courseName: i.nr,
+    }));
+
+    return calendar;
   }
 
   public async getSemesterIdList(): Promise<string[]> {

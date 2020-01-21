@@ -40,17 +40,17 @@
     "ts-loader": "^6.0.4",
     "tslint": "^5.12.1",
     "tslint-config-prettier": "^1.17.0",
-    "typescript": "^3.3.1",
-    "webpack": "^4.29.0",
-    "webpack-cli": "^3.2.1"
+    "typescript": "^3.7.5",
+    "webpack": "^4.41.5",
+    "webpack-cli": "^3.3.10"
   },
   "dependencies": {
     "cheerio": "^1.0.0-rc.2",
     "cross-fetch": "^3.0.1",
-    "entities": "^1.1.2",
+    "entities": "^2.0.0",
     "es6-denodeify": "^0.1.5",
-    "form-data": "^2.3.3",
+    "form-data": "^3.0.0",
     "js-base64": "^2.5.1",
-    "real-isomorphic-fetch": "^2.0.5"
+    "real-isomorphic-fetch": "^3.0.0"
   }
 }

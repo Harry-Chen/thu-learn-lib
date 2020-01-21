@@ -14,7 +14,7 @@ describe('helper login & logout', () => {
     const login_ok = await helper.login(U, P);
     expect(login_ok).toEqual(true);
     const logout_ok = await helper.logout();
-    expect(logout_ok).toEqual(false);  //false if logout correctly.
+    expect(logout_ok).toEqual(true);  //false if logout correctly.
   })
 
   it("should failed to login if account is incorrect", async () => {

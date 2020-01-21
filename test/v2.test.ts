@@ -16,28 +16,28 @@ describe('v2helper config', () => {
 
   it("should not throw error if manually invoke login()", async () => {
     const helper = new Learn2018Helper();
-    const loginok = await helper.login(U, P);
-    expect(loginok).toEqual(true);
+    const login_ok = await helper.login(U, P);
+    expect(login_ok).toEqual(true);
     const semesters = await helper.getSemesterIdList();
     expect(Array.isArray(semesters)).toEqual(true);
   })
 
-  it("should not throw error if provide up config", async () => {
-    const configs = { up: () => ({ username: U, password: P }) };
+  it("should not throw error if provide CredentialProvider", async () => {
+    const configs = { provider: () => ({ username: U, password: P }) };
     const helper = new Learn2018Helper(configs);
     const semesters = await helper.getSemesterIdList();
     expect(Array.isArray(semesters)).toEqual(true);
   })
 
-  it("should not throw error if invoke logout() but provide up config", async () => {
-    const configs = { up: () => ({ username: U, password: P }) };
+  it("should not throw error if invoke logout() but provide CredentialProvider", async () => {
+    const configs = { provider: () => ({ username: U, password: P }) };
     const helper = new Learn2018Helper(configs);
     // First get
     const semesters = await helper.getSemesterIdList();
     expect(Array.isArray(semesters)).toEqual(true);
     // Logout
-    const logoutok = await helper.logout();
-    expect(logoutok).toEqual(false);
+    const logout_ok = await helper.logout();
+    expect(logout_ok).toEqual(false);
     // Second get
     const semesters2 = await helper.getSemesterIdList();
     expect(Array.isArray(semesters2)).toEqual(true);

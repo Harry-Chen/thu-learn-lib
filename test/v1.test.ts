@@ -56,9 +56,10 @@ describe('helper basic function', () => {
   it("should get semesterIdList correctly", async () => {
     const semesters = await helper.getSemesterIdList();
     expect(Array.isArray(semesters)).toEqual(true);
-    expect(semesters[0]).toBeNull();  // [0] is null
-    expect(typeof semesters[1]).toBe("string");
-    expect(semesters[1]).toEqual(semesterTester);
+    for (const semester of semesters) {
+      expect(typeof semester).toBe("string");
+    }
+    expect(semesters[0]).toEqual(semesterTester);
   })
 
   it("should get currentSemester correctly", async () => {

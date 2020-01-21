@@ -63,7 +63,7 @@ export class Learn2018Helper {
 
   public async login(username?: string, password?: string): Promise<boolean> {
     if (!username || !password) {
-      if (!this.up) throw new Error('No Username & Password provided.');
+      if (!this.up) throw new Error('No credential provided');
       const up = await this.up();
       username = up.username;
       password = up.password;
@@ -122,7 +122,9 @@ export class Learn2018Helper {
 
   public async getSemesterIdList(): Promise<string[]> {
     const response = await this.myFetch(URL.LEARN_SEMESTER_LIST());
-    return (await response.json()) as string[];
+    const semesters = (await response.json()) as string[];
+    // sometimes web learning returns null, so confusing...
+    return semesters.filter(s => s != null);
   }
 
   public async getCurrentSemester(): Promise<SemesterInfo> {

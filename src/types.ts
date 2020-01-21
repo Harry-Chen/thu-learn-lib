@@ -1,8 +1,8 @@
 export type Fetch = <Args extends any[], Data extends any>(...args: Args) => Promise<Data>;
-export type UP = { username: string; password: string };
-export type UPGetter = () => UP | Promise<UP>;
+export type Credential = { username: string; password: string };
+export type CredentialProvider = () => Credential | Promise<Credential>;
 export type HelperConfig = {
-  up?: UPGetter;
+  provider?: CredentialProvider;
   cookieJar?: any;
 };
 

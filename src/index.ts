@@ -5,7 +5,7 @@ import { Base64 } from 'js-base64';
 import fetch from 'cross-fetch';
 import * as URL from './urls';
 import {
-  UPGetter,
+  CredentialProvider,
   Fetch,
   HelperConfig,
   Content,
@@ -40,16 +40,16 @@ const $ = (html: string) => {
 };
 
 export class Learn2018Helper {
-  public cookieJar: any;
-  private up?: UPGetter;
+  public readonly cookieJar: any;
+  private readonly provider?: CredentialProvider;
   private readonly rawFetch: Fetch;
   private readonly myFetch: Fetch;
 
   constructor(config?: HelperConfig) {
     this.cookieJar = config?.cookieJar ?? new tough.CookieJar();
-    this.up = config?.up;
+    this.provider = config?.provider;
     this.rawFetch = new IsomorphicFetch(fetch, this.cookieJar);
-    this.myFetch = this.up ? this.withReAuth(this.rawFetch) : this.rawFetch;
+    this.myFetch = this.provider ? this.withReAuth(this.rawFetch) : this.rawFetch;
   }
 
   private withReAuth(rawFetch: Fetch): Fetch {
@@ -63,10 +63,10 @@ export class Learn2018Helper {
 
   public async login(username?: string, password?: string): Promise<boolean> {
     if (!username || !password) {
-      if (!this.up) throw new Error('No credential provided');
-      const up = await this.up();
-      username = up.username;
-      password = up.password;
+      if (!this.provider) throw new Error('No credential provided');
+      const credential = await this.provider();
+      username = credential.username;
+      password = credential.password;
     }
     const ticketResponse = await this.rawFetch(URL.ID_LOGIN(), {
       body: URL.ID_LOGIN_FORM_DATA(username, password),
@@ -85,10 +85,8 @@ export class Learn2018Helper {
   }
 
   public async logout() {
-    this.cookieJar = new tough.CookieJar();
     await this.rawFetch(URL.LEARN_LOGOUT(), { method: 'POST' });
-
-    return false;
+    return true;
   }
 
   public async getCalendar(startDate: string, endDate: string): Promise<CalendarEvent[]> {

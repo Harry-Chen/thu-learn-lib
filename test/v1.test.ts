@@ -11,16 +11,16 @@ describe('helper login & logout', () => {
 
   it("should login & logout correctly if account is right", async () => {
     const helper = new Learn2018Helper();
-    const loginok = await helper.login(U, P);
-    expect(loginok).toEqual(true);
-    const logoutok = await helper.logout();
-    expect(logoutok).toEqual(false);  //false if logout correctly.
+    const login_ok = await helper.login(U, P);
+    expect(login_ok).toEqual(true);
+    const logout_ok = await helper.logout();
+    expect(logout_ok).toEqual(false);  //false if logout correctly.
   })
 
   it("should failed to login if account is incorrect", async () => {
     const helper = new Learn2018Helper();
-    const loginok = await helper.login("nouser", "nopass");
-    expect(loginok).toEqual(false);
+    const login_ok = await helper.login("nouser", "nopass");
+    expect(login_ok).toEqual(false);
   })
 
   it("should throw error if hasn't login", async () => {
@@ -37,8 +37,8 @@ describe('helper basic function', () => {
 
   beforeAll(async () => {
     const _h = new Learn2018Helper();
-    const loginok = await _h.login(U, P);
-    expect(loginok).toEqual(true);
+    const login_ok = await _h.login(U, P);
+    expect(login_ok).toEqual(true);
     const currSemester = await _h.getCurrentSemester();
     const courses = await _h.getCourseList(currSemester.id);
     expect(courses.length).toBeGreaterThan(0);

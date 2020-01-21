@@ -42,20 +42,40 @@ Use `yarn run watch-dist` for watching file changes.
 
 ## Usage
 
-```javascript
+### Authentication related (important changes since v1.2.0)
+
+```typescript
 import { Learn2018Helper } from 'thu-learn-lib';
-import { ContentType } from 'thu-learn-lib/lib/types'
 
-// in JS engines, each instance owns different cookie jars
+// There are three ways of logging in:
+
+// 1. provide a cookie jar with existing cookies (see `tough-cookie-no-native`)
+const helper = new Learn2018Helper({cookieJar: jar});
+// 2. provide nothing, but invoking login with username and password
 const helper = new Learn2018Helper();
+// 3. provide a CredentialProvider function, which can be async
+const helper = new Learn2018Helper({provider: () => {return {username: 'xxx', password: 'xxx'};}});
 
-// all following methods are async
 
-// first login
+// Note that using the following two methods you may encounter problems like login time out.
+// But if you provide a credential provider, the library will retry logging in when failing, automatically resolving the cookie expiry problem.
+// So we strongly recommend using this method.
+
+
+// If you do not provide a cookie jar or CredentialProvider, you must log in manually. Otherwise you do not need to call login explicitly.
 const loginSuccess = await helper.login('user', 'pass');
-// take out cookies (e.g. for file download), which will not work in browsers
-// its type is require('tough-cookie-no-native').CookieJar
+
+// You can also take out cookies (e.g. for file download), which will not work in browsers.
 console.log(helper.cookieJar);
+
+// Logout if you want, but the cookie jar will not be cleared.
+const logoutSuccess = await helper.logout();
+```
+
+### Content related
+
+```typescript
+import { ContentType } from 'thu-learn-lib/lib/types'
 
 // get ids of all semesters that current account has access to
 const semesters = await helper.getSemesterIdList();
@@ -82,9 +102,6 @@ const homeworks = await helper.getAllContents([1, 2, 3], ContentType.HOMEWORK);
 
 // get course calendar
 const calendar = await helper.getCalendar('20191001', '20191201');
-
-// logout if you want, the cookie jar will be cleared in Node
-const logoutSuccess = await helper.logout();
 ```
 
 According to security strategies (CORS, CORB) of browsers, you might need to run the code in the page context of `https://learn2018.tsinghua.edu.cn` and `https://id.tsinghua.edu.cn`. The simplest way is to run the code as a browser extension.
@@ -94,6 +111,12 @@ According to security strategies (CORS, CORB) of browsers, you might need to run
 See `lib/types.d.ts` for type definitions.
 
 ## Changelog
+
+- v1.2.0
+  - Support getting course calendars from academic.tsinghua.edu.cn (thanks to robertying)
+  - Automatic retry logging in when fetching failed and `CredentialProvider` is provided (thanks to mayeths)
+  - Add unit tests using `jest` (thanks to mayeths)
+  - Filter out `null` values in `getSemesterIdList` API
 
 - v1.1.4
   - Return empty array if any content module is disabled

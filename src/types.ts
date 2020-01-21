@@ -1,3 +1,12 @@
+export type Fetch = <Args extends any[], Data extends any>(...args: Args) => Promise<Data>
+export type UP = {username: string, password: string};
+export type UPGetter = () => (UP | Promise<UP>);
+export type HelperConfig = {
+  up?: UPGetter,
+  cookieJar?: any,
+}
+
+
 export enum SemesterType {
   FALL = '秋季学期',
   SPRING = '春季学期',

@@ -5,6 +5,9 @@ import { Base64 } from 'js-base64';
 import fetch from 'cross-fetch';
 import * as URL from './urls';
 import {
+  UPGetter,
+  Fetch,
+  HelperConfig,
   Content,
   ContentType,
   CourseContent,
@@ -37,16 +40,34 @@ const $ = (html: string) => {
 
 export class Learn2018Helper {
   public cookieJar: any;
-  private readonly myFetch: any;
-  private loggedIn: boolean = false;
+  private up?: UPGetter;
+  private readonly rawFetch: Fetch;
+  private readonly myFetch: Fetch;
 
-  constructor(cookieJar = new tough.CookieJar()) {
-    this.cookieJar = cookieJar;
-    this.myFetch = new IsomorphicFetch(fetch, this.cookieJar);
+  constructor(config?: HelperConfig) {
+    this.cookieJar = config && config.cookieJar ? config.cookieJar : new tough.CookieJar();
+    this.up = config && config.up ? config.up : undefined;
+    this.rawFetch = new IsomorphicFetch(fetch, this.cookieJar);
+    this.myFetch = config ? this.withReAuth(this.rawFetch) : this.rawFetch;
   }
 
-  public async login(username: string, password: string): Promise<boolean> {
-    const ticketResponse = await this.myFetch(URL.ID_LOGIN(), {
+  private withReAuth(rawFetch: Fetch): Fetch {
+    const login = this.login.bind(this);  // avoid `this` change inside arrow function
+    return async function wrappedFetch(...args) {
+      const noLogin = (url: string) => url.includes("login_timeout")
+      const retryAfterLogin = async () => await login().then(() => rawFetch(...args))
+      return await rawFetch(...args).then(res => noLogin(res.url) ? retryAfterLogin() : res);
+    }
+  }
+
+  public async login(username?: string, password?: string): Promise<boolean> {
+    if (!username || !password) {
+      if (!this.up) throw new Error('No Username & Password provided.');
+      const up = await this.up();
+      username = up.username;
+      password = up.password;
+    }
+    const ticketResponse = await this.rawFetch(URL.ID_LOGIN(), {
       body: URL.ID_LOGIN_FORM_DATA(username, password),
       method: 'POST',
     });
@@ -58,26 +79,23 @@ export class Learn2018Helper {
     const targetURL = body('a').attr('href');
     const ticket = targetURL.split('=').slice(-1)[0];
 
-    const loginResponse = await this.myFetch(URL.LEARN_AUTH_ROAM(ticket));
-    return (this.loggedIn = loginResponse.ok);
+    const loginResponse = await this.rawFetch(URL.LEARN_AUTH_ROAM(ticket));
+    return loginResponse.ok;
   }
 
   public async logout() {
-    this.ensureLogin();
     this.cookieJar = new tough.CookieJar();
-    const logoutResponse = await this.myFetch(URL.LEARN_LOGOUT(), { method: 'POST' });
+    await this.rawFetch(URL.LEARN_LOGOUT(), { method: 'POST' });
 
-    return (this.loggedIn = !logoutResponse.ok);
+    return false;
   }
 
   public async getSemesterIdList(): Promise<string[]> {
-    this.ensureLogin();
     const response = await this.myFetch(URL.LEARN_SEMESTER_LIST());
     return (await response.json()) as string[];
   }
 
   public async getCurrentSemester(): Promise<SemesterInfo> {
-    this.ensureLogin();
     const response = await this.myFetch(URL.LEARN_CURRENT_SEMESTER());
     const result = (await response.json()).result;
     return {
@@ -91,7 +109,6 @@ export class Learn2018Helper {
   }
 
   public async getCourseList(semesterID: string): Promise<CourseInfo[]> {
-    this.ensureLogin();
     const response = await this.myFetch(URL.LEARN_COURSE_LIST(semesterID));
     const result = (await response.json()).resultList as any[];
     const courses: CourseInfo[] = [];
@@ -114,7 +131,6 @@ export class Learn2018Helper {
   }
 
   public async getTACourseList(semesterID: string): Promise<CourseInfo[]> {
-    this.ensureLogin();
     const response = await this.myFetch(URL.LEARN_TA_COURSE_LIST(semesterID));
     const result = (await response.json()).resultList as any[];
     const courses: CourseInfo[] = [];
@@ -168,7 +184,6 @@ export class Learn2018Helper {
   }
 
   public async getNotificationList(courseID: string): Promise<Notification[]> {
-    this.ensureLogin();
     const json = await (await this.myFetch(URL.LEARN_NOTIFICATION_LIST(courseID))).json();
     if (json.result !== 'success') {
       return [];
@@ -201,7 +216,6 @@ export class Learn2018Helper {
   }
 
   public async getFileList(courseID: string): Promise<File[]> {
-    this.ensureLogin();
     const json = await (await this.myFetch(URL.LEARN_FILE_LIST(courseID))).json();
     if (json.result !== 'success') {
       return [];
@@ -231,7 +245,6 @@ export class Learn2018Helper {
   }
 
   public async getHomeworkList(courseID: string): Promise<Homework[]> {
-    this.ensureLogin();
     const allHomework: Homework[] = [];
 
     await Promise.all(
@@ -245,7 +258,6 @@ export class Learn2018Helper {
   }
 
   public async getDiscussionList(courseID: string): Promise<Discussion[]> {
-    this.ensureLogin();
     const json = await (await this.myFetch(URL.LEARN_DISCUSSION_LIST(courseID))).json();
     if (json.result !== 'success') {
       return [];
@@ -267,7 +279,6 @@ export class Learn2018Helper {
   }
 
   public async getAnsweredQuestionList(courseID: string): Promise<Question[]> {
-    this.ensureLogin();
     const json = await (await this.myFetch(URL.LEARN_QUESTION_LIST_ANSWERED(courseID))).json();
     if (json.result !== 'success') {
       return [];
@@ -288,11 +299,6 @@ export class Learn2018Helper {
     return questions;
   }
 
-  private ensureLogin() {
-    if (!this.loggedIn) {
-      throw new Error('Not logged in.');
-    }
-  }
 
   private async getHomeworkListAtUrl(url: string, status: IHomeworkStatus): Promise<Homework[]> {
     const json = await (await this.myFetch(url)).json();

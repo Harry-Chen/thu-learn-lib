@@ -25,7 +25,7 @@ describe('helper login & logout', () => {
 
   it("should throw error if hasn't login", async () => {
     const helper = new Learn2018Helper();
-    await expect(helper.getSemesterIdList()).rejects.toThrow("Not logged in.");
+    await expect(helper.getSemesterIdList()).rejects.toThrow();
   })
 })
 

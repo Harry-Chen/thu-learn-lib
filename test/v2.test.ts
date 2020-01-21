@@ -37,7 +37,7 @@ describe('v2helper config', () => {
     expect(Array.isArray(semesters)).toEqual(true);
     // Logout
     const logout_ok = await helper.logout();
-    expect(logout_ok).toEqual(false);
+    expect(logout_ok).toEqual(true);
     // Second get
     const semesters2 = await helper.getSemesterIdList();
     expect(Array.isArray(semesters2)).toEqual(true);

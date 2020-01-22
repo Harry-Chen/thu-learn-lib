@@ -73,7 +73,9 @@ const logoutSuccess = await helper.logout();
 
 ### Content related
 
-We currently support both student and teacher (or TA) version of web learning. To keep backwards compatibility, the **default behavior of all APIs is to use the student version**. The following APIS needs `CourseType.TEACHER` as the last (optional) parameter to access the teacher version. You **should use them when you are the teacher / TA** of one course, for you will get nothing from the student version in that case. There can be the situation one can be a student and teacher of the same course at the same time, on which by using different `CourseType` you can get different results.
+We currently support both student and teacher (or TA) version of web learning. To keep backwards compatibility, the **default behavior of all APIs is to use the student version**. The following APIS needs `CourseType.TEACHER` as the last (optional) parameter to access the teacher version. You **should use them when you are the teacher / TA** of one course, for you will get nothing from the student version in that case.
+
+We do not maintain a global type in `Learn2018Helper` class, for there can be the situation that one can be a student and teacher of the same course simultaneously, on which by using different `CourseType` you can get different results.
 
 * `getCourseList`
 * `getNotificationList/getFileList/getHomeworkList/getDiscussionList/getAnsweredQuestionList`

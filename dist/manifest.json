@@ -16,9 +16,6 @@
 	"permissions" : [
 		"storage",
 		"tabs",
-		"cookies",
-		"webRequest",
-		"webRequestBlocking",
 		"https://learn.tsinghua.edu.cn/*",
 		"https://id.tsinghua.edu.cn/*"
 	],

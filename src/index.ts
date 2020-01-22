@@ -214,11 +214,16 @@ export class Learn2018Helper {
   }
 
   public async getNotificationList(courseID: string): Promise<Notification[]> {
-    const json = await (await this.myFetch(URL.LEARN_NOTIFICATION_LIST(courseID))).json();
+    let json = await (await this.myFetch(URL.LEARN_NOTIFICATION_LIST(courseID))).json();
     if (json.result !== 'success') {
       return [];
+    } else if (json.result === 'success' && json.object === null) {
+      json = await (await this.myFetch(URL.LEARN_NOTIFICATION_LIST_TEACHER(courseID))).json();
+      if (json.result !== 'success') {
+        return [];
+      }
     }
-    const result = json.object.aaData as any[];
+    const result = (json.object.aaData ?? json.object.resultsList) as any[];
     const notifications: Notification[] = [];
 
     await Promise.all(

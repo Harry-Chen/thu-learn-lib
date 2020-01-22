@@ -163,7 +163,11 @@ export class Learn2018Helper {
     return courses;
   }
 
-  public async getAllContents(courseIDs: string[], type: ContentType, courseType: CourseType = CourseType.STUDENT): Promise<CourseContent> {
+  public async getAllContents(
+    courseIDs: string[],
+    type: ContentType,
+    courseType: CourseType = CourseType.STUDENT,
+  ): Promise<CourseContent> {
     let fetchFunc: (courseID: string, courseType: CourseType) => Promise<Content[]>;
     switch (type) {
       case ContentType.NOTIFICATION:
@@ -194,11 +198,14 @@ export class Learn2018Helper {
     return contents;
   }
 
-  public async getNotificationList(courseID: string, courseType: CourseType = CourseType.STUDENT): Promise<Notification[]> {
+  public async getNotificationList(
+    courseID: string,
+    courseType: CourseType = CourseType.STUDENT,
+  ): Promise<Notification[]> {
     let json = await (await this.myFetch(URL.LEARN_NOTIFICATION_LIST(courseID, courseType))).json();
     if (json.result !== 'success') {
       return [];
-    } 
+    }
 
     const result = (json.object.aaData ?? json.object.resultsList) as any[];
     const notifications: Notification[] = [];
@@ -233,10 +240,12 @@ export class Learn2018Helper {
       return [];
     }
     let result: any[];
-    if (json?.object?.resultsList) { // teacher
+    if (json?.object?.resultsList) {
+      // teacher
       result = json.object.resultsList;
-    } else { // student
-      result = json.object
+    } else {
+      // student
+      result = json.object;
     }
     const files: File[] = [];
 
@@ -263,8 +272,7 @@ export class Learn2018Helper {
   }
 
   public async getHomeworkList(courseID: string, courseType: CourseType = CourseType.STUDENT): Promise<Homework[]> {
-
-    if (courseType === CourseType.TEACHER) { 
+    if (courseType === CourseType.TEACHER) {
       throw Error('not implemented');
     }
 
@@ -301,7 +309,10 @@ export class Learn2018Helper {
     return discussions;
   }
 
-  public async getAnsweredQuestionList(courseID: string, courseType: CourseType = CourseType.STUDENT): Promise<Question[]> {
+  public async getAnsweredQuestionList(
+    courseID: string,
+    courseType: CourseType = CourseType.STUDENT,
+  ): Promise<Question[]> {
     const json = await (await this.myFetch(URL.LEARN_QUESTION_LIST_ANSWERED(courseID, courseType))).json();
     if (json.result !== 'success') {
       return [];
@@ -355,10 +366,14 @@ export class Learn2018Helper {
     return homeworks;
   }
 
-  private async parseNotificationDetail(courseID: string, id: string, courseType: CourseType): Promise<INotificationDetail> {
+  private async parseNotificationDetail(
+    courseID: string,
+    id: string,
+    courseType: CourseType,
+  ): Promise<INotificationDetail> {
     const response = await this.myFetch(URL.LEARN_NOTIFICATION_DETAIL(courseID, id, courseType));
     const result = $(await response.text());
-    let path = "";
+    let path = '';
     if (courseType == CourseType.STUDENT) {
       path = result('.ml-10').attr('href')!;
     } else {

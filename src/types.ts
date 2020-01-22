@@ -72,7 +72,8 @@ export type Notification = INotification & INotificationDetail;
 
 interface IFile {
   id: string;
-  size: string;
+  rawSize: number; // in byte
+  size: string; // like '1M'
   title: string;
   description: string;
   uploadTime: Date;

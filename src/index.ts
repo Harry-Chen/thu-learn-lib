@@ -138,8 +138,8 @@ export class Learn2018Helper {
     };
   }
 
-  private async getCourseListInternal(semesterID: string, url: string, type: CourseType): Promise<CourseInfo[]> {
-    const response = await this.myFetch(URL.LEARN_COURSE_LIST(semesterID));
+  public async getCourseList(semesterID: string, courseType: CourseType = CourseType.STUDENT): Promise<CourseInfo[]> {
+    const response = await this.myFetch(URL.LEARN_COURSE_LIST(semesterID, courseType));
     const result = (await response.json()).resultList as any[];
     const courses: CourseInfo[] = [];
 
@@ -150,12 +150,12 @@ export class Learn2018Helper {
           name: c.kcm,
           englishName: c.ywkcm,
           timeAndLocation: await (await this.myFetch(URL.LEARN_COURSE_TIME_LOCATION(c.wlkcid))).json(),
-          url: URL.LEARN_COURSE_URL(c.wlkcid, type),
+          url: URL.LEARN_COURSE_URL(c.wlkcid, courseType),
           teacherName: c.jsm ?? '', // teacher can not fetch this
           teacherNumber: c.jsh,
           courseNumber: c.kch,
           courseIndex: c.kxh,
-          courseType: type,
+          courseType,
         });
       }),
     );
@@ -163,16 +163,8 @@ export class Learn2018Helper {
     return courses;
   }
 
-  public async getCourseList(semesterID: string): Promise<CourseInfo[]> {
-    return await this.getCourseListInternal(semesterID, URL.LEARN_COURSE_LIST(semesterID), CourseType.STUDENT);
-  }
-
-  public async getTACourseList(semesterID: string): Promise<CourseInfo[]> {
-    return await this.getCourseListInternal(semesterID, URL.LEARN_TA_COURSE_LIST(semesterID), CourseType.TEACHER);
-  }
-
-  public async getAllContents(courseIDs: string[], type: ContentType): Promise<CourseContent> {
-    let fetchFunc: (courseID: string) => Promise<Content[]>;
+  public async getAllContents(courseIDs: string[], type: ContentType, courseType: CourseType = CourseType.STUDENT): Promise<CourseContent> {
+    let fetchFunc: (courseID: string, courseType: CourseType) => Promise<Content[]>;
     switch (type) {
       case ContentType.NOTIFICATION:
         fetchFunc = this.getNotificationList;
@@ -195,25 +187,19 @@ export class Learn2018Helper {
 
     await Promise.all(
       courseIDs.map(async id => {
-        contents[id] = await fetchFunc.bind(this)(id);
+        contents[id] = await fetchFunc.bind(this)(id, courseType);
       }),
     );
 
     return contents;
   }
 
-  public async getNotificationList(courseID: string): Promise<Notification[]> {
-    // first try fetching using student API
-    let json = await (await this.myFetch(URL.LEARN_NOTIFICATION_LIST(courseID))).json();
+  public async getNotificationList(courseID: string, courseType: CourseType = CourseType.STUDENT): Promise<Notification[]> {
+    let json = await (await this.myFetch(URL.LEARN_NOTIFICATION_LIST(courseID, courseType))).json();
     if (json.result !== 'success') {
       return [];
-    } else if (json.object === null) {
-      // try fetching using teacher API
-      json = await (await this.myFetch(URL.LEARN_NOTIFICATION_LIST_TEACHER(courseID))).json();
-      if (json.result !== 'success' || json.object === null) {
-        return [];
-      }
-    }
+    } 
+
     const result = (json.object.aaData ?? json.object.resultsList) as any[];
     const notifications: Notification[] = [];
 
@@ -223,7 +209,7 @@ export class Learn2018Helper {
           id: n.ggid,
           content: decodeHTML(Base64.decode(n.ggnr)),
           title: decodeHTML(n.bt),
-          url: URL.LEARN_NOTIFICATION_DETAIL(courseID, n.ggid),
+          url: URL.LEARN_NOTIFICATION_DETAIL(courseID, n.ggid, courseType),
           publisher: n.fbrxm,
           hasRead: n.sfyd === '是',
           markedImportant: n.sfqd === '1',
@@ -232,7 +218,7 @@ export class Learn2018Helper {
         let detail: INotificationDetail = {};
         if (n.fjmc !== null) {
           notification.attachmentName = n.fjmc;
-          detail = await this.parseNotificationDetail(courseID, notification.id);
+          detail = await this.parseNotificationDetail(courseID, notification.id, courseType);
         }
         notifications.push({ ...notification, ...detail });
       }),
@@ -241,12 +227,17 @@ export class Learn2018Helper {
     return notifications;
   }
 
-  public async getFileList(courseID: string): Promise<File[]> {
-    const json = await (await this.myFetch(URL.LEARN_FILE_LIST(courseID))).json();
+  public async getFileList(courseID: string, courseType: CourseType): Promise<File[]> {
+    const json = await (await this.myFetch(URL.LEARN_FILE_LIST(courseID, courseType))).json();
     if (json.result !== 'success') {
       return [];
     }
-    const result = json.object as any[];
+    let result: any[];
+    if (json?.object?.resultsList) { // teacher
+      result = json.object.resultsList;
+    } else { // student
+      result = json.object
+    }
     const files: File[] = [];
 
     await Promise.all(
@@ -255,13 +246,14 @@ export class Learn2018Helper {
           id: f.wjid,
           title: decodeHTML(f.bt),
           description: decodeHTML(f.ms),
+          rawSize: f.wjdx,
           size: f.fileSize,
           uploadTime: new Date(f.scsj),
-          downloadUrl: URL.LEARN_FILE_DOWNLOAD(f.wjid),
+          downloadUrl: URL.LEARN_FILE_DOWNLOAD(f.wjid, courseType),
           isNew: f.isNew,
-          markedImportant: f.sfqd === '1',
-          visitCount: f.llcs,
-          downloadCount: f.xzcs,
+          markedImportant: f.sfqd === 1,
+          visitCount: f.llcs ?? 0,
+          downloadCount: f.xzcs ?? 0,
           fileType: f.wjlx,
         });
       }),
@@ -270,7 +262,12 @@ export class Learn2018Helper {
     return files;
   }
 
-  public async getHomeworkList(courseID: string): Promise<Homework[]> {
+  public async getHomeworkList(courseID: string, courseType: CourseType = CourseType.STUDENT): Promise<Homework[]> {
+
+    if (courseType === CourseType.TEACHER) { 
+      throw Error('not implemented');
+    }
+
     const allHomework: Homework[] = [];
 
     await Promise.all(
@@ -283,8 +280,8 @@ export class Learn2018Helper {
     return allHomework;
   }
 
-  public async getDiscussionList(courseID: string): Promise<Discussion[]> {
-    const json = await (await this.myFetch(URL.LEARN_DISCUSSION_LIST(courseID))).json();
+  public async getDiscussionList(courseID: string, courseType: CourseType = CourseType.STUDENT): Promise<Discussion[]> {
+    const json = await (await this.myFetch(URL.LEARN_DISCUSSION_LIST(courseID, courseType))).json();
     if (json.result !== 'success') {
       return [];
     }
@@ -296,7 +293,7 @@ export class Learn2018Helper {
         discussions.push({
           ...this.parseDiscussionBase(d),
           boardId: d.bqid,
-          url: URL.LEARN_DISCUSSION_DETAIL(d.wlkcid, d.bqid, d.id),
+          url: URL.LEARN_DISCUSSION_DETAIL(d.wlkcid, d.bqid, d.id, courseType),
         });
       }),
     );
@@ -304,8 +301,8 @@ export class Learn2018Helper {
     return discussions;
   }
 
-  public async getAnsweredQuestionList(courseID: string): Promise<Question[]> {
-    const json = await (await this.myFetch(URL.LEARN_QUESTION_LIST_ANSWERED(courseID))).json();
+  public async getAnsweredQuestionList(courseID: string, courseType: CourseType = CourseType.STUDENT): Promise<Question[]> {
+    const json = await (await this.myFetch(URL.LEARN_QUESTION_LIST_ANSWERED(courseID, courseType))).json();
     if (json.result !== 'success') {
       return [];
     }
@@ -317,7 +314,7 @@ export class Learn2018Helper {
         questions.push({
           ...this.parseDiscussionBase(q),
           question: Base64.decode(q.wtnr),
-          url: URL.LEARN_QUESTION_DETAIL(q.wlkcid, q.id),
+          url: URL.LEARN_QUESTION_DETAIL(q.wlkcid, q.id, courseType),
         });
       }),
     );
@@ -358,10 +355,16 @@ export class Learn2018Helper {
     return homeworks;
   }
 
-  private async parseNotificationDetail(courseID: string, id: string): Promise<INotificationDetail> {
-    const response = await this.myFetch(URL.LEARN_NOTIFICATION_DETAIL(courseID, id));
+  private async parseNotificationDetail(courseID: string, id: string, courseType: CourseType): Promise<INotificationDetail> {
+    const response = await this.myFetch(URL.LEARN_NOTIFICATION_DETAIL(courseID, id, courseType));
     const result = $(await response.text());
-    return { attachmentUrl: `${URL.LEARN_PREFIX}${result('.ml-10').attr('href')}` };
+    let path = "";
+    if (courseType == CourseType.STUDENT) {
+      path = result('.ml-10').attr('href')!;
+    } else {
+      path = result('#wjid').attr('href')!;
+    }
+    return { attachmentUrl: `${URL.LEARN_PREFIX}${path}` };
   }
 
   private async parseHomeworkDetail(courseID: string, id: string, studentHomeworkID: string): Promise<IHomeworkDetail> {
@@ -413,7 +416,7 @@ export class Learn2018Helper {
       publishTime: new Date(d.fbsj),
       lastReplyTime: new Date(d.zhhfsj),
       lastReplierName: d.zhhfrxm,
-      visitCount: d.djs,
+      visitCount: d.djs ?? 0, // teacher cannot fetch this
       replyCount: d.hfcs,
     };
   }

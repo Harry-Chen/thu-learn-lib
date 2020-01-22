@@ -73,6 +73,14 @@ const logoutSuccess = await helper.logout();
 
 ### Content related
 
+We currently support both student and teacher (or TA) version of web learning. To keep backwards compatibility, the **default behavior of all APIs is to use the student version**. The following APIS needs `CourseType.TEACHER` as the last (optional) parameter to access the teacher version. You **should use them when you are the teacher / TA** of one course, for you will get nothing from the student version in that case. There can be the situation one can be a student and teacher of the same course at the same time, on which by using different `CourseType` you can get different results.
+
+* `getCourseList`
+* `getNotificationList/getFileList/getHomeworkList/getDiscussionList/getAnsweredQuestionList`
+* `getAllContents`
+
+Note that currently fetching homework information from teacher version is **not yet implemented**.
+
 ```typescript
 import { ContentType } from 'thu-learn-lib/lib/types'
 
@@ -82,9 +90,8 @@ const semesters = await helper.getSemesterIdList();
 // get get semester info
 const semester = await helper.getCurrentSemester();
 
-// get courses of this semester (learned or assisted)
+// get courses of this semester
 const courses = await helper.getCourseList(semester.id);
-const TAcourses = await helper.getTACourseList(semester.id);
 const course = courses[0];
 
 // get detail information about the course

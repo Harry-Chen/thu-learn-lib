@@ -123,7 +123,6 @@ It's ok if you meet `Timeout - Async callback was not invoked within the 5000ms 
   - Add unit tests using `jest` (thanks to mayeths)
   - Filter out `null` values in `getSemesterIdList` API
   - Switch to `https://learn.tsinghua.edu.cn/` from `learn2018` permanently
-  - Add extra permission in demo web extension to avoid problems caused be new default same-site policy in Chrome 80
 
 - v1.1.4
   - Return empty array if any content module is disabled

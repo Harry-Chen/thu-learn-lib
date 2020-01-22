@@ -62,6 +62,10 @@ export const LEARN_NOTIFICATION_LIST = (courseID: string) => {
   return `${LEARN_PREFIX}/b/wlxt/kcgg/wlkc_ggb/student/kcggListXs?wlkcid=${courseID}&size=${MAX_SIZE}`;
 };
 
+export const LEARN_NOTIFICATION_LIST_TEACHER = (courseID: string) => {
+  return `${LEARN_PREFIX}/b/wlxt/kcgg/wlkc_ggb/teacher/kcggList?wlkcid=${courseID}&size=${MAX_SIZE}`;
+};
+
 export const LEARN_NOTIFICATION_DETAIL = (courseID: string, notificationID: string) => {
   return `${LEARN_PREFIX}/f/wlxt/kcgg/wlkc_ggb/student/beforeViewXs?wlkcid=${courseID}&id=${notificationID}`;
 };

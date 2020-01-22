@@ -40,8 +40,11 @@ export enum CourseType {
 interface ICourseInfo {
   id: string;
   name: string;
+  englishName: string;
+  timeAndLocation: string[];
   url: string;
   teacherName: string;
+  teacherNumber: string;
   courseNumber: string;
   courseIndex: number;
   courseType: CourseType;

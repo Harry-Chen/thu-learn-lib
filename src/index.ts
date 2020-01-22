@@ -138,7 +138,7 @@ export class Learn2018Helper {
     };
   }
 
-  public async getCourseList(semesterID: string): Promise<CourseInfo[]> {
+  private async getCourseListInternal(semesterID: string, url: string, type: CourseType): Promise<CourseInfo[]> {
     const response = await this.myFetch(URL.LEARN_COURSE_LIST(semesterID));
     const result = (await response.json()).resultList as any[];
     const courses: CourseInfo[] = [];
@@ -148,11 +148,14 @@ export class Learn2018Helper {
         courses.push({
           id: c.wlkcid,
           name: c.kcm,
-          url: URL.LEARN_COURSE_URL(c.wlkcid, CourseType.STUDENT),
-          teacherName: c.jsm,
+          englishName: c.ywkcm,
+          timeAndLocation: await (await this.myFetch(URL.LEARN_COURSE_TIME_LOCATION(c.wlkcid))).json(),
+          url: URL.LEARN_COURSE_URL(c.wlkcid, type),
+          teacherName: c.jsm ?? '', // teacher can not fetch this
+          teacherNumber: c.jsh,
           courseNumber: c.kch,
           courseIndex: c.kxh,
-          courseType: CourseType.STUDENT,
+          courseType: type,
         });
       }),
     );
@@ -160,26 +163,12 @@ export class Learn2018Helper {
     return courses;
   }
 
+  public async getCourseList(semesterID: string): Promise<CourseInfo[]> {
+    return await this.getCourseListInternal(semesterID, URL.LEARN_COURSE_LIST(semesterID), CourseType.STUDENT);
+  }
+
   public async getTACourseList(semesterID: string): Promise<CourseInfo[]> {
-    const response = await this.myFetch(URL.LEARN_TA_COURSE_LIST(semesterID));
-    const result = (await response.json()).resultList as any[];
-    const courses: CourseInfo[] = [];
-
-    await Promise.all(
-      result.map(async c => {
-        courses.push({
-          id: c.wlkcid,
-          name: c.kcm,
-          url: URL.LEARN_COURSE_URL(c.wlkcid, CourseType.TEACHER),
-          teacherName: '', // FIXME: currently it can not be fetched
-          courseNumber: c.kch,
-          courseIndex: c.kxh,
-          courseType: CourseType.TEACHER,
-        });
-      }),
-    );
-
-    return courses;
+    return await this.getCourseListInternal(semesterID, URL.LEARN_TA_COURSE_LIST(semesterID), CourseType.TEACHER);
   }
 
   public async getAllContents(courseIDs: string[], type: ContentType): Promise<CourseContent> {
@@ -214,12 +203,14 @@ export class Learn2018Helper {
   }
 
   public async getNotificationList(courseID: string): Promise<Notification[]> {
+    // first try fetching using student API
     let json = await (await this.myFetch(URL.LEARN_NOTIFICATION_LIST(courseID))).json();
     if (json.result !== 'success') {
       return [];
-    } else if (json.result === 'success' && json.object === null) {
+    } else if (json.object === null) {
+      // try fetching using teacher API
       json = await (await this.myFetch(URL.LEARN_NOTIFICATION_LIST_TEACHER(courseID))).json();
-      if (json.result !== 'success') {
+      if (json.result !== 'success' || json.object === null) {
         return [];
       }
     }

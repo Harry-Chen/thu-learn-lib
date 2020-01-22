@@ -46,6 +46,10 @@ export const LEARN_COURSE_URL = (courseID: string, courseType: CourseType) => {
   return `${LEARN_PREFIX}/f/wlxt/index/course/${courseType}/course?wlkcid=${courseID}`;
 };
 
+export const LEARN_COURSE_TIME_LOCATION = (courseID: string) => {
+  return `${LEARN_PREFIX}/b/kc/v_wlkc_xk_sjddb/detail?id=${courseID}`
+}
+
 export const LEARN_TEACHER_COURSE_URL = (courseID: string) => {
   return `${LEARN_PREFIX}/f/wlxt/index/course/teacher/course?wlkcid=${courseID}`;
 };

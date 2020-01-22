@@ -1,7 +1,7 @@
 # thu-learn-lib
 
-![Github version](https://img.shields.io/github/package-json/v/Harry-Chen/thu-learn-lib)
-![npm version](https://img.shields.io/npm/v/thu-learn-lib)
+[![Github version](https://img.shields.io/github/package-json/v/Harry-Chen/thu-learn-lib)](https://github.com/Harry-Chen/thu-learn-lib)
+[![npm version](https://img.shields.io/npm/v/thu-learn-lib)](https://www.npmjs.com/package/thu-learn-lib)
 ![npm size](https://img.shields.io/bundlephobia/min/thu-learn-lib)
 ![npm downloads](https://img.shields.io/npm/dw/thu-learn-lib)
 
@@ -122,93 +122,93 @@ See `lib/types.d.ts` for type definitions.
 
 Run `yarn test` for testing. It requires your personal credential since we don't have mocks for these APIs. To do this, you must touch a `.env` similar to `template.env` under /test folder.
 
-It's ok if you meet `Timeout - Async callback was not invoked within the 5000ms timeout...` error when running tests, rerun tests may resolve this problem. If you hate this, just add the third argument `timeout` to every testcase `it("should...", async () => void, timeout)` and make sure it's greater than 5000.
+It's ok if you meet `Timeout * Async callback was not invoked within the 5000ms timeout...` error when running tests, rerun tests may resolve this problem. If you hate this, just add the third argument `timeout` to every testcase `it("should...", async () => void, timeout)` and make sure it's greater than 5000.
 
 ## Changelog
 
-- v1.2.0
-  - Support getting course calendars from academic.tsinghua.edu.cn (thanks to robertying)
-  - Automatic retry logging in when fetching failed and `CredentialProvider` is provided (thanks to mayeths)
-  - Add unit tests using `jest` (thanks to mayeths)
-  - Filter out `null` values in `getSemesterIdList` API
-  - Switch to `https://learn.tsinghua.edu.cn/` from `learn2018` permanently
+* v1.2.0
+  * Support getting course calendars from academic.tsinghua.edu.cn (thanks to robertying)
+  * Automatic retry logging in when fetching failed and `CredentialProvider` is provided (thanks to mayeths)
+  * Add unit tests using `jest` (thanks to mayeths)
+  * Filter out `null` values in `getSemesterIdList` API
+  * Switch to `https://learn.tsinghua.edu.cn/` from `learn2018` permanently
 
-- v1.1.4
-  - Return empty array if any content module is disabled
-  - Add `getTACourseList` to get TA's course list (temporarily can not be used by other functions)
+* v1.1.4
+  * Return empty array if any content module is disabled
+  * Add `getTACourseList` to get TA's course list (temporarily can not be used by other functions)
 
-- v1.1.3
-  - Emergency fix of wrongly decoded base64 string, add `js-base64` back
+* v1.1.3
+  * Emergency fix of wrongly decoded base64 string, add `js-base64` back
 
-- v1.1.2
-  - Switch to `Base64.js` instead of `js-base64`, which uses evil `eval`
+* v1.1.2
+  * Switch to `Base64.js` instead of `js-base64`, which uses evil `eval`
 
-- v1.1.1
-  - Decode HTML entities in the title of disscussions (the last one, I promise!)
+* v1.1.1
+  * Decode HTML entities in the title of disscussions (the last one, I promise!)
 
-- v1.1.0
-  - Fix an typo in grade level mapping
-  - Bump to a new minor version
+* v1.1.0
+  * Fix an typo in grade level mapping
+  * Bump to a new minor version
 
-- v1.0.16 (no v1.0.15 due to some publishing issues)
-  - Switch to `yarn`
-  - Add parsing of grade levels of homework (A+/A/.../F)
+* v1.0.16 (no v1.0.15 due to some publishing issues)
+  * Switch to `yarn`
+  * Add parsing of grade levels of homework (A+/A/.../F)
 
-- v1.0.14
-  - Add prefix for `attachmentUrl` filed of Notification
-  - Deprecate all old versions
+* v1.0.14
+  * Add prefix for `attachmentUrl` filed of Notification
+  * Deprecate all old versions
 
-- v1.0.13
-  - Decode HTML entities whenever possible
+* v1.0.13
+  * Decode HTML entities whenever possible
 
-- v1.0.12
-  - Add `url` for Course
-  - Fix `url` for Question (to display correct section name)
+* v1.0.12
+  * Add `url` for Course
+  * Fix `url` for Question (to display correct section name)
 
-- v1.0.11
-  - Fix `url` error in Question
+* v1.0.11
+  * Fix `url` error in Question
 
-- v1.0.10
-  - Decode the HTML entities in the `description` field of homework
+* v1.0.10
+  * Decode the HTML entities in the `description` field of homework
 
-- v1.0.9
-  - Use `entities` to decode HTML entities
+* v1.0.9
+  * Use `entities` to decode HTML entities
 
-- v1.0.8
-  - Export type CourseContent
+* v1.0.8
+  * Export type CourseContent
 
-- v1.0.7
-  - No change made to code, update README
+* v1.0.7
+  * No change made to code, update README
 
-- v1.0.6
-  - Add API to fetching content for a list of courses
+* v1.0.6
+  * Add API to fetching content for a list of courses
 
-- v1.0.5
-  - Fix HTML entity replacement.
+* v1.0.5
+  * Fix HTML entity replacement.
 
-- v1.0.4
-  - No change made to code
-  - Remove unused build commands
-  - Fix multiple typos in README
+* v1.0.4
+  * No change made to code
+  * Remove unused build commands
+  * Fix multiple typos in README
 
-- v1.0.3
-  - Add real logout API (thank @zhaofeng-shu33)
+* v1.0.3
+  * Add real logout API (thank @zhaofeng-shu33)
 
-- v1.0.2
-  - Add API to get IDs of all semesters (thank @jiegec)
+* v1.0.2
+  * Add API to get IDs of all semesters (thank @jiegec)
 
-- v1.0.1
-  - Expose CookieJar in helper class
-  - Fix some HTML entity decoding problems
-  - __Rename of some APIs__ (break compatibility before we have actual users)
+* v1.0.1
+  * Expose CookieJar in helper class
+  * Fix some HTML entity decoding problems
+  * __Rename of some APIs__ (break compatibility before we have actual users)
 
-- v1.0.0
-  - First release
-  - Support parsing of notification, homework, file, discussion and __answered__ questions
+* v1.0.0
+  * First release
+  * Support parsing of notification, homework, file, discussion and __answered__ questions
   
 ## Projects using this library
 
-- [Harry-Chen/Learn Project](https://github.com/Harry-Chen/Learn-Project)
-- [jiegec/clone-learn-tsinghua](https://github.com/jiegec/clone-learn-tsinghua)
-- [robertying/learnX](https://github.com/robertying/learnX) (customized fork)
-- [Konano/thu-weblearn-tgbot](https://github.com/Konano/thu-weblearn-tgbot)
+* [Harry-Chen/Learn Project](https://github.com/Harry-Chen/Learn-Project)
+* [jiegec/clone-learn-tsinghua](https://github.com/jiegec/clone-learn-tsinghua)
+* [robertying/learnX](https://github.com/robertying/learnX) (customized fork)
+* [Konano/thu-weblearn-tgbot](https://github.com/Konano/thu-weblearn-tgbot)

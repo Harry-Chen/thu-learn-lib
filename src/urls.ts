@@ -62,11 +62,11 @@ export const LEARN_FILE_LIST = (courseID: string, courseType: CourseType) => {
   }
 };
 
-export const LEARN_FILE_DOWNLOAD = (fileID: string, courseType: CourseType, courseID?: string) => {
+export const LEARN_FILE_DOWNLOAD = (fileID: string, courseType: CourseType, courseID: string) => {
   if (courseType == CourseType.STUDENT) {
     return `${LEARN_PREFIX}/b/wlxt/kj/wlkc_kjxxb/student/downloadFile?sfgk=0&wjid=${fileID}`;
   } else {
-    return `${LEARN_PREFIX}/f/wlxt/kj/wlkc_kjxxb/teacher/beforeView?id=${fileID}&wlkcid=${courseID!}`;
+    return `${LEARN_PREFIX}/f/wlxt/kj/wlkc_kjxxb/teacher/beforeView?id=${fileID}&wlkcid=${courseID}`;
   }
 };
 

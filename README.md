@@ -126,6 +126,10 @@ It's ok if you meet `Timeout * Async callback was not invoked within the 5000ms 
 
 ## Changelog
 
+* v1.2.1
+  * Support TA version of many APIs (see above for usage)
+  * Fix some wrong URLs in fetched data
+
 * v1.2.0
   * Support getting course calendars from academic.tsinghua.edu.cn (thanks to robertying)
   * Automatic retry logging in when fetching failed and `CredentialProvider` is provided (thanks to mayeths)

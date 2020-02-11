@@ -234,7 +234,7 @@ export class Learn2018Helper {
     return notifications;
   }
 
-  public async getFileList(courseID: string, courseType: CourseType): Promise<File[]> {
+  public async getFileList(courseID: string, courseType: CourseType = CourseType.STUDENT): Promise<File[]> {
     const json = await (await this.myFetch(URL.LEARN_FILE_LIST(courseID, courseType))).json();
     if (json.result !== 'success') {
       return [];
@@ -374,7 +374,7 @@ export class Learn2018Helper {
     const response = await this.myFetch(URL.LEARN_NOTIFICATION_DETAIL(courseID, id, courseType));
     const result = $(await response.text());
     let path = '';
-    if (courseType == CourseType.STUDENT) {
+    if (courseType === CourseType.STUDENT) {
       path = result('.ml-10').attr('href')!;
     } else {
       path = result('#wjid').attr('href')!;

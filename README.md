@@ -126,6 +126,9 @@ It's ok if you meet `Timeout * Async callback was not invoked within the 5000ms 
 
 ## Changelog
 
+* v1.2.2
+  * Fix a function signature to keep compatibility
+
 * v1.2.1
   * Support TA version of many APIs (see above for usage)
   * Fix some wrong URLs in fetched data

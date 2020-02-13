@@ -13,7 +13,9 @@ This project is licensed under MIT License.
 
 The library uses `cross-fetch` and `real-isomorphic-fetch`, which provides cookie and redirection support in both browsers and JS engines (like node).
 
-I don't like polyfill. In case of any problems, just upgrade your browser / Node.
+I don't like polyfill. In case of any syntax problems, just upgrade your browser / Node.
+
+Version 2.0.0 breaks `login` and `logout` API compatibility, which do not return a promise any more.
 
 ## Installation
 
@@ -62,13 +64,17 @@ const helper = new Learn2018Helper({provider: () => {return {username: 'xxx', pa
 
 
 // If you do not provide a cookie jar or CredentialProvider, you must log in manually. Otherwise you do not need to call login explicitly.
-const loginSuccess = await helper.login('user', 'pass');
+try {
+    await helper.login('user', 'pass');
+} catch (e) {
+    // e is a FailReason
+}
 
 // You can also take out cookies (e.g. for file download), which will not work in browsers.
 console.log(helper.cookieJar);
 
 // Logout if you want, but the cookie jar will not be cleared.
-const logoutSuccess = await helper.logout();
+await helper.logout();
 ```
 
 ### Content related
@@ -116,7 +122,7 @@ According to security strategies (CORS, CORB) of browsers, you might need to run
 
 ## Typing
 
-See `lib/types.d.ts` for type definitions.
+See `lib/types.d.ts` for type definitions. Note that `FailReason` represents all strings that will be used as the reason of rejected Promises.
 
 ## Testing
 
@@ -125,6 +131,11 @@ Run `yarn test` for testing. It requires your personal credential since we don't
 It's ok if you meet `Timeout * Async callback was not invoked within the 5000ms timeout...` error when running tests, rerun tests may resolve this problem. If you hate this, just add the third argument `timeout` to every testcase `it("should...", async () => void, timeout)` and make sure it's greater than 5000.
 
 ## Changelog
+
+* v2.0.0
+  * Use ES2018 in generated library
+  * Add `FailReason` to represent all strings that will be used as the reason of rejected Promises
+  * `login` and `logout` no longer return Promises
 
 * v1.2.2
   * Fix a function signature to keep compatibility

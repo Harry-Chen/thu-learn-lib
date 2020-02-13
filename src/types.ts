@@ -6,6 +6,15 @@ export type HelperConfig = {
   cookieJar?: any;
 };
 
+export enum FailReason {
+  NO_CREDENTIAL = 'no credential provided',
+  ERROR_FETCH_FROM_ID = 'could not fetch ticket from id.tsinghua.edu.cn',
+  BAD_CREDENTIAL = 'bad credential',
+  ERROR_ROAMING = 'could not roam to learn.tsinghua.edu.cn',
+  NOT_LOGGED_IN = 'not logged in or login timeout',
+  NOT_IMPLEMENTED = 'not implemented'
+}
+
 export enum SemesterType {
   FALL = '秋季学期',
   SPRING = '春季学期',

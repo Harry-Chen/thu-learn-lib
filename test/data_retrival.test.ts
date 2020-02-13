@@ -1,5 +1,6 @@
 import { Learn2018Helper } from "../src"
 import * as dotenv from "dotenv"
+import { FailReason, CourseType } from "../src/types";
 
 dotenv.config({ path: "test/.env" })
 const U = process.env.U!;  // username
@@ -7,38 +8,15 @@ const P = process.env.P!;  // password
 //                     ^ note the exclamation mark here
 // prevent TS2322: Type 'string | undefined' is not assignable to type 'string'.
 
-describe('helper login & logout', () => {
 
-  it("should login & logout correctly if account is right", async () => {
-    const helper = new Learn2018Helper();
-    const login_ok = await helper.login(U, P);
-    expect(login_ok).toEqual(true);
-    const logout_ok = await helper.logout();
-    expect(logout_ok).toEqual(true);
-  })
-
-  it("should failed to login if account is incorrect", async () => {
-    const helper = new Learn2018Helper();
-    const login_ok = await helper.login("nouser", "nopass");
-    expect(login_ok).toEqual(false);
-  })
-
-  it("should throw error if hasn't login", async () => {
-    const helper = new Learn2018Helper();
-    await expect(helper.getSemesterIdList()).rejects.toThrow();
-  })
-})
-
-
-describe('helper basic function', () => {
+describe('helper data retrival', () => {
   let helper: Learn2018Helper;
   let semesterTester: string;
   let courseTester: string;
 
   beforeAll(async () => {
     const _h = new Learn2018Helper();
-    const login_ok = await _h.login(U, P);
-    expect(login_ok).toEqual(true);
+    await _h.login(U, P);
     const currSemester = await _h.getCurrentSemester();
     const courses = await _h.getCourseList(currSemester.id);
     expect(courses.length).toBeGreaterThan(0);
@@ -73,6 +51,10 @@ describe('helper basic function', () => {
     const courses = await helper.getCourseList(semesterTester);
     expect(courses.length).toBeGreaterThan(0);
     expect(courses[0].id).toEqual(courseTester);
+  })
+
+  it("should throw on unimplemented functionality", async () => {
+    await expect(helper.getHomeworkList(courseTester, CourseType.TEACHER)).rejects.toEqual(FailReason.NOT_IMPLEMENTED);
   })
 
   it("should get TAcourses correctly", async () => {

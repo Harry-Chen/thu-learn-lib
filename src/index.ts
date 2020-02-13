@@ -13,6 +13,7 @@ import {
   CourseContent,
   CourseInfo,
   Discussion,
+  FailReason,
   File,
   Homework,
   IDiscussionBase,
@@ -39,31 +40,41 @@ const $ = (html: string) => {
   return cheerio.load(html, CHEERIO_CONFIG);
 };
 
+const noLogin = (url: string) => url.includes('login_timeout');
+
 export class Learn2018Helper {
   public readonly cookieJar: any;
   private readonly provider?: CredentialProvider;
   private readonly rawFetch: Fetch;
   private readonly myFetch: Fetch;
 
+
   constructor(config?: HelperConfig) {
     this.cookieJar = config?.cookieJar ?? new tough.CookieJar();
     this.provider = config?.provider;
     this.rawFetch = new IsomorphicFetch(fetch, this.cookieJar);
-    this.myFetch = this.provider ? this.withReAuth(this.rawFetch) : this.rawFetch;
+    this.myFetch = this.provider ? this.withReAuth(this.rawFetch) : async (...args) => {
+      const result = await this.rawFetch(...args);
+      if (noLogin(result.url)) return Promise.reject(FailReason.NOT_LOGGED_IN);
+      return result;
+    }
   }
 
   private withReAuth(rawFetch: Fetch): Fetch {
-    const login = this.login.bind(this); // avoid `this` change inside arrow function
+    
+    const login = this.login.bind(this);
     return async function wrappedFetch(...args) {
-      const noLogin = (url: string) => url.includes('login_timeout');
-      const retryAfterLogin = async () => await login().then(() => rawFetch(...args));
+      const retryAfterLogin = async () => {
+        await login();
+        return await rawFetch(...args);
+      }
       return await rawFetch(...args).then(res => (noLogin(res.url) ? retryAfterLogin() : res));
     };
   }
 
-  public async login(username?: string, password?: string): Promise<boolean> {
+  public async login(username?: string, password?: string) {
     if (!username || !password) {
-      if (!this.provider) throw new Error('No credential provided');
+      if (!this.provider) return Promise.reject(FailReason.NO_CREDENTIAL);
       const credential = await this.provider();
       username = credential.username;
       password = credential.password;
@@ -73,20 +84,24 @@ export class Learn2018Helper {
       method: 'POST',
     });
     if (!ticketResponse.ok) {
-      throw new Error('Error fetching ticket from id.tsinghua.edu.cn');
+      return Promise.reject(FailReason.ERROR_FETCH_FROM_ID);
     }
+    // check response from id.tsinghua.edu.cn
     const ticketResult = await ticketResponse.text();
     const body = $(ticketResult);
     const targetURL = body('a').attr('href') as string;
     const ticket = targetURL.split('=').slice(-1)[0];
-
+    if (ticket === 'BAD_CREDENTIALS') {
+      return Promise.reject(FailReason.BAD_CREDENTIAL);
+    }
     const loginResponse = await this.rawFetch(URL.LEARN_AUTH_ROAM(ticket));
-    return loginResponse.ok;
+    if (loginResponse.ok !== true) {
+      return Promise.reject(FailReason.ERROR_ROAMING);
+    };
   }
 
   public async logout() {
     await this.rawFetch(URL.LEARN_LOGOUT(), { method: 'POST' });
-    return true;
   }
 
   public async getCalendar(startDate: string, endDate: string): Promise<CalendarEvent[]> {
@@ -273,7 +288,7 @@ export class Learn2018Helper {
 
   public async getHomeworkList(courseID: string, courseType: CourseType = CourseType.STUDENT): Promise<Homework[]> {
     if (courseType === CourseType.TEACHER) {
-      throw Error('not implemented');
+      return Promise.reject(FailReason.NOT_IMPLEMENTED);
     }
 
     const allHomework: Homework[] = [];

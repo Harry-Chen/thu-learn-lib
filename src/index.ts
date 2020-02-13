@@ -48,26 +48,26 @@ export class Learn2018Helper {
   private readonly rawFetch: Fetch;
   private readonly myFetch: Fetch;
 
-
   constructor(config?: HelperConfig) {
     this.cookieJar = config?.cookieJar ?? new tough.CookieJar();
     this.provider = config?.provider;
     this.rawFetch = new IsomorphicFetch(fetch, this.cookieJar);
-    this.myFetch = this.provider ? this.withReAuth(this.rawFetch) : async (...args) => {
-      const result = await this.rawFetch(...args);
-      if (noLogin(result.url)) return Promise.reject(FailReason.NOT_LOGGED_IN);
-      return result;
-    }
+    this.myFetch = this.provider
+      ? this.withReAuth(this.rawFetch)
+      : async (...args) => {
+          const result = await this.rawFetch(...args);
+          if (noLogin(result.url)) return Promise.reject(FailReason.NOT_LOGGED_IN);
+          return result;
+        };
   }
 
   private withReAuth(rawFetch: Fetch): Fetch {
-    
     const login = this.login.bind(this);
     return async function wrappedFetch(...args) {
       const retryAfterLogin = async () => {
         await login();
         return await rawFetch(...args);
-      }
+      };
       return await rawFetch(...args).then(res => (noLogin(res.url) ? retryAfterLogin() : res));
     };
   }
@@ -97,7 +97,7 @@ export class Learn2018Helper {
     const loginResponse = await this.rawFetch(URL.LEARN_AUTH_ROAM(ticket));
     if (loginResponse.ok !== true) {
       return Promise.reject(FailReason.ERROR_ROAMING);
-    };
+    }
   }
 
   public async logout() {

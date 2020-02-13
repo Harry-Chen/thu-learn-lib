@@ -12,7 +12,7 @@ export enum FailReason {
   BAD_CREDENTIAL = 'bad credential',
   ERROR_ROAMING = 'could not roam to learn.tsinghua.edu.cn',
   NOT_LOGGED_IN = 'not logged in or login timeout',
-  NOT_IMPLEMENTED = 'not implemented'
+  NOT_IMPLEMENTED = 'not implemented',
 }
 
 export enum SemesterType {

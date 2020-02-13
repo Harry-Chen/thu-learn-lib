@@ -1,7 +1,7 @@
 {
 	"name" : "thu-learn-lib-test",
 	"version":"0.0.1",
-	"minimum_chrome_version" : "51",
+	"minimum_chrome_version" : "72",
 	"manifest_version" : 2,
 	"description":"清华大学网络学堂2018爬虫测试",
 	"content_scripts":[

@@ -176,6 +176,6 @@ export const REGISTRAR_AUTH = (ticket: string) => {
   return `${REGISTRAR_PREFIX}/j_acegi_login.do?url=/&ticket=${ticket}`;
 };
 
-export const REGISTRAR_CALENDAR = (startDate: string, endDate: string) => {
-  return `${REGISTRAR_PREFIX}/jxmh_out.do?m=bks_jxrl_all&p_start_date=${startDate}&p_end_date=${endDate}&jsoncallback=no_such_method`;
+export const REGISTRAR_CALENDAR = (startDate: string, endDate: string, callbackName: string = 'unknown') => {
+  return `${REGISTRAR_PREFIX}/jxmh_out.do?m=bks_jxrl_all&p_start_date=${startDate}&p_end_date=${endDate}&jsoncallback=${callbackName}`;
 };

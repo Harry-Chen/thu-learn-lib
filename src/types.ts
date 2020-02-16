@@ -13,6 +13,7 @@ export enum FailReason {
   ERROR_ROAMING = 'could not roam to learn.tsinghua.edu.cn',
   NOT_LOGGED_IN = 'not logged in or login timeout',
   NOT_IMPLEMENTED = 'not implemented',
+  INVALID_RESPONSE = 'invalid response',
 }
 
 export enum SemesterType {
@@ -81,8 +82,10 @@ export type Notification = INotification & INotificationDetail;
 
 interface IFile {
   id: string;
-  rawSize: number; // in byte
-  size: string; // like '1M'
+  /** size in byte */
+  rawSize: number;
+  /** inaccurate size description (like '1M') */
+  size: string;
   title: string;
   description: string;
   uploadTime: Date;
@@ -111,7 +114,8 @@ export interface IHomework extends IHomeworkStatus {
   submitTime?: Date;
   submittedAttachmentUrl?: string;
   grade?: number;
-  gradeLevel?: string; // some homework has levels but not grades, like A/B/.../F
+  /** some homework has levels but not grades, like A/B/.../F */
+  gradeLevel?: string;
   gradeTime?: Date;
   graderName?: string;
   gradeContent?: string;

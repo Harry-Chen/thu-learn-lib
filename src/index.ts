@@ -109,13 +109,13 @@ export class Learn2018Helper {
   }
 
   /**
-   * Get calendar items during the specified period (in yyyymmdd format).  
-   * @param startDate start date (inclusive)  
-   * @param endDate end date (inclusive)  
-   * If the API returns any error, this function will throw `FailReason.INVALID_RESPONSE`, 
+   * Get calendar items during the specified period (in yyyymmdd format).
+   * @param startDate start date (inclusive)
+   * @param endDate end date (inclusive)
+   * If the API returns any error, this function will throw `FailReason.INVALID_RESPONSE`,
    * and we currently observe a limit of no more that 29 days.
    * Otherwise it will return the parsed data (might be empty if the period is too far away from now)
-  */
+   */
   public async getCalendar(startDate: string, endDate: string): Promise<CalendarEvent[]> {
     const ticketResponse = await this.myFetch(URL.REGISTRAR_TICKET(), {
       method: 'POST',
@@ -197,10 +197,10 @@ export class Learn2018Helper {
     return courses;
   }
 
-  /** 
-   * Get certain type of content of all specified courses.  
+  /**
+   * Get certain type of content of all specified courses.
    * It actually wraps around other `getXXX` functions
-  */
+   */
   public async getAllContents(
     courseIDs: string[],
     type: ContentType,
@@ -352,7 +352,7 @@ export class Learn2018Helper {
   }
 
   /**
-   * Get all notifications （课程答疑） of the specified course.  
+   * Get all notifications （课程答疑） of the specified course.
    * The student version supports only answered questions, while the teacher version supports all questions.
    */
   public async getAnsweredQuestionList(

@@ -137,6 +137,9 @@ It's ok if you meet `Timeout * Async callback was not invoked within the 5000ms 
 
 ## Changelog
 
+* v2.1.2
+  * Fix problem in invoking JSONP callback (because some engines might do JIT)
+
 * v2.1.1
   * Remove usage of `eval` in `getCalendar`
 

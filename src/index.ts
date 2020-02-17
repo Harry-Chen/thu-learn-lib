@@ -143,7 +143,6 @@ export class Learn2018Helper {
       date: i.nq,
       courseName: i.nr,
     }));
-
   }
 
   public async getSemesterIdList(): Promise<string[]> {

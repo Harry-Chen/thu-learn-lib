@@ -58,7 +58,6 @@ export function mapGradeToLevel(grade: number | null): string | undefined {
   }
 }
 
-
 export const JSONP_EXTRACTOR_NAME = 'thu_learn_lib_jsonp_extractor';
 
 export function extractJSONPResult(jsonp: string): any {

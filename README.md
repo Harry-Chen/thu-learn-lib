@@ -137,6 +137,9 @@ It's ok if you meet `Timeout * Async callback was not invoked within the 5000ms 
 
 ## Changelog
 
+* v2.1.1
+  * Remove usage of `eval` in `getCalendar`
+
 * v2.1.0
   * Catch errors returned by calendar API and throw user-defined error
   * Add documentation for all public APIs

@@ -72,17 +72,17 @@ describe('helper data retrival', () => {
     expect((await helper.getFileList(courseTester)).length).toBeGreaterThanOrEqual(0);
     expect((await helper.getAnsweredQuestionList(courseTester)).length).toBeGreaterThanOrEqual(0);
     if (courseTATester !== undefined) {
-      await expect((await helper.getHomeworkList(courseTATester, CourseType.TEACHER))).rejects.toThrow(FailReason.NOT_IMPLEMENTED);
       expect((await helper.getDiscussionList(courseTATester, CourseType.TEACHER)).length).toBeGreaterThanOrEqual(0);
       expect((await helper.getNotificationList(courseTATester, CourseType.TEACHER)).length).toBeGreaterThanOrEqual(0);
       expect((await helper.getFileList(courseTATester, CourseType.TEACHER)).length).toBeGreaterThanOrEqual(0);
       expect((await helper.getAnsweredQuestionList(courseTATester, CourseType.TEACHER)).length).toBeGreaterThanOrEqual(0);
+      await expect(helper.getHomeworkList(courseTATester, CourseType.TEACHER)).rejects.toEqual(FailReason.NOT_IMPLEMENTED);
     }
   })
 
-  it("should get calendar items correctly", async () => {
-    expect((await helper.getCalendar('20200216', '20200228')).length).toBeGreaterThanOrEqual(0);
-    await expect((await helper.getCalendar('gg', 'GG'))).rejects.toThrow(FailReason.INVALID_RESPONSE);
+  it("should get calendar items correctly and throw on invalid response", async () => {
+    expect((await helper.getCalendar('20200217', '20200228')).length).toBeGreaterThanOrEqual(0);
+    await expect(helper.getCalendar('gg', 'GG')).rejects.toEqual(FailReason.INVALID_RESPONSE);
   })
 
 

@@ -148,7 +148,9 @@ export class Learn2018Helper {
     if (!calendarJSONP.startsWith(extractData.name)) {
       return Promise.reject(FailReason.INVALID_RESPONSE);
     }
-    return eval(calendarJSONP);
+
+    // define the extract function and evaluate the jsonp with the function
+    return Function(`"use strict";const ${extractData.name}=${extractData.toString()};return ${calendarJSONP};`)();
   }
 
   public async getSemesterIdList(): Promise<string[]> {

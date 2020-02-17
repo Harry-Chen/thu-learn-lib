@@ -1,6 +1,6 @@
 import { decodeHTML } from 'entities';
 
-import { SemesterType } from './types';
+import { SemesterType, FailReason } from './types';
 
 export function parseSemesterType(n: number): SemesterType {
   if (n === 1) {
@@ -56,4 +56,16 @@ export function mapGradeToLevel(grade: number | null): string | undefined {
   } else {
     return undefined;
   }
+}
+
+
+export const JSONP_EXTRACTOR_NAME = 'thu_learn_lib_jsonp_extractor';
+
+export function extractJSONPResult(jsonp: string): any {
+  // check jsonp format
+  if (!jsonp.startsWith(JSONP_EXTRACTOR_NAME)) {
+    throw FailReason.INVALID_RESPONSE;
+  }
+  // evaluate the result
+  return Function(`"use strict";const ${JSONP_EXTRACTOR_NAME}=(s)=>s;return ${jsonp};`)();
 }

@@ -27,7 +27,7 @@ import {
   CourseType,
   CalendarEvent,
 } from './types';
-import { mapGradeToLevel, parseSemesterType, trimAndDefine } from './utils';
+import { mapGradeToLevel, parseSemesterType, trimAndDefine, JSONP_EXTRACTOR_NAME, extractJSONPResult } from './utils';
 
 const IsomorphicFetch = require('real-isomorphic-fetch');
 const tough = require('tough-cookie-no-native');
@@ -127,30 +127,23 @@ export class Learn2018Helper {
 
     await this.myFetch(URL.REGISTRAR_AUTH(ticket));
 
-    const extractData = (raw: any[]) =>
-      raw.map<CalendarEvent>(i => ({
-        location: i.dd,
-        status: i.fl,
-        startTime: i.kssj,
-        endTime: i.jssj,
-        date: i.nq,
-        courseName: i.nr,
-      }));
-
-    const response = await this.myFetch(URL.REGISTRAR_CALENDAR(startDate, endDate, extractData.name));
+    const response = await this.myFetch(URL.REGISTRAR_CALENDAR(startDate, endDate, JSONP_EXTRACTOR_NAME));
 
     if (!response.ok) {
       return Promise.reject(FailReason.INVALID_RESPONSE);
     }
 
-    let calendarJSONP = (await response.text()) as string;
+    const result = extractJSONPResult(await response.text()) as any[];
 
-    if (!calendarJSONP.startsWith(extractData.name)) {
-      return Promise.reject(FailReason.INVALID_RESPONSE);
-    }
+    return result.map<CalendarEvent>(i => ({
+      location: i.dd,
+      status: i.fl,
+      startTime: i.kssj,
+      endTime: i.jssj,
+      date: i.nq,
+      courseName: i.nr,
+    }));
 
-    // define the extract function and evaluate the jsonp with the function
-    return Function(`"use strict";const ${extractData.name}=${extractData.toString()};return ${calendarJSONP};`)();
   }
 
   public async getSemesterIdList(): Promise<string[]> {

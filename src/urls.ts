@@ -70,9 +70,11 @@ export const LEARN_FILE_DOWNLOAD = (fileID: string, courseType: CourseType, cour
   }
 };
 
-export const LEARN_FILE_PREVIEW = (fileID: string, courseType: CourseType, firstPageOnly: bool) => {
-  return `${LEARN_PREFIX}/f/wlxt/kc/wj_wjb/${courseType}/beforePlay?wjid=${fileID}&mk=mk_kcwj&browser=-1&pageType=${firstPageOnly ? 'first' : 'all'}`;
-}
+export const LEARN_FILE_PREVIEW = (fileID: string, courseType: CourseType, firstPageOnly: boolean) => {
+  return `${LEARN_PREFIX}/f/wlxt/kc/wj_wjb/${courseType}/beforePlay?wjid=${fileID}&mk=mk_kcwj&browser=-1&pageType=${
+    firstPageOnly ? 'first' : 'all'
+  }`;
+};
 
 export const LEARN_NOTIFICATION_LIST = (courseID: string, courseType: CourseType) => {
   if (courseType === CourseType.STUDENT) {

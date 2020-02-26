@@ -89,7 +89,10 @@ interface IFile {
   title: string;
   description: string;
   uploadTime: Date;
+  /** for teachers, this url will not initiate download directly */
   downloadUrl: string;
+  /** preview is not supported on all types of files, check before use */
+  previewUrl: string;
   isNew: boolean;
   markedImportant: boolean;
   visitCount: number;

@@ -1,5 +1,4 @@
 import * as cheerio from 'cheerio';
-import { decodeHTML } from 'entities';
 import { Base64 } from 'js-base64';
 
 import fetch from 'cross-fetch';
@@ -27,7 +26,7 @@ import {
   CourseType,
   CalendarEvent,
 } from './types';
-import { mapGradeToLevel, parseSemesterType, trimAndDefine, JSONP_EXTRACTOR_NAME, extractJSONPResult } from './utils';
+import { decodeHTML, mapGradeToLevel, parseSemesterType, trimAndDefine, JSONP_EXTRACTOR_NAME, extractJSONPResult } from './utils';
 
 const IsomorphicFetch = require('real-isomorphic-fetch');
 const tough = require('tough-cookie-no-native');
@@ -44,7 +43,7 @@ const noLogin = (url: string) => url.includes('login_timeout');
 
 /** the main helper class */
 export class Learn2018Helper {
-  
+
   readonly #provider?: CredentialProvider;
   readonly #rawFetch: Fetch;
   readonly #myFetch: Fetch;

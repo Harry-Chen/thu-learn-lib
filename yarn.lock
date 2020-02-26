@@ -5118,7 +5118,7 @@ typedarray@^0.0.6:
   resolved "https://registry.npm.taobao.org/typedarray/download/typedarray-0.0.6.tgz#867ac74e3864187b1d3d47d996a78ec5c8830777"
   integrity sha1-hnrHTjhkGHsdPUfZlqeOxciDB3c=
 
-typescript@^3.7.5:
+typescript@^3.8.2:
   version "3.8.2"
   resolved "https://registry.npm.taobao.org/typescript/download/typescript-3.8.2.tgz#91d6868aaead7da74f493c553aeff76c0c0b1d5a"
   integrity sha1-kdaGiq6tfadPSTxVOu/3bAwLHVo=

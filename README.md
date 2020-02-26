@@ -137,6 +137,9 @@ It's ok if you meet `Timeout * Async callback was not invoked within the 5000ms 
 
 ## Changelog
 
+* v2.2.1
+  * Fix a missing parameter in `previewUrl`
+
 * v2.2.0
   * Use ECMAScript private fields in `Learn2018Helper` class to protect credentials
   * Add `previewUrl` to `File`

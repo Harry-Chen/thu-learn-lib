@@ -137,6 +137,11 @@ It's ok if you meet `Timeout * Async callback was not invoked within the 5000ms 
 
 ## Changelog
 
+* v2.2.0
+  * Use ECMAScript private fields in `Learn2018Helper` class to protect credentials
+  * Add `previewUrl` to `File`
+  * Upgrade to TypeScript 3.8.2
+
 * v2.1.2
   * Fix problem in invoking JSONP callback (because some engines might do JIT)
 

@@ -21,6 +21,8 @@ export function decodeHTML(html: string): string {
     ? text.substr(5)
     : text.startsWith('\x9E\xE9\x65')
     ? text.substr(3)
+    : text.startsWith('\xE9\x65')
+    ? text.substr(2)
     : text;
 }
 

@@ -26,7 +26,14 @@ import {
   CourseType,
   CalendarEvent,
 } from './types';
-import { decodeHTML, mapGradeToLevel, parseSemesterType, trimAndDefine, JSONP_EXTRACTOR_NAME, extractJSONPResult } from './utils';
+import {
+  decodeHTML,
+  mapGradeToLevel,
+  parseSemesterType,
+  trimAndDefine,
+  JSONP_EXTRACTOR_NAME,
+  extractJSONPResult,
+} from './utils';
 
 const IsomorphicFetch = require('real-isomorphic-fetch');
 const tough = require('tough-cookie-no-native');
@@ -43,7 +50,6 @@ const noLogin = (url: string) => url.includes('login_timeout');
 
 /** the main helper class */
 export class Learn2018Helper {
-
   readonly #provider?: CredentialProvider;
   readonly #rawFetch: Fetch;
   readonly #myFetch: Fetch;
@@ -55,9 +61,9 @@ export class Learn2018Helper {
         await login();
         return await rawFetch(...args);
       };
-      return await rawFetch(...args).then(res => (noLogin(res.url) ? retryAfterLogin() : res));
+      return await rawFetch(...args).then((res) => (noLogin(res.url) ? retryAfterLogin() : res));
     };
-  }
+  };
 
   public readonly cookieJar: any;
 
@@ -136,7 +142,7 @@ export class Learn2018Helper {
 
     const result = extractJSONPResult(await response.text()) as any[];
 
-    return result.map<CalendarEvent>(i => ({
+    return result.map<CalendarEvent>((i) => ({
       location: i.dd,
       status: i.fl,
       startTime: i.kssj,
@@ -150,7 +156,7 @@ export class Learn2018Helper {
     const response = await this.#myFetch(URL.LEARN_SEMESTER_LIST());
     const semesters = (await response.json()) as string[];
     // sometimes web learning returns null, so confusing...
-    return semesters.filter(s => s != null);
+    return semesters.filter((s) => s != null);
   }
 
   public async getCurrentSemester(): Promise<SemesterInfo> {
@@ -173,7 +179,7 @@ export class Learn2018Helper {
     const courses: CourseInfo[] = [];
 
     await Promise.all(
-      result.map(async c => {
+      result.map(async (c) => {
         courses.push({
           id: c.wlkcid,
           name: c.kcm,
@@ -223,7 +229,7 @@ export class Learn2018Helper {
     const contents: CourseContent = {};
 
     await Promise.all(
-      courseIDs.map(async id => {
+      courseIDs.map(async (id) => {
         contents[id] = await fetchFunc.bind(this)(id, courseType);
       }),
     );
@@ -245,7 +251,7 @@ export class Learn2018Helper {
     const notifications: Notification[] = [];
 
     await Promise.all(
-      result.map(async n => {
+      result.map(async (n) => {
         const notification: INotification = {
           id: n.ggid,
           content: decodeHTML(Base64.decode(n.ggnr)),
@@ -285,7 +291,7 @@ export class Learn2018Helper {
     const files: File[] = [];
 
     await Promise.all(
-      result.map(async f => {
+      result.map(async (f) => {
         files.push({
           id: f.wjid,
           title: decodeHTML(f.bt),
@@ -316,7 +322,7 @@ export class Learn2018Helper {
     const allHomework: Homework[] = [];
 
     await Promise.all(
-      URL.LEARN_HOMEWORK_LIST_SOURCE(courseID).map(async s => {
+      URL.LEARN_HOMEWORK_LIST_SOURCE(courseID).map(async (s) => {
         const homeworks = await this.getHomeworkListAtUrl(s.url, s.status);
         allHomework.push(...homeworks);
       }),
@@ -335,7 +341,7 @@ export class Learn2018Helper {
     const discussions: Discussion[] = [];
 
     await Promise.all(
-      result.map(async d => {
+      result.map(async (d) => {
         discussions.push({
           ...this.parseDiscussionBase(d),
           boardId: d.bqid,
@@ -363,7 +369,7 @@ export class Learn2018Helper {
     const questions: Question[] = [];
 
     await Promise.all(
-      result.map(async q => {
+      result.map(async (q) => {
         questions.push({
           ...this.parseDiscussionBase(q),
           question: Base64.decode(q.wtnr),
@@ -384,7 +390,7 @@ export class Learn2018Helper {
     const homeworks: Homework[] = [];
 
     await Promise.all(
-      result.map(async h => {
+      result.map(async (h) => {
         homeworks.push({
           id: h.zyid,
           studentHomeworkId: h.xszyid,
@@ -431,21 +437,9 @@ export class Learn2018Helper {
     const fileDivs = result('div.list.fujian.clearfix');
 
     return {
-      description: trimAndDefine(
-        result('div.list.calendar.clearfix>div.fl.right>div.c55')
-          .slice(0, 1)
-          .html(),
-      ),
-      answerContent: trimAndDefine(
-        result('div.list.calendar.clearfix>div.fl.right>div.c55')
-          .slice(1, 2)
-          .html(),
-      ),
-      submittedContent: trimAndDefine(
-        cheerio('div.right', result('div.boxbox').slice(1, 2))
-          .slice(2, 3)
-          .html(),
-      ),
+      description: trimAndDefine(result('div.list.calendar.clearfix>div.fl.right>div.c55').slice(0, 1).html()),
+      answerContent: trimAndDefine(result('div.list.calendar.clearfix>div.fl.right>div.c55').slice(1, 2).html()),
+      submittedContent: trimAndDefine(cheerio('div.right', result('div.boxbox').slice(1, 2)).slice(2, 3).html()),
       ...this.parseHomeworkFile(fileDivs[0], 'attachmentName', 'attachmentUrl'),
       ...this.parseHomeworkFile(fileDivs[1], 'answerAttachmentName', 'answerAttachmentUrl'),
       ...this.parseHomeworkFile(fileDivs[2], 'submittedAttachmentName', 'submittedAttachmentUrl'),

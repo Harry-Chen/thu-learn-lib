@@ -187,9 +187,9 @@ export class Learn2018Helper {
           timeAndLocation: await (await this.#myFetch(URL.LEARN_COURSE_TIME_LOCATION(c.wlkcid))).json(),
           url: URL.LEARN_COURSE_URL(c.wlkcid, courseType),
           teacherName: c.jsm ?? '', // teacher can not fetch this
-          teacherNumber: c.jsh,
-          courseNumber: c.kch,
-          courseIndex: c.kxh,
+          teacherNumber: Number(c.jsh),
+          courseNumber: Number(c.kch),
+          courseIndex: Number(c.kxh),
           courseType,
         });
       }),
@@ -254,17 +254,18 @@ export class Learn2018Helper {
       result.map(async (n) => {
         const notification: INotification = {
           id: n.ggid,
-          content: decodeHTML(Base64.decode(n.ggnr)),
+          content: decodeHTML(Base64.decode(n.ggnr ?? '')),
           title: decodeHTML(n.bt),
           url: URL.LEARN_NOTIFICATION_DETAIL(courseID, n.ggid, courseType),
           publisher: n.fbrxm,
           hasRead: n.sfyd === '是',
-          markedImportant: n.sfqd === '1',
+          markedImportant: Number(n.sfqd) === 1,
           publishTime: new Date(n.fbsjStr),
         };
         let detail: INotificationDetail = {};
-        if (n.fjmc !== null) {
-          notification.attachmentName = n.fjmc;
+        let attachmentName = n.fjmc ?? n.fjbt;
+        if (attachmentName !== null) {
+          notification.attachmentName = attachmentName;
           detail = await this.parseNotificationDetail(courseID, notification.id, courseType);
         }
         notifications.push({ ...notification, ...detail });

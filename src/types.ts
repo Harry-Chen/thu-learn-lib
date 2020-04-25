@@ -54,8 +54,8 @@ interface ICourseInfo {
   timeAndLocation: string[];
   url: string;
   teacherName: string;
-  teacherNumber: string;
-  courseNumber: string;
+  teacherNumber: number;
+  courseNumber: number;
   courseIndex: number;
   courseType: CourseType;
 }

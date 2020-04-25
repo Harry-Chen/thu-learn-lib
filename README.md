@@ -137,6 +137,9 @@ It's ok if you meet `Timeout * Async callback was not invoked within the 5000ms 
 
 ## Changelog
 
+* v2.2.3
+  * Add workaround for some strange behaviors in teacher mode (thanks to @MashPlant)
+
 * v2.2.2
   * Return error when API return any non-success result
 

@@ -189,7 +189,7 @@ export class Learn2018Helper {
           teacherName: c.jsm ?? '', // teacher can not fetch this
           teacherNumber: c.jsh,
           courseNumber: c.kch,
-          courseIndex: Number(c.kxh),
+          courseIndex: Number(c.kxh), // c.kxh could be string (teacher mode) or number (student mode)
           courseType,
         });
       }),
@@ -259,11 +259,11 @@ export class Learn2018Helper {
           url: URL.LEARN_NOTIFICATION_DETAIL(courseID, n.ggid, courseType),
           publisher: n.fbrxm,
           hasRead: n.sfyd === '是',
-          markedImportant: Number(n.sfqd) === 1,
+          markedImportant: Number(n.sfqd) === 1, // n.sfqd could be string '1' (teacher mode) or number 1 (student mode)
           publishTime: new Date(n.fbsjStr),
         };
         let detail: INotificationDetail = {};
-        let attachmentName = courseType === CourseType.STUDENT ? n.fjmc : n.fjbt;
+        const attachmentName = courseType === CourseType.STUDENT ? n.fjmc : n.fjbt;
         if (attachmentName !== null) {
           notification.attachmentName = attachmentName;
           detail = await this.parseNotificationDetail(courseID, notification.id, courseType);

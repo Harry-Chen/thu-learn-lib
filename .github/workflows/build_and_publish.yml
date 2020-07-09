@@ -14,7 +14,7 @@ jobs:
             - name: Install dependencies
               run: yarn install --frozen-lockfile
             - name: Build library
-              name: yarn build
+              run: yarn build
             - name: Upload build result
               uses: actions/upload-artifact@v2
               with:

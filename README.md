@@ -1,5 +1,6 @@
 # thu-learn-lib
 
+[![Build and Publish](https://github.com/Harry-Chen/thu-learn-lib/workflows/Build%20and%20Publish/badge.svg?event=push)](https://github.com/Harry-Chen/thu-learn-lib/actions?query=workflow%3A%22Build+and+Publish%22)
 [![Github version](https://img.shields.io/github/package-json/v/Harry-Chen/thu-learn-lib)](https://github.com/Harry-Chen/thu-learn-lib)
 [![npm version](https://img.shields.io/npm/v/thu-learn-lib)](https://www.npmjs.com/package/thu-learn-lib)
 ![npm size](https://img.shields.io/bundlephobia/min/thu-learn-lib)

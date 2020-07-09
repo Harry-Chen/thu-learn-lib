@@ -50,6 +50,6 @@ jobs:
                 registry-url: 'https://npm.pkg.github.com'
 
             - name: Publish to GitHub Package Registry
-            - run: yarn publish
+              run: yarn publish
               env:
                 NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}

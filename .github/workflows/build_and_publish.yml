@@ -1,0 +1,55 @@
+name: Build and Publish
+
+on: [push, pull_request]
+
+jobs:
+    build:
+        runs-on: ubuntu-latest
+        if: "!contains(github.event.head_commit.message, 'ci skip')"
+        steps:
+            - uses: actions/checkout@v2
+            - uses: actions/setup-node@v2-beta
+              with:
+                node-version: '12'
+            - name: Install dependencies
+              run: yarn install --frozen-lockfile
+            - name: Build library
+              name: yarn build
+            - name: Upload build result
+              uses: actions/upload-artifact@v2
+              with:
+                name: thu-learn-lib
+                path: lib/
+
+    publish:
+        needs: build
+        runs-on: ubuntu-latest
+        if: {{ github.ref == 'ref/head/v*' }}
+        steps:
+            - uses: actions/checkout@v2
+
+            - name: Download build result
+              uses: actions/download-artifact@v2
+              with:
+                name: thu-learn-lib
+
+            - uses: actions/setup-node@v2-beta
+              with:
+                node-version: '12'
+                registry-url: 'https://registry.npmjs.org'
+
+            - name: Publish to NPM
+              run: yarn publish
+              env:
+                NODE_AUTH_TOKEN: ${{ secrets.NPM_PUBLISH_TOKEN }}
+                 
+
+            - uses: actions/setup-node@v2-beta
+                with:
+                  node-version: '12'
+                  registry-url: 'https://npm.pkg.github.com'
+
+            - name: Publish to GitHub Package Registry
+            - run: yarn publish
+              env:
+                NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}

@@ -45,9 +45,9 @@ jobs:
                  
 
             - uses: actions/setup-node@v2-beta
-                with:
-                  node-version: '12'
-                  registry-url: 'https://npm.pkg.github.com'
+              with:
+                node-version: '12'
+                registry-url: 'https://npm.pkg.github.com'
 
             - name: Publish to GitHub Package Registry
             - run: yarn publish

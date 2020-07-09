@@ -24,7 +24,7 @@ jobs:
     publish:
         needs: build
         runs-on: ubuntu-latest
-        if: {{ github.ref == 'ref/head/v*' }}
+        if: "contains(github.ref, 'ref/head/v')"
         steps:
             - uses: actions/checkout@v2
 

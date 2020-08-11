@@ -1,4 +1,4 @@
-export type Fetch = <Args extends any[], Data extends any>(...args: Args) => Promise<Data>;
+export type Fetch = <Args extends any[]>(...args: Args) => Promise<any>;
 export type Credential = { username: string; password: string };
 export type CredentialProvider = () => Credential | Promise<Credential>;
 export type HelperConfig = {

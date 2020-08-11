@@ -59,7 +59,7 @@ export class Learn2018Helper {
     return async function wrappedFetch(...args) {
       const retryAfterLogin = async () => {
         await login();
-        return await rawFetch(...args);
+        return await rawFetch(...args).then((res) => (noLogin(res.url) ? Promise.reject(FailReason.NOT_LOGGED_IN) : res));
       };
       return await rawFetch(...args).then((res) => (noLogin(res.url) ? retryAfterLogin() : res));
     };

@@ -27,15 +27,15 @@
   },
   "devDependencies": {
     "@types/cheerio": "^0.22.15",
-    "@types/firefox-webext-browser": "^70.0.1",
-    "@types/jest": "^25.1.2",
-    "@types/js-base64": "^2.3.1",
+    "@types/firefox-webext-browser": "^78.0.1",
+    "@types/jest": "^26.0.9",
+    "@types/js-base64": "^3.0.0",
     "dotenv": "^8.2.0",
     "html-webpack-plugin": "^4.2.0",
-    "jest": "^25.1.0",
+    "jest": "^26.3.0",
     "prettier": "^2.0.5",
-    "ts-jest": "^25.2.0",
-    "ts-loader": "^7.0.1",
+    "ts-jest": "^26.2.0",
+    "ts-loader": "^8.0.2",
     "tslint": "^6.0.0",
     "tslint-config-prettier": "^1.17.0",
     "typescript": "^3.8.2",
@@ -48,7 +48,7 @@
     "entities": "^2.0.0",
     "es6-denodeify": "^0.1.5",
     "form-data": "^3.0.0",
-    "js-base64": "^2.5.2",
+    "js-base64": "^3.4.5",
     "real-isomorphic-fetch": "^3.0.0"
   }
 }

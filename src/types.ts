@@ -16,6 +16,11 @@ export enum FailReason {
   INVALID_RESPONSE = 'invalid response',
 }
 
+export interface ApiError {
+  reason: FailReason,
+  extra?: any
+}
+
 export enum SemesterType {
   FALL = '秋季学期',
   SPRING = '春季学期',

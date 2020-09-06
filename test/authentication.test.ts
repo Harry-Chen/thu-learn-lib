@@ -18,13 +18,13 @@ describe('helper authentication', () => {
 
   it("should failed to login if account is incorrect", async () => {
     const helper = new Learn2018Helper();
-    await expect(helper.login("nouser", "nopass")).rejects.toEqual(FailReason.BAD_CREDENTIAL);
+    await expect(helper.login("nouser", "nopass")).rejects.toHaveProperty('reason', FailReason.BAD_CREDENTIAL);
   })
 
   it("should throw error if hasn't login and not provide up config", async () => {
     const helper = new Learn2018Helper();
-    await expect(helper.login()).rejects.toEqual(FailReason.NO_CREDENTIAL);
-    await expect(helper.getSemesterIdList()).rejects.toEqual(FailReason.NOT_LOGGED_IN);
+    await expect(helper.login()).rejects.toHaveProperty('reason', FailReason.NO_CREDENTIAL);
+    await expect(helper.getSemesterIdList()).rejects.toHaveProperty('reason', FailReason.NOT_LOGGED_IN);
   })
 
   it("should not throw error if manually invoke login()", async () => {

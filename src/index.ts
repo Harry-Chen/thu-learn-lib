@@ -25,6 +25,7 @@ import {
   SemesterInfo,
   CourseType,
   CalendarEvent,
+  ApiError,
 } from './types';
 import {
   decodeHTML,
@@ -76,7 +77,9 @@ export class Learn2018Helper {
       ? this.#withReAuth(this.#rawFetch)
       : async (...args) => {
           const result = await this.#rawFetch(...args);
-          if (noLogin(result.url)) return Promise.reject(FailReason.NOT_LOGGED_IN);
+          if (noLogin(result.url)) return Promise.reject({
+            reason: FailReason.NOT_LOGGED_IN
+          } as ApiError);
           return result;
         };
   }
@@ -84,7 +87,9 @@ export class Learn2018Helper {
   /** login is necessary if you do not provide a `CredentialProvider` */
   public async login(username?: string, password?: string) {
     if (!username || !password) {
-      if (!this.#provider) return Promise.reject(FailReason.NO_CREDENTIAL);
+      if (!this.#provider) return Promise.reject({
+        reason: FailReason.NO_CREDENTIAL
+      } as ApiError);
       const credential = await this.#provider();
       username = credential.username;
       password = credential.password;
@@ -94,7 +99,9 @@ export class Learn2018Helper {
       method: 'POST',
     });
     if (!ticketResponse.ok) {
-      return Promise.reject(FailReason.ERROR_FETCH_FROM_ID);
+      return Promise.reject({
+        reason: FailReason.ERROR_FETCH_FROM_ID
+      } as ApiError);
     }
     // check response from id.tsinghua.edu.cn
     const ticketResult = await ticketResponse.text();
@@ -102,11 +109,15 @@ export class Learn2018Helper {
     const targetURL = body('a').attr('href') as string;
     const ticket = targetURL.split('=').slice(-1)[0];
     if (ticket === 'BAD_CREDENTIALS') {
-      return Promise.reject(FailReason.BAD_CREDENTIAL);
+      return Promise.reject({
+        reason: FailReason.BAD_CREDENTIAL
+      } as ApiError);
     }
     const loginResponse = await this.#rawFetch(URL.LEARN_AUTH_ROAM(ticket));
     if (loginResponse.ok !== true) {
-      return Promise.reject(FailReason.ERROR_ROAMING);
+      return Promise.reject({
+        reason: FailReason.ERROR_ROAMING
+      } as ApiError);
     }
   }
 
@@ -137,7 +148,9 @@ export class Learn2018Helper {
     const response = await this.#myFetch(URL.REGISTRAR_CALENDAR(startDate, endDate, graduate, JSONP_EXTRACTOR_NAME));
 
     if (!response.ok) {
-      return Promise.reject(FailReason.INVALID_RESPONSE);
+      return Promise.reject({
+        reason: FailReason.INVALID_RESPONSE
+      } as ApiError);
     }
 
     const result = extractJSONPResult(await response.text()) as any[];
@@ -153,15 +166,27 @@ export class Learn2018Helper {
   }
 
   public async getSemesterIdList(): Promise<string[]> {
-    const response = await this.#myFetch(URL.LEARN_SEMESTER_LIST());
-    const semesters = (await response.json()) as string[];
+    const json = await (await this.#myFetch(URL.LEARN_SEMESTER_LIST())).json();
+    if (!Array.isArray(json)) {
+      return Promise.reject({
+        reason: FailReason.INVALID_RESPONSE,
+        extra: json
+      } as ApiError);
+    }
+    const semesters = json as string[];
     // sometimes web learning returns null, so confusing...
     return semesters.filter((s) => s != null);
   }
 
   public async getCurrentSemester(): Promise<SemesterInfo> {
-    const response = await this.#myFetch(URL.LEARN_CURRENT_SEMESTER());
-    const result = (await response.json()).result;
+    const json = await (await this.#myFetch(URL.LEARN_CURRENT_SEMESTER())).json();
+    if (json.message != 'success') {
+      return Promise.reject({
+        reason: FailReason.INVALID_RESPONSE,
+        extra: json
+      } as ApiError);
+    }
+    const result = json.result;
     return {
       id: result.id,
       startDate: new Date(result.kssj),
@@ -174,8 +199,14 @@ export class Learn2018Helper {
 
   /** get all courses in the specified semester */
   public async getCourseList(semesterID: string, courseType: CourseType = CourseType.STUDENT): Promise<CourseInfo[]> {
-    const response = await this.#myFetch(URL.LEARN_COURSE_LIST(semesterID, courseType));
-    const result = (await response.json()).resultList as any[];
+    const json = await (await this.#myFetch(URL.LEARN_COURSE_LIST(semesterID, courseType))).json();
+    if (json.message !== 'success' || !Array.isArray(json.resultList)) {
+      return Promise.reject({
+        reason: FailReason.INVALID_RESPONSE,
+        extra: json
+      } as ApiError);
+    }
+    const result = json.resultList as any[];
     const courses: CourseInfo[] = [];
 
     await Promise.all(
@@ -243,8 +274,11 @@ export class Learn2018Helper {
     courseType: CourseType = CourseType.STUDENT,
   ): Promise<Notification[]> {
     let json = await (await this.#myFetch(URL.LEARN_NOTIFICATION_LIST(courseID, courseType))).json();
-    if (json.result !== 'success' || json.msg !== null) {
-      return Promise.reject(FailReason.INVALID_RESPONSE);
+    if (json.result !== 'success') {
+      return Promise.reject({
+        reason: FailReason.INVALID_RESPONSE,
+        extra: json
+      } as ApiError);
     }
 
     const result = (json.object.aaData ?? json.object.resultsList) as any[];
@@ -278,8 +312,11 @@ export class Learn2018Helper {
   /** Get all files （课程文件） of the specified course. */
   public async getFileList(courseID: string, courseType: CourseType = CourseType.STUDENT): Promise<File[]> {
     const json = await (await this.#myFetch(URL.LEARN_FILE_LIST(courseID, courseType))).json();
-    if (json.result !== 'success' || json.msg !== null) {
-      return Promise.reject(FailReason.INVALID_RESPONSE);
+    if (json.result !== 'success') {
+      return Promise.reject({
+        reason: FailReason.INVALID_RESPONSE,
+        extra: json
+      } as ApiError);
     }
     let result: any[];
     if (json.object?.resultsList) {
@@ -317,7 +354,10 @@ export class Learn2018Helper {
   /** Get all homeworks （课程作业） of the specified course (support student version only). */
   public async getHomeworkList(courseID: string, courseType: CourseType = CourseType.STUDENT): Promise<Homework[]> {
     if (courseType === CourseType.TEACHER) {
-      return Promise.reject(FailReason.NOT_IMPLEMENTED);
+      return Promise.reject({
+        reason: FailReason.NOT_IMPLEMENTED,
+        extra: 'currently getting homework list of TA courses is not supported'
+      } as ApiError);
     }
 
     const allHomework: Homework[] = [];
@@ -335,8 +375,11 @@ export class Learn2018Helper {
   /** Get all discussions （课程讨论） of the specified course. */
   public async getDiscussionList(courseID: string, courseType: CourseType = CourseType.STUDENT): Promise<Discussion[]> {
     const json = await (await this.#myFetch(URL.LEARN_DISCUSSION_LIST(courseID, courseType))).json();
-    if (json.result !== 'success' || json.msg !== null) {
-      return Promise.reject(FailReason.INVALID_RESPONSE);
+    if (json.result !== 'success') {
+      return Promise.reject({
+        reason: FailReason.INVALID_RESPONSE,
+        extra: json
+      } as ApiError);
     }
     const result = json.object.resultsList as any[];
     const discussions: Discussion[] = [];
@@ -363,8 +406,11 @@ export class Learn2018Helper {
     courseType: CourseType = CourseType.STUDENT,
   ): Promise<Question[]> {
     const json = await (await this.#myFetch(URL.LEARN_QUESTION_LIST_ANSWERED(courseID, courseType))).json();
-    if (json.result !== 'success' || json.msg !== null) {
-      return Promise.reject(FailReason.INVALID_RESPONSE);
+    if (json.result !== 'success') {
+      return Promise.reject({
+        reason: FailReason.INVALID_RESPONSE,
+        extra: json
+      } as ApiError);
     }
     const result = json.object.resultsList as any[];
     const questions: Question[] = [];
@@ -384,8 +430,11 @@ export class Learn2018Helper {
 
   private async getHomeworkListAtUrl(url: string, status: IHomeworkStatus): Promise<Homework[]> {
     const json = await (await this.#myFetch(url)).json();
-    if (json.result !== 'success' || json.msg !== null) {
-      return Promise.reject(FailReason.INVALID_RESPONSE);
+    if (json.result !== 'success') {
+      return Promise.reject({
+        reason: FailReason.INVALID_RESPONSE,
+        extra: json
+      } as ApiError);
     }
     const result = json.object.aaData as any[];
     const homeworks: Homework[] = [];

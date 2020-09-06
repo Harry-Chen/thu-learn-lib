@@ -91,7 +91,7 @@ We do not maintain a global type in `Learn2018Helper` class, for there can be th
 Note that currently fetching homework information from teacher version is **not yet implemented**.
 
 ```typescript
-import { ContentType } from 'thu-learn-lib/lib/types'
+import { ContentType, ApiError } from 'thu-learn-lib/lib/types'
 
 // get ids of all semesters that current account has access to
 const semesters = await helper.getSemesterIdList();
@@ -119,7 +119,8 @@ const homeworks = await helper.getAllContents([1, 2, 3], ContentType.HOMEWORK);
 try {
     const calendar = await helper.getCalendar('20191001', '20191201');
 } catch (e) {
-    // if calendar API returns error, FailReason.INVALID_RESPONSE will be thrown here
+    const error = e as ApiError;
+    // check e.reason and e.extra for information
     // you might want to check your date format or shrink the range (currently we observe a limit of 29 days)
 }
 ```
@@ -128,7 +129,7 @@ According to security strategies (CORS, CORB) of browsers, you might need to run
 
 ## Typing
 
-See `lib/types.d.ts` for type definitions. Note that `FailReason` represents all strings that will be used as the reason of rejected Promises.
+See `lib/types.d.ts` for type definitions. Note that `ApiError` represents the type that will be used in rejected Promises.
 
 ## Testing
 
@@ -137,6 +138,9 @@ Run `yarn test` for testing. It requires your personal credential since we don't
 It's ok if you meet `Timeout * Async callback was not invoked within the 5000ms timeout...` error when running tests, rerun tests may resolve this problem. If you hate this, just add the third argument `timeout` to every testcase `it("should...", async () => void, timeout)` and make sure it's greater than 5000.
 
 ## Changelog
+
+* v2.3.0
+  * Refine error detecting & handling by using `ApiError` in usage of `Promise.reject` (might be a breaking change)
 
 * v2.2.3
   * Add workaround for some strange behaviors in teacher mode (thanks to @MashPlant)

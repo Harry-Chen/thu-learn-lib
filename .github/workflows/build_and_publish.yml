@@ -15,6 +15,8 @@ jobs:
               run: yarn install --frozen-lockfile
             - name: Build library
               run: yarn build
+            - name: Show files to publish
+              run: npm publish --dry-run
             - name: Upload build result
               uses: actions/upload-artifact@v2
               with:

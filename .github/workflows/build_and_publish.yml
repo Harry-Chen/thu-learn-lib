@@ -21,7 +21,14 @@ jobs:
               uses: actions/upload-artifact@v2
               with:
                 name: thu-learn-lib
-                path: lib/
+                path: lib
+            - name: Download build result
+              id: download
+              uses: actions/download-artifact@v2
+              with:
+                name: thu-learn-lib
+            - run: ls -R
+            - run: ${{steps.download.outputs.download-path}}
 
     publish:
         needs: build
@@ -34,6 +41,8 @@ jobs:
               uses: actions/download-artifact@v2
               with:
                 name: thu-learn-lib
+
+            - run: ls -alh lib/
 
             - uses: actions/setup-node@v2-beta
               with:

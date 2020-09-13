@@ -139,8 +139,8 @@ It's ok if you meet `Timeout * Async callback was not invoked within the 5000ms 
 
 ## Changelog
 
-* v2.3.1
-  * Fix a problem in `v2.3.0` that build output fails to be uploaded to npm
+* v2.3.2
+  * Fix a problem in `v2.3.1` (not published) and `v2.3.0` that build output fails to be uploaded to npm
 
 * v2.3.0
   * Refine error detecting & handling by using `ApiError` in usage of `Promise.reject` (might be a breaking change)

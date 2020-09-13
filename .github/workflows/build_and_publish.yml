@@ -27,17 +27,15 @@ jobs:
         if: "startsWith(github.ref, 'refs/tags/v')"
         steps:
             - uses: actions/checkout@v2
-
-            - name: Download build result
-              uses: actions/download-artifact@v2
-              with:
-                name: thu-learn-lib
-
             - uses: actions/setup-node@v2-beta
               with:
                 node-version: '12'
                 registry-url: 'https://registry.npmjs.org'
 
+            - name: Install dependencies
+              run: yarn install --frozen-lockfile
+            - name: Build library
+              run: yarn build
             - name: Publish to NPM
               run: yarn publish
               env:
@@ -48,7 +46,6 @@ jobs:
               with:
                 node-version: '12'
                 registry-url: 'https://npm.pkg.github.com'
-
             - name: Publish to GitHub Package Registry
               run: yarn publish
               env:

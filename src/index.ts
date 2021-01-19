@@ -184,7 +184,7 @@ export class Learn2018Helper {
 
   public async getCurrentSemester(): Promise<SemesterInfo> {
     const json = await (await this.#myFetch(URL.LEARN_CURRENT_SEMESTER())).json();
-    if (json.message != 'success') {
+    if (json.message !== 'success') {
       return Promise.reject({
         reason: FailReason.INVALID_RESPONSE,
         extra: json,
@@ -277,7 +277,7 @@ export class Learn2018Helper {
     courseID: string,
     courseType: CourseType = CourseType.STUDENT,
   ): Promise<Notification[]> {
-    let json = await (await this.#myFetch(URL.LEARN_NOTIFICATION_LIST(courseID, courseType))).json();
+    const json = await (await this.#myFetch(URL.LEARN_NOTIFICATION_LIST(courseID, courseType))).json();
     if (json.result !== 'success') {
       return Promise.reject({
         reason: FailReason.INVALID_RESPONSE,

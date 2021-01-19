@@ -139,6 +139,10 @@ It's ok if you meet `Timeout * Async callback was not invoked within the 5000ms 
 
 ## Changelog
 
+* v2.4.0
+  * Upgrade to TypeScript 4.1 & Webpack 5.15
+  * Add more null checking for disabled functionalities (see [xxr3376/Learn-Project#90](https://github.com/xxr3376/Learn-Project/issues/90))
+
 * v2.3.2
   * Fix a problem in `v2.3.1` (not published) and `v2.3.0` that build output fails to be uploaded to npm
 
@@ -267,3 +271,4 @@ It's ok if you meet `Timeout * Async callback was not invoked within the 5000ms 
 * [jiegec/clone-learn-tsinghua](https://github.com/jiegec/clone-learn-tsinghua)
 * [robertying/learnX](https://github.com/robertying/learnX) (customized fork)
 * [Konano/thu-weblearn-tgbot](https://github.com/Konano/thu-weblearn-tgbot)
+* [Starrah/THUCourseHelper](https://github.com/Starrah/THUCourseHelper)

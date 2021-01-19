@@ -43,7 +43,7 @@ describe('helper data retrival', () => {
     for (const semester of semesters) {
       expect(typeof semester).toBe("string");
     }
-    expect(semesters[0]).toEqual(semesterTester);
+    expect(semesters).toContain(semesterTester);
   })
 
   it("should get currentSemester correctly", async () => {

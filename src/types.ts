@@ -17,8 +17,8 @@ export enum FailReason {
 }
 
 export interface ApiError {
-  reason: FailReason,
-  extra?: any
+  reason: FailReason;
+  extra?: any;
 }
 
 export enum SemesterType {

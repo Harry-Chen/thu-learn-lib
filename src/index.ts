@@ -60,7 +60,9 @@ export class Learn2018Helper {
     return async function wrappedFetch(...args) {
       const retryAfterLogin = async () => {
         await login();
-        return await rawFetch(...args).then((res) => (noLogin(res.url) ? Promise.reject(FailReason.NOT_LOGGED_IN) : res));
+        return await rawFetch(...args).then((res) =>
+          noLogin(res.url) ? Promise.reject(FailReason.NOT_LOGGED_IN) : res,
+        );
       };
       return await rawFetch(...args).then((res) => (noLogin(res.url) ? retryAfterLogin() : res));
     };
@@ -77,9 +79,10 @@ export class Learn2018Helper {
       ? this.#withReAuth(this.#rawFetch)
       : async (...args) => {
           const result = await this.#rawFetch(...args);
-          if (noLogin(result.url)) return Promise.reject({
-            reason: FailReason.NOT_LOGGED_IN
-          } as ApiError);
+          if (noLogin(result.url))
+            return Promise.reject({
+              reason: FailReason.NOT_LOGGED_IN,
+            } as ApiError);
           return result;
         };
   }
@@ -87,9 +90,10 @@ export class Learn2018Helper {
   /** login is necessary if you do not provide a `CredentialProvider` */
   public async login(username?: string, password?: string) {
     if (!username || !password) {
-      if (!this.#provider) return Promise.reject({
-        reason: FailReason.NO_CREDENTIAL
-      } as ApiError);
+      if (!this.#provider)
+        return Promise.reject({
+          reason: FailReason.NO_CREDENTIAL,
+        } as ApiError);
       const credential = await this.#provider();
       username = credential.username;
       password = credential.password;
@@ -100,7 +104,7 @@ export class Learn2018Helper {
     });
     if (!ticketResponse.ok) {
       return Promise.reject({
-        reason: FailReason.ERROR_FETCH_FROM_ID
+        reason: FailReason.ERROR_FETCH_FROM_ID,
       } as ApiError);
     }
     // check response from id.tsinghua.edu.cn
@@ -110,13 +114,13 @@ export class Learn2018Helper {
     const ticket = targetURL.split('=').slice(-1)[0];
     if (ticket === 'BAD_CREDENTIALS') {
       return Promise.reject({
-        reason: FailReason.BAD_CREDENTIAL
+        reason: FailReason.BAD_CREDENTIAL,
       } as ApiError);
     }
     const loginResponse = await this.#rawFetch(URL.LEARN_AUTH_ROAM(ticket));
     if (loginResponse.ok !== true) {
       return Promise.reject({
-        reason: FailReason.ERROR_ROAMING
+        reason: FailReason.ERROR_ROAMING,
       } as ApiError);
     }
   }
@@ -149,7 +153,7 @@ export class Learn2018Helper {
 
     if (!response.ok) {
       return Promise.reject({
-        reason: FailReason.INVALID_RESPONSE
+        reason: FailReason.INVALID_RESPONSE,
       } as ApiError);
     }
 
@@ -170,7 +174,7 @@ export class Learn2018Helper {
     if (!Array.isArray(json)) {
       return Promise.reject({
         reason: FailReason.INVALID_RESPONSE,
-        extra: json
+        extra: json,
       } as ApiError);
     }
     const semesters = json as string[];
@@ -183,7 +187,7 @@ export class Learn2018Helper {
     if (json.message != 'success') {
       return Promise.reject({
         reason: FailReason.INVALID_RESPONSE,
-        extra: json
+        extra: json,
       } as ApiError);
     }
     const result = json.result;
@@ -203,7 +207,7 @@ export class Learn2018Helper {
     if (json.message !== 'success' || !Array.isArray(json.resultList)) {
       return Promise.reject({
         reason: FailReason.INVALID_RESPONSE,
-        extra: json
+        extra: json,
       } as ApiError);
     }
     const result = (json.resultList ?? []) as any[];
@@ -277,7 +281,7 @@ export class Learn2018Helper {
     if (json.result !== 'success') {
       return Promise.reject({
         reason: FailReason.INVALID_RESPONSE,
-        extra: json
+        extra: json,
       } as ApiError);
     }
 
@@ -315,7 +319,7 @@ export class Learn2018Helper {
     if (json.result !== 'success') {
       return Promise.reject({
         reason: FailReason.INVALID_RESPONSE,
-        extra: json
+        extra: json,
       } as ApiError);
     }
 
@@ -357,7 +361,7 @@ export class Learn2018Helper {
     if (courseType === CourseType.TEACHER) {
       return Promise.reject({
         reason: FailReason.NOT_IMPLEMENTED,
-        extra: 'currently getting homework list of TA courses is not supported'
+        extra: 'currently getting homework list of TA courses is not supported',
       } as ApiError);
     }
 
@@ -379,7 +383,7 @@ export class Learn2018Helper {
     if (json.result !== 'success') {
       return Promise.reject({
         reason: FailReason.INVALID_RESPONSE,
-        extra: json
+        extra: json,
       } as ApiError);
     }
 
@@ -411,7 +415,7 @@ export class Learn2018Helper {
     if (json.result !== 'success') {
       return Promise.reject({
         reason: FailReason.INVALID_RESPONSE,
-        extra: json
+        extra: json,
       } as ApiError);
     }
 
@@ -436,7 +440,7 @@ export class Learn2018Helper {
     if (json.result !== 'success') {
       return Promise.reject({
         reason: FailReason.INVALID_RESPONSE,
-        extra: json
+        extra: json,
       } as ApiError);
     }
 

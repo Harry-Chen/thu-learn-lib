@@ -1,11 +1,10 @@
-import { Learn2018Helper } from "../src"
-import * as dotenv from "dotenv"
-import { FailReason, CourseType, ContentType } from "../src/types";
+import { Learn2018Helper } from '../src';
+import * as dotenv from 'dotenv';
+import { FailReason, CourseType, ContentType } from '../src/types';
 
-dotenv.config({ path: "test/.env" })
-const U = process.env.U!;  // username
-const P = process.env.P!;  // password
-
+dotenv.config({ path: 'test/.env' });
+const U = process.env.U!; // username
+const P = process.env.P!; // password
 
 describe('helper data retrival', () => {
   let helper: Learn2018Helper;
@@ -28,49 +27,49 @@ describe('helper data retrival', () => {
     if (taCourses.length > 0) {
       courseTATester = taCourses[0].id;
     }
-  })
+  });
   beforeAll(async () => {
     helper = new Learn2018Helper();
     await helper.login(U, P);
-  })
+  });
   afterAll(async () => {
     await helper.logout();
-  })
+  });
 
-  it("should get semesterIdList correctly", async () => {
+  it('should get semesterIdList correctly', async () => {
     const semesters = await helper.getSemesterIdList();
     expect(Array.isArray(semesters)).toEqual(true);
     for (const semester of semesters) {
-      expect(typeof semester).toBe("string");
+      expect(typeof semester).toBe('string');
     }
     expect(semesters).toContain(semesterTester);
-  })
+  });
 
-  it("should get currentSemester correctly", async () => {
+  it('should get currentSemester correctly', async () => {
     const currSemester = await helper.getCurrentSemester();
     expect(currSemester).not.toBeUndefined();
     expect(currSemester).not.toBeNull();
     expect(currSemester.id).toEqual(semesterTester);
-  })
+  });
 
-  it("should get courseList correctly", async () => {
+  it('should get courseList correctly', async () => {
     const courses = await helper.getCourseList(semesterTester);
     expect(courses.length).toBeGreaterThanOrEqual(0);
     if (courses.length > 0) {
-      expect(courses.map(c => c.id)).toContain(courseTester);
+      expect(courses.map((c) => c.id)).toContain(courseTester);
     }
-  })
+  });
 
-  it("should get TAcourses correctly", async () => {
+  it('should get TAcourses correctly', async () => {
     const courses = await helper.getCourseList(semesterTester, CourseType.TEACHER);
     expect(courses.length).toBeGreaterThanOrEqual(0);
     if (courses.length > 0) {
-      expect(courses.map(c => c.id)).toContain(courseTATester);
+      expect(courses.map((c) => c.id)).toContain(courseTATester);
     }
-  })
+  });
 
-  it("should get contents (or throw on unimplemented function) correctly", async () => {
-    if (courseTester !== undefined) { 
+  it('should get contents (or throw on unimplemented function) correctly', async () => {
+    if (courseTester !== undefined) {
       expect((await helper.getHomeworkList(courseTester)).length).toBeGreaterThanOrEqual(0);
       expect((await helper.getDiscussionList(courseTester)).length).toBeGreaterThanOrEqual(0);
       expect((await helper.getNotificationList(courseTester)).length).toBeGreaterThanOrEqual(0);
@@ -82,14 +81,15 @@ describe('helper data retrival', () => {
       // expect((await helper.getNotificationList(courseTATester, CourseType.TEACHER)).length).toBeGreaterThanOrEqual(0);
       expect((await helper.getFileList(courseTATester, CourseType.TEACHER)).length).toBeGreaterThanOrEqual(0);
       // expect((await helper.getAnsweredQuestionList(courseTATester, CourseType.TEACHER)).length).toBeGreaterThanOrEqual(0);
-      await expect(helper.getHomeworkList(courseTATester, CourseType.TEACHER)).rejects.toHaveProperty('reason', FailReason.NOT_IMPLEMENTED);
+      await expect(helper.getHomeworkList(courseTATester, CourseType.TEACHER)).rejects.toHaveProperty(
+        'reason',
+        FailReason.NOT_IMPLEMENTED,
+      );
     }
-  })
+  });
 
-  it("should get calendar items correctly and throw on invalid response", async () => {
+  it('should get calendar items correctly and throw on invalid response', async () => {
     expect((await helper.getCalendar('20200217', '20200228')).length).toBeGreaterThanOrEqual(0);
     // await expect(helper.getCalendar('gg', 'GG')).rejects.toHaveProperty('reason', FailReason.INVALID_RESPONSE);
-  })
-
-
-})
+  });
+});

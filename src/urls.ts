@@ -151,7 +151,7 @@ export const LEARN_DISCUSSION_DETAIL = (
   boardID: string,
   discussionID: string,
   courseType: CourseType,
-  tabId: number = 1,
+  tabId = 1,
 ) => {
   return `${LEARN_PREFIX}/f/wlxt/bbs/bbs_tltb/${courseType}/viewTlById?wlkcid=${courseID}&id=${discussionID}&tabbh=${tabId}&bqid=${boardID}`;
 };
@@ -185,8 +185,8 @@ export const REGISTRAR_AUTH = (ticket: string) => {
 export const REGISTRAR_CALENDAR = (
   startDate: string,
   endDate: string,
-  graduate: boolean = false,
-  callbackName: string = 'unknown',
+  graduate = false,
+  callbackName = 'unknown',
 ) => {
   return `${REGISTRAR_PREFIX}/jxmh_out.do?m=${
     graduate ? 'yjs' : 'bks'

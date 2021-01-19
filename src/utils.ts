@@ -64,7 +64,7 @@ const GRADE_LEVEL_MAP = new Map([
 
 export function mapGradeToLevel(grade: number | null): string | undefined {
   if (grade !== null && GRADE_LEVEL_MAP.has(grade)) {
-    return GRADE_LEVEL_MAP.get(grade)!!;
+    return GRADE_LEVEL_MAP.get(grade)!;
   } else {
     return undefined;
   }

@@ -40,6 +40,7 @@ const IsomorphicFetch = require('real-isomorphic-fetch');
 const tough = require('tough-cookie-no-native');
 
 const CHEERIO_CONFIG: cheerio.CheerioParserOptions = {
+  _useHtmlParser2: true,
   decodeEntities: false,
 };
 
@@ -138,7 +139,7 @@ export class Learn2018Helper {
    * and we currently observe a limit of no more that 29 days.
    * Otherwise it will return the parsed data (might be empty if the period is too far away from now)
    */
-  public async getCalendar(startDate: string, endDate: string, graduate: boolean = false): Promise<CalendarEvent[]> {
+  public async getCalendar(startDate: string, endDate: string, graduate = false): Promise<CalendarEvent[]> {
     const ticketResponse = await this.#myFetch(URL.REGISTRAR_TICKET(), {
       method: 'POST',
       body: URL.REGISTRAR_TICKET_FORM_DATA(),

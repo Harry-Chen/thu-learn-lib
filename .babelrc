@@ -1,0 +1,13 @@
+{
+  "plugins": [
+    [
+      "module-resolver",
+      {
+        "alias": {
+            "parse5": "src/fake-parse5/",
+            "parse5-htmlparser2-tree-adapter": "src/fake-parse5/",
+        }
+      }
+    ]
+  ]
+}

@@ -36,6 +36,10 @@ module.exports = {
   },
   resolve: {
     extensions: ['.ts', '.tsx', '.js'],
+    alias: {
+      'parse5': path.resolve(__dirname, 'src/fake-parse5/'),
+      'parse5-htmlparser2-tree-adapter': path.resolve(__dirname, 'src/fake-parse5/'),
+    }
   },
   mode: 'development',
   devtool: 'inline-source-map',

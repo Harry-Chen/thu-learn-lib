@@ -1,4 +1,5 @@
 import { Learn2018Helper } from '../src';
+import { ContentType, CourseType } from '../src/types';
 
 browser.browserAction.onClicked.addListener(() => {
   browser.tabs.create({
@@ -6,4 +7,10 @@ browser.browserAction.onClicked.addListener(() => {
   });
 });
 
-(window as any).Learn2018Helper = Learn2018Helper;
+const helper = {
+  Learn2018Helper,
+  ContentType,
+  CourseType,
+};
+
+(window as any).LearnHelper = helper;

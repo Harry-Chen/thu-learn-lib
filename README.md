@@ -38,7 +38,7 @@ It __should not__ be directly used in browsers.
 
 You can find the bundled version in `dist/`.
 You can install it as an unpacked extension in Chrome and click the `t` icon in extension bar, then execute anything you want in the Console of Chrome Developer Tool.
-The helper class is attached as `window.Learn2018Helper` in this mode.
+The helper class and utility types is attached as `window.LearnHelper` in this mode.
 Or you can just import `index.js` with NodeJS.
 
 Use `yarn run watch-dist` for watching file changes.

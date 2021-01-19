@@ -39,7 +39,7 @@ import {
 const IsomorphicFetch = require('real-isomorphic-fetch');
 const tough = require('tough-cookie-no-native');
 
-const CHEERIO_CONFIG: CheerioOptionsInterface = {
+const CHEERIO_CONFIG: cheerio.CheerioParserOptions = {
   decodeEntities: false,
 };
 
@@ -497,8 +497,8 @@ export class Learn2018Helper {
     };
   }
 
-  private parseHomeworkFile(fileDiv: CheerioElement, nameKey: string, urlKey: string) {
-    const fileNode = cheerio('.ftitle', fileDiv).children('a')[0];
+  private parseHomeworkFile(fileDiv: cheerio.Element, nameKey: string, urlKey: string) {
+    const fileNode = cheerio('.ftitle', fileDiv).children('a')[0] as cheerio.TagElement;
     if (fileNode !== undefined) {
       return {
         [nameKey]: fileNode.children[0].data,

@@ -27,7 +27,7 @@
   },
   "devDependencies": {
     "@types/cheerio": "^0.22.15",
-    "@types/firefox-webext-browser": "^78.0.1",
+    "@types/firefox-webext-browser": "^82.0.0",
     "@types/jest": "^26.0.9",
     "@types/js-base64": "^3.0.0",
     "dotenv": "^8.2.0",

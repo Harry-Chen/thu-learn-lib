@@ -139,6 +139,10 @@ It's ok if you meet `Timeout * Async callback was not invoked within the 5000ms 
 
 ## Changelog
 
+* v2.4.1
+  * Replace `parse5` with `htmlparser2` in Cheerio and remove it from bundled file (replaced with `src/fake-parse5`)
+  * Replace TSLint with ESLint
+
 * v2.4.0
   * Upgrade to TypeScript 4.1 & Webpack 5.15
   * Add more null checking for disabled functionalities (see [xxr3376/Learn-Project#90](https://github.com/xxr3376/Learn-Project/issues/90))

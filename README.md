@@ -139,6 +139,9 @@ It's ok if you meet `Timeout * Async callback was not invoked within the 5000ms 
 
 ## Changelog
 
+* v2.4.2
+  * No functionality change, bump some dependencies to mitigate security concerns
+
 * v2.4.1
   * Replace `parse5` with `htmlparser2` in Cheerio and remove it from bundled file (replaced with `src/fake-parse5`)
   * Replace TSLint with ESLint

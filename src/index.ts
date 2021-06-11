@@ -44,7 +44,8 @@ const CHEERIO_CONFIG: cheerio.CheerioParserOptions = {
   decodeEntities: false,
 };
 
-const $ = (html: string) => {
+const $ = (html: string | cheerio.Element | cheerio.Element[]): cheerio.Root => {
+  // @ts-ignore
   return cheerio.load(html, CHEERIO_CONFIG);
 };
 
@@ -498,7 +499,7 @@ export class Learn2018Helper {
     return {
       description: trimAndDefine(result('div.list.calendar.clearfix>div.fl.right>div.c55').slice(0, 1).html()),
       answerContent: trimAndDefine(result('div.list.calendar.clearfix>div.fl.right>div.c55').slice(1, 2).html()),
-      submittedContent: trimAndDefine(cheerio('div.right', result('div.boxbox').slice(1, 2)).slice(2, 3).html()),
+      submittedContent: trimAndDefine($(result('div.boxbox').slice(1, 2).toArray())('div.right').slice(2, 3).html()),
       ...this.parseHomeworkFile(fileDivs[0], 'attachmentName', 'attachmentUrl'),
       ...this.parseHomeworkFile(fileDivs[1], 'answerAttachmentName', 'answerAttachmentUrl'),
       ...this.parseHomeworkFile(fileDivs[2], 'submittedAttachmentName', 'submittedAttachmentUrl'),
@@ -507,7 +508,7 @@ export class Learn2018Helper {
   }
 
   private parseHomeworkFile(fileDiv: cheerio.Element, nameKey: string, urlKey: string) {
-    const fileNode = cheerio('.ftitle', fileDiv).children('a')[0] as cheerio.TagElement;
+    const fileNode = $(fileDiv)('.ftitle').children('a')[0] as cheerio.TagElement;
     if (fileNode !== undefined) {
       return {
         [nameKey]: fileNode.children[0].data,

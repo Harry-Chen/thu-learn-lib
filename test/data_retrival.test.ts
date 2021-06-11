@@ -89,7 +89,7 @@ describe('helper data retrival', () => {
   });
 
   it('should get calendar items correctly and throw on invalid response', async () => {
-    expect((await helper.getCalendar('20200217', '20200228')).length).toBeGreaterThanOrEqual(0);
+    expect((await helper.getCalendar('20210501', '20210530')).length).toBeGreaterThanOrEqual(0);
     // await expect(helper.getCalendar('gg', 'GG')).rejects.toHaveProperty('reason', FailReason.INVALID_RESPONSE);
   });
 });

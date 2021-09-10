@@ -139,6 +139,9 @@ It's ok if you meet `Timeout * Async callback was not invoked within the 5000ms 
 
 ## Changelog
 
+* v2.5.0
+  * Add transparent support for CSRF token (recently deployed) in all Web Learning APIs
+
 * v2.4.2
   * No functionality change, bump some dependencies to mitigate security concerns
 

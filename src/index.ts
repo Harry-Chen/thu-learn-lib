@@ -61,7 +61,7 @@ export class Learn2018Helper {
       await this.login();
     }
     const [url, ...remaining] = args;
-    let urlStr = url as String;
+    let urlStr = url as string;
     if (urlStr.includes('?')) {
       urlStr += `&_csrf=${this.#csrfToken}`;
     } else {
@@ -69,7 +69,7 @@ export class Learn2018Helper {
     }
     return this.#myFetch(urlStr, ...remaining);
   };
-  #csrfToken: String = '';
+  #csrfToken: string = '';
 
   readonly #withReAuth = (rawFetch: Fetch): Fetch => {
     const login = this.login.bind(this);
@@ -118,7 +118,7 @@ export class Learn2018Helper {
   }
 
   /** login is necessary if you do not provide a `CredentialProvider` */
-  public async login(username?: string, password?: string) {
+  public async login(username?: string, password?: string): Promise<void> {
     if (!username || !password) {
       if (!this.#provider)
         return Promise.reject({
@@ -153,8 +153,8 @@ export class Learn2018Helper {
         reason: FailReason.ERROR_ROAMING,
       } as ApiError);
     }
-    const courseListPageSource: String = await (await this.#rawFetch(URL.LEARN_STUDENT_COURSE_LIST_PAGE())).text();
-    const tokenRegex = /^.*\&\_csrf\=(\S*)\".*$/gm;
+    const courseListPageSource: string = await (await this.#rawFetch(URL.LEARN_STUDENT_COURSE_LIST_PAGE())).text();
+    const tokenRegex = /^.*&_csrf=(\S*)".*$/gm;
     const matches = [...courseListPageSource.matchAll(tokenRegex)];
     if (matches.length == 0) {
       return Promise.reject({
@@ -166,7 +166,7 @@ export class Learn2018Helper {
   }
 
   /**  logout (to make everyone happy) */
-  public async logout() {
+  public async logout(): Promise<void> {
     await this.#rawFetch(URL.LEARN_LOGOUT(), { method: 'POST' });
   }
 

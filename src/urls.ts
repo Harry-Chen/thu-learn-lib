@@ -26,6 +26,10 @@ export const LEARN_LOGOUT = () => {
   return `${LEARN_PREFIX}/f/j_spring_security_logout`;
 };
 
+export const LEARN_STUDENT_COURSE_LIST_PAGE = () => {
+  return `${LEARN_PREFIX}/f/wlxt/index/course/student/`;
+}
+
 export const LEARN_SEMESTER_LIST = () => {
   return `${LEARN_PREFIX}/b/wlxt/kc/v_wlkc_xs_xktjb_coassb/queryxnxq`;
 };

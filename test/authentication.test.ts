@@ -23,7 +23,7 @@ describe('helper authentication', () => {
   it("should throw error if hasn't login and not provide up config", async () => {
     const helper = new Learn2018Helper();
     await expect(helper.login()).rejects.toHaveProperty('reason', FailReason.NO_CREDENTIAL);
-    await expect(helper.getSemesterIdList()).rejects.toHaveProperty('reason', FailReason.NOT_LOGGED_IN);
+    await expect(helper.getSemesterIdList()).rejects.toHaveProperty('reason', FailReason.NO_CREDENTIAL);
   });
 
   it('should not throw error if manually invoke login()', async () => {

@@ -63,13 +63,13 @@ export class Learn2018Helper {
     const [url, ...remaining] = args;
     let urlStr = url as String;
     if (urlStr.includes('?')) {
-      urlStr += `&_csrf=${this.#csrfToken}`; 
+      urlStr += `&_csrf=${this.#csrfToken}`;
     } else {
-      urlStr += `?_csrf=${this.#csrfToken}`; 
+      urlStr += `?_csrf=${this.#csrfToken}`;
     }
     return this.#myFetch(urlStr, ...remaining);
   };
-  #csrfToken: String = "";
+  #csrfToken: String = '';
 
   readonly #withReAuth = (rawFetch: Fetch): Fetch => {
     const login = this.login.bind(this);
@@ -79,14 +79,14 @@ export class Learn2018Helper {
         return await rawFetch(...args).then((res: Response) => {
           if (noLogin(res)) {
             return Promise.reject({
-              reason: FailReason.NOT_LOGGED_IN
+              reason: FailReason.NOT_LOGGED_IN,
             } as ApiError);
           } else if (res.status != 200) {
             return Promise.reject({
               reason: FailReason.UNEXPECTED_STATUS,
               extra: {
                 code: res.status,
-                text: res.statusText
+                text: res.statusText,
               },
             } as ApiError);
           } else {
@@ -159,7 +159,7 @@ export class Learn2018Helper {
     if (matches.length == 0) {
       return Promise.reject({
         reason: FailReason.INVALID_RESPONSE,
-        extra: 'cannot fetch CSRF token from source'
+        extra: 'cannot fetch CSRF token from source',
       } as ApiError);
     }
     this.#csrfToken = matches[0][1];

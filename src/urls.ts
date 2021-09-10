@@ -28,7 +28,7 @@ export const LEARN_LOGOUT = () => {
 
 export const LEARN_STUDENT_COURSE_LIST_PAGE = () => {
   return `${LEARN_PREFIX}/f/wlxt/index/course/student/`;
-}
+};
 
 export const LEARN_SEMESTER_LIST = () => {
   return `${LEARN_PREFIX}/b/wlxt/kc/v_wlkc_xs_xktjb_coassb/queryxnxq`;
@@ -186,12 +186,7 @@ export const REGISTRAR_AUTH = (ticket: string) => {
   return `${REGISTRAR_PREFIX}/j_acegi_login.do?url=/&ticket=${ticket}`;
 };
 
-export const REGISTRAR_CALENDAR = (
-  startDate: string,
-  endDate: string,
-  graduate = false,
-  callbackName = 'unknown',
-) => {
+export const REGISTRAR_CALENDAR = (startDate: string, endDate: string, graduate = false, callbackName = 'unknown') => {
   return `${REGISTRAR_PREFIX}/jxmh_out.do?m=${
     graduate ? 'yjs' : 'bks'
   }_jxrl_all&p_start_date=${startDate}&p_end_date=${endDate}&jsoncallback=${callbackName}`;

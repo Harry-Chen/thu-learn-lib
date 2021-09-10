@@ -14,7 +14,7 @@ export enum FailReason {
   NOT_LOGGED_IN = 'not logged in or login timeout',
   NOT_IMPLEMENTED = 'not implemented',
   INVALID_RESPONSE = 'invalid response',
-  UNEXPECTED_STATUS = 'unexpected status'
+  UNEXPECTED_STATUS = 'unexpected status',
 }
 
 export interface ApiError {

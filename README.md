@@ -12,7 +12,7 @@ This project is licensed under MIT License.
 
 ## Compatibility
 
-The library uses `cross-fetch` and `real-isomorphic-fetch`, which provides cookie and redirection support in both browsers and JS engines (like node).
+The library uses `cross-fetch` and `real-isomorphic-fetch`, which provides cookie and redirection support in both browsers and JS engines (like Node.js).
 
 I don't like polyfill. In case of any syntax problems, just upgrade your browser / Node.
 
@@ -29,17 +29,17 @@ Version 2.0.0 breaks `login` and `logout` API compatibility, which do not return
 `yarn && yarn run build`
 
 You can find the library version in `lib/`.
-It can be used in web development or imported with NodeJS (with all dependencies installed).
+It can be used in web development or imported with NodeJS with ES Module support (with all dependencies installed).
 It __should not__ be directly used in browsers.
 
-### Bundled version (for browsers or Node)
+### Bundled version (for browsers)
 
 `yarn && yarn run build-dist`
 
 You can find the bundled version in `dist/`.
 You can install it as an unpacked extension in Chrome and click the `t` icon in extension bar, then execute anything you want in the Console of Chrome Developer Tool.
 The helper class and utility types is attached as `window.LearnHelper` in this mode.
-Or you can just import `index.js` with NodeJS.
+Or you can just import `index.js` in NodeJS / browsers.
 
 Use `yarn run watch-dist` for watching file changes.
 
@@ -140,7 +140,7 @@ It's ok if you meet `Timeout * Async callback was not invoked within the 5000ms 
 ## Changelog
 
 * v2.5.1
-  * No feature change, add `module` attribute in `packages.json` for node.js users
+  * No feature change, add support for direct `import` in Node.js
 
 * v2.5.0
   * Add transparent support for CSRF token (recently deployed) in all Web Learning APIs

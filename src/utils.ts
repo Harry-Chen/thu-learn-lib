@@ -1,6 +1,6 @@
 import { decodeHTML as _decodeHTML } from 'entities';
 
-import { SemesterType, FailReason } from './types.js';
+import { SemesterType, FailReason } from './types';
 
 export function parseSemesterType(n: number): SemesterType {
   if (n === 1) {

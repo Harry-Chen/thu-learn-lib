@@ -1,18 +1,21 @@
-const path = require('path');
-const HtmlWebpackPlugin = require('html-webpack-plugin');
-const NodePolyfillPlugin = require("node-polyfill-webpack-plugin")
+import { resolve, dirname } from 'path';
+import { fileURLToPath } from 'url';
+import HtmlWebpackPlugin from 'html-webpack-plugin';
+import NodePolyfillPlugin from "node-polyfill-webpack-plugin";
+
+const __dirname = dirname(fileURLToPath(import.meta.url));
 
 const htmlPlugin = new HtmlWebpackPlugin({
   template: './demo/index.html',
   filename: './index.html',
 });
 
-module.exports = {
+export default {
   entry: {
     index: './demo/index.ts',
   },
   output: {
-    path: path.resolve('./dist'),
+    path: resolve('./dist'),
     filename: '[name].js',
   },
   plugins: [
@@ -37,8 +40,8 @@ module.exports = {
   resolve: {
     extensions: ['.ts', '.tsx', '.js'],
     alias: {
-      'parse5': path.resolve(__dirname, 'src/fake-parse5/'),
-      'parse5-htmlparser2-tree-adapter': path.resolve(__dirname, 'src/fake-parse5/'),
+      'parse5': resolve(__dirname, 'src/fake-parse5/'),
+      'parse5-htmlparser2-tree-adapter': resolve(__dirname, 'src/fake-parse5/'),
     }
   },
   mode: 'development',

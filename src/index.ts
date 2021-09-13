@@ -2,7 +2,7 @@ import * as cheerio from 'cheerio';
 import { Base64 } from 'js-base64';
 
 import fetch from 'cross-fetch';
-import * as URL from './urls.js';
+import * as URL from './urls';
 import {
   CredentialProvider,
   Fetch,
@@ -26,7 +26,7 @@ import {
   CourseType,
   CalendarEvent,
   ApiError,
-} from './types.js';
+} from './types';
 import {
   decodeHTML,
   mapGradeToLevel,
@@ -34,7 +34,7 @@ import {
   trimAndDefine,
   JSONP_EXTRACTOR_NAME,
   extractJSONPResult,
-} from './utils.js';
+} from './utils';
 
 // .d.ts files are in types/
 import IsomorphicFetch from 'real-isomorphic-fetch';

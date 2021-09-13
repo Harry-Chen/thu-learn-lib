@@ -139,6 +139,9 @@ It's ok if you meet `Timeout * Async callback was not invoked within the 5000ms 
 
 ## Changelog
 
+* v2.5.1
+  * No feature change, add `module` attribute in `packages.json` for node.js users
+
 * v2.5.0
   * Add transparent support for CSRF token (recently deployed) in all Web Learning APIs
 

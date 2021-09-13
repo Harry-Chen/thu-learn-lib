@@ -4,6 +4,7 @@
   "description": "a JavaScript library to provide a program-friendly interface to Web Learning (2018) of Tsinghua University",
   "main": "lib/index.js",
   "module": "lib/index.js",
+  "type": "module",
   "files": [
     "lib/**/*",
     "src/**/*"

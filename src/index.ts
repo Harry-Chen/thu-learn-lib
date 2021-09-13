@@ -2,7 +2,7 @@ import * as cheerio from 'cheerio';
 import { Base64 } from 'js-base64';
 
 import fetch from 'cross-fetch';
-import * as URL from './urls';
+import * as URL from './urls.js';
 import {
   CredentialProvider,
   Fetch,
@@ -26,7 +26,7 @@ import {
   CourseType,
   CalendarEvent,
   ApiError,
-} from './types';
+} from './types.js';
 import {
   decodeHTML,
   mapGradeToLevel,
@@ -34,11 +34,11 @@ import {
   trimAndDefine,
   JSONP_EXTRACTOR_NAME,
   extractJSONPResult,
-} from './utils';
+} from './utils.js';
 
 // .d.ts files are in types/
-import * as IsomorphicFetch from 'real-isomorphic-fetch';
-import * as tough from 'tough-cookie-no-native';
+import IsomorphicFetch from 'real-isomorphic-fetch';
+import tough from 'tough-cookie-no-native';
 
 const CHEERIO_CONFIG: cheerio.CheerioParserOptions = {
   _useHtmlParser2: true,

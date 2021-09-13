@@ -1,5 +1,5 @@
-import * as FormData from 'form-data';
-import { CourseType } from './types';
+import FormData from 'form-data';
+import { CourseType } from './types.js';
 
 export const LEARN_PREFIX = 'https://learn.tsinghua.edu.cn';
 export const REGISTRAR_PREFIX = 'https://zhjw.cic.tsinghua.edu.cn';

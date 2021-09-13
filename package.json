@@ -10,7 +10,7 @@
     "src/**/*"
   ],
   "scripts": {
-    "build": "tsc",
+    "build": "tsc && sed -i -E \"s/from '(\\.\\/.*)'/from '\\1.js'/g\" lib/*.js",
     "build-dist": "webpack --config webpack.config.js",
     "watch-dist": "webpack -w --config webpack.config.js",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\" \"demo/**/*.ts\"",

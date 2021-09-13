@@ -1,8 +1,9 @@
 {
   "name": "thu-learn-lib",
-  "version": "2.5.0",
+  "version": "2.5.1",
   "description": "a JavaScript library to provide a program-friendly interface to Web Learning (2018) of Tsinghua University",
   "main": "lib/index.js",
+  "module": "lib/index.js",
   "files": [
     "lib/**/*",
     "src/**/*"
@@ -19,7 +20,7 @@
     "tsinghua",
     "learn2018"
   ],
-  "author": "Harry Chen <harry-chen@outlook.com>",
+  "author": "Harry Chen <harry-chen@outlook.com> (https://harrychen.xyz)",
   "license": "MIT",
   "repository": {
     "type": "git",

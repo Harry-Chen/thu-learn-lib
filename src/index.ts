@@ -36,8 +36,9 @@ import {
   extractJSONPResult,
 } from './utils';
 
-const IsomorphicFetch = require('real-isomorphic-fetch');
-const tough = require('tough-cookie-no-native');
+// .d.ts files are in types/
+import * as IsomorphicFetch from 'real-isomorphic-fetch';
+import * as tough from 'tough-cookie-no-native';
 
 const CHEERIO_CONFIG: cheerio.CheerioParserOptions = {
   _useHtmlParser2: true,
@@ -69,7 +70,7 @@ export class Learn2018Helper {
     }
     return this.#myFetch(urlStr, ...remaining);
   };
-  #csrfToken: string = '';
+  #csrfToken = '';
 
   readonly #withReAuth = (rawFetch: Fetch): Fetch => {
     const login = this.login.bind(this);

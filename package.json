@@ -13,8 +13,8 @@
     "build-dist": "webpack --config webpack.config.js",
     "watch-dist": "webpack -w --config webpack.config.js",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\" \"demo/**/*.ts\"",
-    "lint": "eslint . --ext .js,.ts",
-    "test": "jest"
+    "lint": "eslint --ext .ts 'src/**'",
+    "test": "jest --config jest.config.json"
   },
   "keywords": [
     "tsinghua",

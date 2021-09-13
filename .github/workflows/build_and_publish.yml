@@ -23,7 +23,7 @@ jobs:
                 name: thu-learn-lib
                 path: lib/
             - name: Build bundled
-              run: yarn dist-build
+              run: yarn build-dist
             - name: Upload bundle
               uses: actions/upload-artifact@v2
               with:

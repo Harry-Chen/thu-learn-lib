@@ -2,7 +2,7 @@ import { resolve, dirname } from 'path';
 import { fileURLToPath } from 'url';
 import HtmlWebpackPlugin from 'html-webpack-plugin';
 import CopyPlugin from 'copy-webpack-plugin';
-import NodePolyfillPlugin from "node-polyfill-webpack-plugin";
+import NodePolyfillPlugin from 'node-polyfill-webpack-plugin';
 import RemovePlugin from 'remove-files-webpack-plugin';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
@@ -13,19 +13,13 @@ const htmlPlugin = new HtmlWebpackPlugin({
 });
 
 const copyPolyFill = new CopyPlugin({
-  patterns: [
-    { from: './node_modules/webextension-polyfill/dist/browser-polyfill.min.js', to: './' },
-  ],
+  patterns: [{ from: './node_modules/webextension-polyfill/dist/browser-polyfill.min.js', to: './' }],
 });
 
 const removeRedundantFile = new RemovePlugin({
   // remove output dist files
   before: {
-    include: [
-      './dist/index.html',
-      './dist/browser-polyfill.min.js',
-      './dist/index.js',
-    ],
+    include: ['./dist/index.html', './dist/browser-polyfill.min.js', './dist/index.js'],
   },
   // remove .d.ts files produced by Webpack to source directories
   after: {
@@ -41,12 +35,7 @@ export default {
     path: resolve('./dist'),
     filename: '[name].js',
   },
-  plugins: [
-    new NodePolyfillPlugin(),
-    htmlPlugin,
-    copyPolyFill,
-    removeRedundantFile,
-  ],
+  plugins: [new NodePolyfillPlugin(), htmlPlugin, copyPolyFill, removeRedundantFile],
   devServer: {
     contentBase: './dist',
     headers: {
@@ -65,9 +54,9 @@ export default {
   resolve: {
     extensions: ['.ts', '.tsx', '.js'],
     alias: {
-      'parse5': resolve(__dirname, 'src/fake-parse5/'),
+      parse5: resolve(__dirname, 'src/fake-parse5/'),
       'parse5-htmlparser2-tree-adapter': resolve(__dirname, 'src/fake-parse5/'),
-    }
+    },
   },
   mode: 'development',
   devtool: 'inline-source-map',

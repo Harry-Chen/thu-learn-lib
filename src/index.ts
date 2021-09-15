@@ -285,12 +285,13 @@ export class Learn2018Helper {
 
   /**
    * Get certain type of content of all specified courses.
-   * It actually wraps around other `getXXX` functions
+   * It actually wraps around other `getXXX` functions. You can ignore the failure caused by certain courses.
    */
   public async getAllContents(
     courseIDs: string[],
     type: ContentType,
     courseType: CourseType = CourseType.STUDENT,
+    allowFailure: boolean = false,
   ): Promise<CourseContent> {
     let fetchFunc: (courseID: string, courseType: CourseType) => Promise<Content[]>;
     switch (type) {
@@ -313,11 +314,24 @@ export class Learn2018Helper {
 
     const contents: CourseContent = {};
 
-    await Promise.all(
+    const results = await Promise.allSettled(
       courseIDs.map(async (id) => {
         contents[id] = await fetchFunc.bind(this)(id, courseType);
       }),
     );
+
+    if (!allowFailure) {
+      for (const r of results) {
+        if (r.status == 'rejected') {
+          return Promise.reject({
+            reason: FailReason.INVALID_RESPONSE,
+            extra: {
+              reason: r.reason
+            }
+          } as ApiError);
+        }
+      }
+    }
 
     return contents;
   }

@@ -139,6 +139,9 @@ It's ok if you meet `Timeout * Async callback was not invoked within the 5000ms 
 
 ## Changelog
 
+* v2.5.3
+  * Add `allowFailure` in `allowFailure` for convenience
+
 * v2.5.2
   * Allow retrieving CSRF token via `getCSRFToken` method
   * Export `addCSRFTokenToUrl` function as API for convenience

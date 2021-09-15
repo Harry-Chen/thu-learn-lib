@@ -139,6 +139,10 @@ It's ok if you meet `Timeout * Async callback was not invoked within the 5000ms 
 
 ## Changelog
 
+* v2.5.2
+  * Allow retrieving CSRF token via `getCSRFToken` method
+  * Export `addCSRFTokenToUrl` function as API for convenience
+
 * v2.5.1
   * No feature change, add support for direct `import` in Node.js
 

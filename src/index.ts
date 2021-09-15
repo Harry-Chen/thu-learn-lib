@@ -52,7 +52,6 @@ const $ = (html: string | cheerio.Element | cheerio.Element[]): cheerio.Root => 
 
 const noLogin = (res: Response) => res.url.includes('login_timeout') || res.status == 403;
 
-
 /** add CSRF token to any request URL as parameters */
 export const addCSRFTokenToUrl = (url: string, token: string): string => {
   if (url.includes('?')) {
@@ -61,11 +60,10 @@ export const addCSRFTokenToUrl = (url: string, token: string): string => {
     url += `?_csrf=${token}`;
   }
   return url;
-}
-
+};
 
 /** the main helper class */
-export default class Learn2018Helper {
+export class Learn2018Helper {
   readonly #provider?: CredentialProvider;
   readonly #rawFetch: Fetch;
   readonly #myFetch: Fetch;

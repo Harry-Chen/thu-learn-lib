@@ -326,8 +326,8 @@ export class Learn2018Helper {
           return Promise.reject({
             reason: FailReason.INVALID_RESPONSE,
             extra: {
-              reason: r.reason
-            }
+              reason: r.reason,
+            },
           } as ApiError);
         }
       }

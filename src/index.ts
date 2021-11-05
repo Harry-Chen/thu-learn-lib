@@ -46,8 +46,14 @@ const CHEERIO_CONFIG: cheerio.CheerioParserOptions = {
 };
 
 const $ = (html: string | cheerio.Element | cheerio.Element[]): cheerio.Root => {
-  // @ts-ignore
+  /* eslint-disable */
+  // `cheerio.load` has two prototypes:
+  // 1. `(html: string | Buffer, options?: CheerioParserOptions | undefined): Root`
+  // 2. `(element: Element | Element[], options?: CheerioParserOptions | undefined): Root`
+  // TypeScript cannot handle this, so we must workaround this.
+  // @ts-ignore: No overload matches this call
   return cheerio.load(html, CHEERIO_CONFIG);
+  /* eslint-enable */
 };
 
 const noLogin = (res: Response) => res.url.includes('login_timeout') || res.status == 403;
@@ -291,7 +297,7 @@ export class Learn2018Helper {
     courseIDs: string[],
     type: ContentType,
     courseType: CourseType = CourseType.STUDENT,
-    allowFailure: boolean = false,
+    allowFailure = false,
   ): Promise<CourseContent> {
     let fetchFunc: (courseID: string, courseType: CourseType) => Promise<Content[]>;
     switch (type) {
@@ -362,7 +368,7 @@ export class Learn2018Helper {
           publisher: n.fbrxm,
           hasRead: n.sfyd === '是',
           markedImportant: Number(n.sfqd) === 1, // n.sfqd could be string '1' (teacher mode) or number 1 (student mode)
-          publishTime: new Date((n.fbsj && typeof n.fbsj === 'string') ? n.fbsj : n.fbsjStr),
+          publishTime: new Date(n.fbsj && typeof n.fbsj === 'string' ? n.fbsj : n.fbsjStr),
         };
         let detail: INotificationDetail = {};
         const attachmentName = courseType === CourseType.STUDENT ? n.fjmc : n.fjbt;

@@ -111,9 +111,11 @@ export class Learn2018Helper {
   };
 
   public readonly cookieJar: any;
+  public previewFirstPage: boolean;
 
   /** you can provide a CookieJar and / or CredentialProvider in the configuration */
   constructor(config?: HelperConfig) {
+    this.previewFirstPage = config?.generatePreviewUrlForFirstPage ?? true;
     this.cookieJar = config?.cookieJar ?? new tough.CookieJar();
     this.#provider = config?.provider;
     this.#rawFetch = new IsomorphicFetch(fetch, this.cookieJar);
@@ -411,7 +413,7 @@ export class Learn2018Helper {
           courseType,
           courseID,
         );
-        const previewUrl = URL.LEARN_FILE_PREVIEW(ContentType.FILE, f.wjid, courseType, true);
+        const previewUrl = URL.LEARN_FILE_PREVIEW(ContentType.FILE, f.wjid, courseType, this.previewFirstPage);
         files.push({
           id: f.wjid,
           title: decodeHTML(f.bt),
@@ -590,7 +592,7 @@ export class Learn2018Helper {
         name: attachmentName,
         id: attachmentId,
         downloadUrl: path,
-        previewUrl: URL.LEARN_FILE_PREVIEW(ContentType.NOTIFICATION, attachmentId, courseType),
+        previewUrl: URL.LEARN_FILE_PREVIEW(ContentType.NOTIFICATION, attachmentId, courseType, this.previewFirstPage),
         size,
       },
     };
@@ -629,7 +631,7 @@ export class Learn2018Helper {
         id: attachmentId,
         name: fileNode.children[0].data!,
         downloadUrl,
-        previewUrl: URL.LEARN_FILE_PREVIEW(ContentType.HOMEWORK, attachmentId, CourseType.STUDENT),
+        previewUrl: URL.LEARN_FILE_PREVIEW(ContentType.HOMEWORK, attachmentId, CourseType.STUDENT, this.previewFirstPage),
         size,
       };
     } else {

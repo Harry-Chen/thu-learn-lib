@@ -137,6 +137,9 @@ It's ok if you meet `Timeout * Async callback was not invoked within the 5000ms 
 
 ## Changelog
 
+* v3.0.1
+  * Add config `generatePreviewUrlForFirstPage` to switch preview URL type (default to `true`)
+
 * v3.0.0
   * (BREAKING CHANGE) Redesign exported types, use `RemoteFile` to represent a file on Web Learning
   * Add support for parsing attachment sizes & preview URLs in homework & notifications (Harry-Chen/Learn-Helper#109)

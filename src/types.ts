@@ -4,6 +4,7 @@ export type CredentialProvider = () => Credential | Promise<Credential>;
 export type HelperConfig = {
   provider?: CredentialProvider;
   cookieJar?: any;
+  generatePreviewUrlForFirstPage?: boolean;
 };
 
 export enum FailReason {

@@ -26,6 +26,7 @@ import {
   CourseType,
   CalendarEvent,
   ApiError,
+  RemoteFile,
 } from './types';
 import {
   decodeHTML,
@@ -372,9 +373,8 @@ export class Learn2018Helper {
         };
         let detail: INotificationDetail = {};
         const attachmentName = courseType === CourseType.STUDENT ? n.fjmc : n.fjbt;
-        if (attachmentName !== null) {
-          notification.attachmentName = attachmentName;
-          detail = await this.parseNotificationDetail(courseID, notification.id, courseType);
+        if (attachmentName) {
+          detail = await this.parseNotificationDetail(courseID, notification.id, courseType, attachmentName);
         }
         notifications.push({ ...notification, ...detail });
       }),
@@ -405,6 +405,9 @@ export class Learn2018Helper {
 
     await Promise.all(
       result.map(async (f) => {
+        const title = decodeHTML(f.bt);
+        const downloadUrl = URL.LEARN_FILE_DOWNLOAD(courseType === CourseType.STUDENT ? f.wjid : f.id, courseType, courseID);
+        const previewUrl = URL.LEARN_FILE_PREVIEW(ContentType.FILE, f.wjid, courseType, true);
         files.push({
           id: f.wjid,
           title: decodeHTML(f.bt),
@@ -412,13 +415,20 @@ export class Learn2018Helper {
           rawSize: f.wjdx,
           size: f.fileSize,
           uploadTime: new Date(f.scsj),
-          downloadUrl: URL.LEARN_FILE_DOWNLOAD(courseType === CourseType.STUDENT ? f.wjid : f.id, courseType, courseID),
-          previewUrl: URL.LEARN_FILE_PREVIEW(f.wjid, courseType, true),
+          downloadUrl,
+          previewUrl,
           isNew: f.isNew,
           markedImportant: f.sfqd === 1,
           visitCount: f.llcs ?? 0,
           downloadCount: f.xzcs ?? 0,
           fileType: f.wjlx,
+          remoteFile: {
+            id: f.wjid,
+            name: title,
+            downloadUrl,
+            previewUrl,
+            size: f.fileSize,
+          },
         });
       }),
     );
@@ -532,7 +542,6 @@ export class Learn2018Helper {
           graderName: trimAndDefine(h.jsm),
           gradeContent: trimAndDefine(h.pynr),
           gradeTime: h.pysj === null ? undefined : new Date(h.pysj),
-          submittedAttachmentUrl: h.zyfjid === '' ? undefined : URL.LEARN_HOMEWORK_DOWNLOAD(h.wlkcid, h.zyfjid),
           ...status,
           ...(await this.parseHomeworkDetail(h.wlkcid, h.zyid, h.xszyid)),
         });
@@ -546,7 +555,18 @@ export class Learn2018Helper {
     courseID: string,
     id: string,
     courseType: CourseType,
+    attachmentName: string
   ): Promise<INotificationDetail> {
+    /// from JSON (backup, currently not used)
+    // const postParams = new FormData();
+    // postParams.append('id', id);
+    // postParams.append('wlkcid', courseID);
+    // const metadata = await (await this.#myFetchWithToken(URL.LEARN_NOTIFICATION_EDIT(courseType), {
+    //   'method': 'POST',
+    //   'body': postParams,
+    // })).json();
+    // const attachmentId = metadata.ggfjid as string;
+    /// parsed from HTML
     const response = await this.#myFetchWithToken(URL.LEARN_NOTIFICATION_DETAIL(courseID, id, courseType));
     const result = $(await response.text());
     let path = '';
@@ -555,7 +575,21 @@ export class Learn2018Helper {
     } else {
       path = result('#wjid').attr('href')!;
     }
-    return { attachmentUrl: `${URL.LEARN_PREFIX}${path}` };
+    const size = trimAndDefine(result('div#attachment > div.fl > span[class^="color"]').first().text())!;
+    const params = new URLSearchParams(path.split('?').slice(-1)[0]);
+    const attachmentId = params.get('wjid')!;
+    if (!path.startsWith(URL.LEARN_PREFIX)) {
+      path = URL.LEARN_PREFIX + path;
+    }
+    return {
+      attachment: {
+        name: attachmentName,
+        id: attachmentId,
+        downloadUrl: path,
+        previewUrl: URL.LEARN_FILE_PREVIEW(ContentType.NOTIFICATION, attachmentId, courseType),
+        size,
+      }
+    };
   }
 
   private async parseHomeworkDetail(courseID: string, id: string, studentHomeworkID: string): Promise<IHomeworkDetail> {
@@ -565,25 +599,36 @@ export class Learn2018Helper {
     const fileDivs = result('div.list.fujian.clearfix');
 
     return {
-      description: trimAndDefine(result('div.list.calendar.clearfix>div.fl.right>div.c55').slice(0, 1).html()),
-      answerContent: trimAndDefine(result('div.list.calendar.clearfix>div.fl.right>div.c55').slice(1, 2).html()),
+      description: trimAndDefine(result('div.list.calendar.clearfix > div.fl.right > div.c55').slice(0, 1).html()),
+      answerContent: trimAndDefine(result('div.list.calendar.clearfix > div.fl.right > div.c55').slice(1, 2).html()),
       submittedContent: trimAndDefine($(result('div.boxbox').slice(1, 2).toArray())('div.right').slice(2, 3).html()),
-      ...this.parseHomeworkFile(fileDivs[0], 'attachmentName', 'attachmentUrl'),
-      ...this.parseHomeworkFile(fileDivs[1], 'answerAttachmentName', 'answerAttachmentUrl'),
-      ...this.parseHomeworkFile(fileDivs[2], 'submittedAttachmentName', 'submittedAttachmentUrl'),
-      ...this.parseHomeworkFile(fileDivs[3], 'gradeAttachmentName', 'gradeAttachmentUrl'),
+      attachment: this.parseHomeworkFile(fileDivs[0]),
+      answerAttachment: this.parseHomeworkFile(fileDivs[1]),
+      submittedAttachment: this.parseHomeworkFile(fileDivs[2]),
+      gradeAttachment: this.parseHomeworkFile(fileDivs[3]),
     };
   }
 
-  private parseHomeworkFile(fileDiv: cheerio.Element, nameKey: string, urlKey: string) {
-    const fileNode = $(fileDiv)('.ftitle').children('a')[0] as cheerio.TagElement;
+  private parseHomeworkFile(fileDiv: cheerio.Element): RemoteFile | undefined {
+    const fileNode = ($(fileDiv)('.ftitle').children('a')[0] ?? $(fileDiv)('.fl').children('a')[0]) as cheerio.TagElement;
     if (fileNode !== undefined) {
+      const size = trimAndDefine($(fileDiv)('.fl > span[class^="color"]').first().text())!;
+      const params = new URLSearchParams(fileNode.attribs.href.split('?').slice(-1)[0]);
+      const attachmentId = params.get('fileId')!;
+      // so dirty here...
+      let downloadUrl = URL.LEARN_PREFIX + fileNode.attribs.href;
+      if (params.has('downloadUrl')) {
+        downloadUrl = URL.LEARN_PREFIX + params.get('downloadUrl')!;
+      }
       return {
-        [nameKey]: fileNode.children[0].data,
-        [urlKey]: `${URL.LEARN_PREFIX}${fileNode.attribs.href.split('=').slice(-1)[0]}`,
+        id: attachmentId,
+        name: fileNode.children[0].data!,
+        downloadUrl,
+        previewUrl: URL.LEARN_FILE_PREVIEW(ContentType.HOMEWORK, attachmentId, CourseType.STUDENT),
+        size,
       };
     } else {
-      return {};
+      return undefined;
     }
   }
 

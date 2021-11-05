@@ -1,6 +1,6 @@
 import { decodeHTML as _decodeHTML } from 'entities';
 
-import { SemesterType, FailReason } from './types';
+import { SemesterType, FailReason, ContentType } from './types';
 
 export function parseSemesterType(n: number): SemesterType {
   if (n === 1) {
@@ -12,6 +12,18 @@ export function parseSemesterType(n: number): SemesterType {
   } else {
     return SemesterType.UNKNOWN;
   }
+}
+
+const CONTENT_TYPE_MK_MAP = new Map([
+  [ContentType.NOTIFICATION, 'kcgg'],
+  [ContentType.FILE, 'kcwj'],
+  [ContentType.HOMEWORK, 'kczy'],
+  [ContentType.DISCUSSION, ''],
+  [ContentType.QUESTION, ''],
+]);
+
+export function getMkFromType(type: ContentType): string {
+  return 'mk_' + (CONTENT_TYPE_MK_MAP.get(type) ?? 'UNKNOWN');
 }
 
 export function decodeHTML(html: string): string {

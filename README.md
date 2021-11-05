@@ -14,9 +14,7 @@ This project is licensed under MIT License.
 
 The library uses `cross-fetch` and `real-isomorphic-fetch`, which provides cookie and redirection support in both browsers and JS engines (like Node.js).
 
-I don't like polyfill. In case of any syntax problems, just upgrade your browser / Node.
-
-Version 2.0.0 breaks `login` and `logout` API compatibility, which do not return a promise any more.
+In case of any syntax problems, just upgrade your browser / Node, or use any corresponding polyfills.
 
 ## Installation
 
@@ -138,6 +136,10 @@ Run `yarn test` for testing. It requires your personal credential since we don't
 It's ok if you meet `Timeout * Async callback was not invoked within the 5000ms timeout...` error when running tests, rerun tests may resolve this problem. If you hate this, just add the third argument `timeout` to every testcase `it("should...", async () => void, timeout)` and make sure it's greater than 5000.
 
 ## Changelog
+
+* v3.0.0
+  * (BREAKING CHANGE) Redesign exported types, use `RemoteFile` to represent a file on Web Learning
+  * Add support for parsing attachment sizes & preview URLs in homework & notifications (Harry-Chen/Learn-Helper#109)
 
 * v2.5.4
   * Fix (sometimes) incorrect publish time of notifications (#36)

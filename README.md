@@ -139,8 +139,11 @@ It's ok if you meet `Timeout * Async callback was not invoked within the 5000ms 
 
 ## Changelog
 
+* v2.5.4
+  * Fix (sometimes) incorrect publish time of notifications (#36)
+
 * v2.5.3
-  * Add `allowFailure` in `allowFailure` for convenience
+  * Add `allowFailure` in `getAllContents` for convenience
 
 * v2.5.2
   * Allow retrieving CSRF token via `getCSRFToken` method

@@ -406,7 +406,11 @@ export class Learn2018Helper {
     await Promise.all(
       result.map(async (f) => {
         const title = decodeHTML(f.bt);
-        const downloadUrl = URL.LEARN_FILE_DOWNLOAD(courseType === CourseType.STUDENT ? f.wjid : f.id, courseType, courseID);
+        const downloadUrl = URL.LEARN_FILE_DOWNLOAD(
+          courseType === CourseType.STUDENT ? f.wjid : f.id,
+          courseType,
+          courseID,
+        );
         const previewUrl = URL.LEARN_FILE_PREVIEW(ContentType.FILE, f.wjid, courseType, true);
         files.push({
           id: f.wjid,
@@ -555,7 +559,7 @@ export class Learn2018Helper {
     courseID: string,
     id: string,
     courseType: CourseType,
-    attachmentName: string
+    attachmentName: string,
   ): Promise<INotificationDetail> {
     /// from JSON (backup, currently not used)
     // const postParams = new FormData();
@@ -588,7 +592,7 @@ export class Learn2018Helper {
         downloadUrl: path,
         previewUrl: URL.LEARN_FILE_PREVIEW(ContentType.NOTIFICATION, attachmentId, courseType),
         size,
-      }
+      },
     };
   }
 
@@ -610,7 +614,8 @@ export class Learn2018Helper {
   }
 
   private parseHomeworkFile(fileDiv: cheerio.Element): RemoteFile | undefined {
-    const fileNode = ($(fileDiv)('.ftitle').children('a')[0] ?? $(fileDiv)('.fl').children('a')[0]) as cheerio.TagElement;
+    const fileNode = ($(fileDiv)('.ftitle').children('a')[0] ??
+      $(fileDiv)('.fl').children('a')[0]) as cheerio.TagElement;
     if (fileNode !== undefined) {
       const size = trimAndDefine($(fileDiv)('.fl > span[class^="color"]').first().text())!;
       const params = new URLSearchParams(fileNode.attribs.href.split('?').slice(-1)[0]);

@@ -75,10 +75,15 @@ export const LEARN_FILE_DOWNLOAD = (fileID: string, courseType: CourseType, cour
   }
 };
 
-export const LEARN_FILE_PREVIEW = (type: ContentType, fileID: string, courseType: CourseType, firstPageOnly = false) => {
-  return `${LEARN_PREFIX}/f/wlxt/kc/wj_wjb/${courseType}/beforePlay?wjid=${fileID}&mk=${getMkFromType(type)}&browser=-1&sfgk=0&pageType=${
-    firstPageOnly ? 'first' : 'all'
-  }`;
+export const LEARN_FILE_PREVIEW = (
+  type: ContentType,
+  fileID: string,
+  courseType: CourseType,
+  firstPageOnly = false,
+) => {
+  return `${LEARN_PREFIX}/f/wlxt/kc/wj_wjb/${courseType}/beforePlay?wjid=${fileID}&mk=${getMkFromType(
+    type,
+  )}&browser=-1&sfgk=0&pageType=${firstPageOnly ? 'first' : 'all'}`;
 };
 
 export const LEARN_NOTIFICATION_LIST = (courseID: string, courseType: CourseType) => {
@@ -97,9 +102,9 @@ export const LEARN_NOTIFICATION_DETAIL = (courseID: string, notificationID: stri
   }
 };
 
-export const LEARN_NOTIFICATION_EDIT = (courseType: CourseType): string => { 
+export const LEARN_NOTIFICATION_EDIT = (courseType: CourseType): string => {
   return `${LEARN_PREFIX}/b/wlxt/kcgg/wlkc_ggb/${courseType}/editKcgg`;
-}
+};
 
 export const LEARN_HOMEWORK_LIST_SOURCE = (courseID: string) => {
   return [

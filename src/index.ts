@@ -631,7 +631,12 @@ export class Learn2018Helper {
         id: attachmentId,
         name: fileNode.children[0].data!,
         downloadUrl,
-        previewUrl: URL.LEARN_FILE_PREVIEW(ContentType.HOMEWORK, attachmentId, CourseType.STUDENT, this.previewFirstPage),
+        previewUrl: URL.LEARN_FILE_PREVIEW(
+          ContentType.HOMEWORK,
+          attachmentId,
+          CourseType.STUDENT,
+          this.previewFirstPage,
+        ),
         size,
       };
     } else {

@@ -137,6 +137,9 @@ It's ok if you meet `Timeout * Async callback was not invoked within the 5000ms 
 
 ## Changelog
 
+* v3.0.2
+  * No feature changes, upgrade dependencies to mitigate security vulnerabilities
+
 * v3.0.1
   * Add config `generatePreviewUrlForFirstPage` to switch preview URL type (default to `true`)
 

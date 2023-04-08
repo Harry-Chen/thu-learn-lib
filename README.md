@@ -6,7 +6,7 @@
 ![npm size](https://img.shields.io/bundlephobia/min/thu-learn-lib)
 ![npm downloads](https://img.shields.io/npm/dw/thu-learn-lib)
 
-This is a JavaScript library aimed to provide a program-friendly interface of [web Learning of Tsinghua University](https://learn.tsinghua.edu.cn). Only the newest version (learn2018) is supported.
+This is a JavaScript library aimed to provide a program-friendly interface of [web Learning of Tsinghua University](https://learn.tsinghua.edu.cn).
 
 This project is licensed under MIT License.
 
@@ -136,6 +136,9 @@ Run `yarn test` for testing. It requires your personal credential since we don't
 It's ok if you meet `Timeout * Async callback was not invoked within the 5000ms timeout...` error when running tests, rerun tests may resolve this problem. If you hate this, just add the third argument `timeout` to every testcase `it("should...", async () => void, timeout)` and make sure it's greater than 5000.
 
 ## Changelog
+
+* v3.0.4
+  * No feature changes, upgrade dependencies
 
 * v3.0.3
   * No feature changes, upgrade dependencies

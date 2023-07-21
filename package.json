@@ -28,12 +28,12 @@
     "url": "https://github.com/Harry-Chen/thu-learn-lib.git"
   },
   "devDependencies": {
-    "@types/cheerio": "^0.22.31",
     "@types/firefox-webext-browser": "^111.0.1",
     "@types/jest": "^29.5.0",
     "@typescript-eslint/eslint-plugin": "^5.57.1",
     "@typescript-eslint/parser": "^5.57.1",
     "copy-webpack-plugin": "^11.0.0",
+    "domhandler": "^5.0.3",
     "dotenv": "^16.0.3",
     "eslint": "^8.38.0",
     "html-webpack-plugin": "^5.5.0",
@@ -49,7 +49,7 @@
     "webpack-cli": "^5.0.1"
   },
   "dependencies": {
-    "cheerio": "^1.0.0-rc.10",
+    "cheerio": "^1.0.0-rc.12",
     "cross-fetch": "^3.1.5",
     "entities": "^4.4.0",
     "es6-denodeify": "^0.1.5",

@@ -1,4 +1,5 @@
 import * as cheerio from 'cheerio';
+import type * as DOM from 'domhandler';
 import { Base64 } from 'js-base64';
 
 import fetch from 'cross-fetch';
@@ -41,20 +42,14 @@ import {
 import IsomorphicFetch from 'real-isomorphic-fetch';
 import tough from 'tough-cookie-no-native';
 
-const CHEERIO_CONFIG: cheerio.CheerioParserOptions = {
-  _useHtmlParser2: true,
+const CHEERIO_CONFIG: cheerio.CheerioOptions = {
+  // _useHtmlParser2
+  xml: true,
   decodeEntities: false,
 };
 
-const $ = (html: string | cheerio.Element | cheerio.Element[]): cheerio.Root => {
-  /* eslint-disable */
-  // `cheerio.load` has two prototypes:
-  // 1. `(html: string | Buffer, options?: CheerioParserOptions | undefined): Root`
-  // 2. `(element: Element | Element[], options?: CheerioParserOptions | undefined): Root`
-  // TypeScript cannot handle this, so we must workaround this.
-  // @ts-ignore: No overload matches this call
+const $ = (html: string | DOM.Element | DOM.Element[]): cheerio.CheerioAPI => {
   return cheerio.load(html, CHEERIO_CONFIG);
-  /* eslint-enable */
 };
 
 const noLogin = (res: Response) => res.url.includes('login_timeout') || res.status == 403;
@@ -615,9 +610,8 @@ export class Learn2018Helper {
     };
   }
 
-  private parseHomeworkFile(fileDiv: cheerio.Element): RemoteFile | undefined {
-    const fileNode = ($(fileDiv)('.ftitle').children('a')[0] ??
-      $(fileDiv)('.fl').children('a')[0]) as cheerio.TagElement;
+  private parseHomeworkFile(fileDiv: DOM.Element): RemoteFile | undefined {
+    const fileNode = ($(fileDiv)('.ftitle').children('a')[0] ?? $(fileDiv)('.fl').children('a')[0]) as DOM.Element;
     if (fileNode !== undefined) {
       const size = trimAndDefine($(fileDiv)('.fl > span[class^="color"]').first().text())!;
       const params = new URLSearchParams(fileNode.attribs.href.split('?').slice(-1)[0]);
@@ -629,7 +623,7 @@ export class Learn2018Helper {
       }
       return {
         id: attachmentId,
-        name: fileNode.children[0].data!,
+        name: (fileNode.children[0] as DOM.Text).data!,
         downloadUrl,
         previewUrl: URL.LEARN_FILE_PREVIEW(
           ContentType.HOMEWORK,

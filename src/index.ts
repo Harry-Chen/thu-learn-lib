@@ -279,7 +279,7 @@ export class Learn2018Helper {
           name: c.kcm,
           englishName: c.ywkcm,
           timeAndLocation: await (await this.#myFetchWithToken(URL.LEARN_COURSE_TIME_LOCATION(c.wlkcid))).json(),
-          url: URL.LEARN_COURSE_URL(c.wlkcid, courseType),
+          url: URL.LEARN_COURSE_PAGE(c.wlkcid, courseType),
           teacherName: c.jsm ?? '', // teacher can not fetch this
           teacherNumber: c.jsh,
           courseNumber: c.kch,
@@ -541,7 +541,7 @@ export class Learn2018Helper {
           title: decodeHTML(h.bt),
           url: URL.LEARN_HOMEWORK_DETAIL(h.wlkcid, h.zyid, h.xszyid),
           deadline: new Date(h.jzsj),
-          submitUrl: URL.LEARN_HOMEWORK_SUBMIT(h.wlkcid, h.xszyid),
+          submitUrl: URL.LEARN_HOMEWORK_SUBMIT_PAGE(h.wlkcid, h.xszyid),
           submitTime: h.scsj === null ? undefined : new Date(h.scsj),
           grade: h.cj === null ? undefined : h.cj,
           gradeLevel: mapGradeToLevel(h.cj),

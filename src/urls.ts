@@ -1,5 +1,5 @@
 import { FormData } from 'node-fetch-native';
-import { ContentType, CourseType } from './types';
+import { ContentType, CourseType, IHomeworkSubmitAttachment } from './types';
 import { getMkFromType } from './utils';
 
 export const LEARN_PREFIX = 'https://learn.tsinghua.edu.cn';
@@ -109,6 +109,24 @@ export const LEARN_HOMEWORK_DOWNLOAD = (courseID: string, attachmentID: string) 
 
 export const LEARN_HOMEWORK_SUBMIT_PAGE = (courseID: string, studentHomeworkID: string) =>
   `${LEARN_PREFIX}/f/wlxt/kczy/zy/student/tijiao?wlkcid=${courseID}&xszyid=${studentHomeworkID}`;
+
+export const LEARN_HOMEWORK_SUBMIT = () => `${LEARN_PREFIX}/b/wlxt/kczy/zy/student/tjzy`;
+
+export const LEARN_HOMEWORK_SUBMIT_FORM_DATA = (
+  studentHomeworkID: string,
+  content = '',
+  attachment?: IHomeworkSubmitAttachment,
+  removeAttachment = false,
+) => {
+  const form = new FormData();
+  form.append('xszyid', studentHomeworkID);
+  form.append('zynr', content ?? '');
+  if (attachment) form.append('fileupload', attachment.content, attachment.filename);
+  else form.append('fileupload', 'undefined');
+  if (removeAttachment) form.append('isDeleted', '1');
+  else form.append('isDeleted', '0');
+  return form;
+};  
 
 export const LEARN_DISCUSSION_LIST = (courseID: string, courseType: CourseType) =>
   `${LEARN_PREFIX}/b/wlxt/bbs/bbs_tltb/${courseType}/kctlList?wlkcid=${courseID}&size=${MAX_SIZE}`;

@@ -23,7 +23,7 @@ export enum FailReason {
 
 export interface ApiError {
   reason: FailReason;
-  extra?: any;
+  extra?: unknown;
 }
 
 export enum SemesterType {
@@ -159,6 +159,17 @@ export interface IHomeworkDetail {
 }
 
 export type Homework = IHomework & IHomeworkDetail;
+
+export interface IHomeworkSubmitAttachment {
+  filename: string;
+  content: Blob;
+}
+
+export interface IHomeworkSubmitResult {
+  result: 'success' | 'error';
+  msg: string;
+  object: unknown;
+}
 
 export interface IDiscussionBase {
   id: string;

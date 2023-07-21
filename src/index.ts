@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import * as cheerio from 'cheerio';
 import type * as DOM from 'domhandler';
 import { Base64 } from 'js-base64';
@@ -29,6 +30,8 @@ import {
   CalendarEvent,
   ApiError,
   RemoteFile,
+  IHomeworkSubmitAttachment,
+  IHomeworkSubmitResult,
 } from './types';
 import {
   decodeHTML,
@@ -648,5 +651,19 @@ export class Learn2018Helper {
       visitCount: d.djs ?? 0, // teacher cannot fetch this
       replyCount: d.hfcs,
     };
+  }
+
+  public async submitHomework(
+    studentHomeworkID: string,
+    content = '',
+    attachment?: IHomeworkSubmitAttachment,
+    removeAttachment = false,
+  ): Promise<IHomeworkSubmitResult> {
+    return await (
+      await this.#myFetchWithToken(URL.LEARN_HOMEWORK_SUBMIT(), {
+        method: 'POST',
+        body: URL.LEARN_HOMEWORK_SUBMIT_FORM_DATA(studentHomeworkID, content, attachment, removeAttachment),
+      })
+    ).json();
   }
 }

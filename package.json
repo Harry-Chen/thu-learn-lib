@@ -30,6 +30,8 @@
   "devDependencies": {
     "@types/firefox-webext-browser": "^111.0.1",
     "@types/jest": "^29.5.0",
+    "@types/node": "^20.3.1",
+    "@types/tough-cookie": "^4.0.2",
     "@typescript-eslint/eslint-plugin": "^5.57.1",
     "@typescript-eslint/parser": "^5.57.1",
     "copy-webpack-plugin": "^11.0.0",
@@ -50,11 +52,11 @@
   },
   "dependencies": {
     "cheerio": "^1.0.0-rc.12",
-    "cross-fetch": "^3.1.5",
     "entities": "^4.4.0",
     "es6-denodeify": "^0.1.5",
-    "form-data": "^4.0.0",
+    "fetch-cookie": "^2.1.0",
     "js-base64": "^3.7.5",
-    "real-isomorphic-fetch": "^3.0.0"
+    "node-fetch-native": "^1.2.0",
+    "tough-cookie": "^4.1.3"
   }
 }

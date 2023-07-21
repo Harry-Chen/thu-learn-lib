@@ -1,8 +1,9 @@
 import * as cheerio from 'cheerio';
 import type * as DOM from 'domhandler';
 import { Base64 } from 'js-base64';
+import { fetch } from 'node-fetch-native';
+import fetchCookie from 'fetch-cookie';
 
-import fetch from 'cross-fetch';
 import * as URL from './urls';
 import {
   CredentialProvider,
@@ -37,10 +38,6 @@ import {
   JSONP_EXTRACTOR_NAME,
   extractJSONPResult,
 } from './utils';
-
-// .d.ts files are in types/
-import IsomorphicFetch from 'real-isomorphic-fetch';
-import tough from 'tough-cookie-no-native';
 
 const CHEERIO_CONFIG: cheerio.CheerioOptions = {
   // _useHtmlParser2
@@ -105,15 +102,17 @@ export class Learn2018Helper {
     };
   };
 
-  public readonly cookieJar: any;
   public previewFirstPage: boolean;
 
   /** you can provide a CookieJar and / or CredentialProvider in the configuration */
   constructor(config?: HelperConfig) {
     this.previewFirstPage = config?.generatePreviewUrlForFirstPage ?? true;
-    this.cookieJar = config?.cookieJar ?? new tough.CookieJar();
     this.#provider = config?.provider;
-    this.#rawFetch = new IsomorphicFetch(fetch, this.cookieJar);
+    this.#rawFetch =
+      config?.fetch ??
+      (typeof window !== 'undefined'
+        ? (input, init) => fetch(input, { ...init, credentials: 'include' })
+        : fetchCookie(fetch, config?.cookieJar));
     this.#myFetch = this.#provider
       ? this.#withReAuth(this.#rawFetch)
       : async (...args) => {

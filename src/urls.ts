@@ -1,4 +1,4 @@
-import FormData from 'form-data';
+import { FormData } from 'node-fetch-native';
 import { ContentType, CourseType } from './types';
 import { getMkFromType } from './utils';
 

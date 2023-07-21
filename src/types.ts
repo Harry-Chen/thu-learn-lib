@@ -1,9 +1,12 @@
-export type Fetch = <Args extends any[]>(...args: Args) => Promise<any>;
+import type { CookieJar } from 'tough-cookie';
+
+export type Fetch = typeof globalThis.fetch;
 export type Credential = { username: string; password: string };
 export type CredentialProvider = () => Credential | Promise<Credential>;
 export type HelperConfig = {
   provider?: CredentialProvider;
-  cookieJar?: any;
+  fetch?: Fetch;
+  cookieJar?: CookieJar;
   generatePreviewUrlForFirstPage?: boolean;
 };
 

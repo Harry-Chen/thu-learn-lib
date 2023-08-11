@@ -32,6 +32,7 @@ import {
   RemoteFile,
   IHomeworkSubmitAttachment,
   IHomeworkSubmitResult,
+  Language,
 } from './types';
 import {
   decodeHTML,
@@ -77,6 +78,7 @@ export class Learn2018Helper {
     return this.#myFetch(addCSRFTokenToUrl(url as string, this.#csrfToken), ...remaining);
   };
   #csrfToken = '';
+  #lang = Language.ZH_CN;
 
   readonly #withReAuth = (rawFetch: Fetch): Fetch => {
     const login = this.login.bind(this);
@@ -106,10 +108,12 @@ export class Learn2018Helper {
   };
 
   public previewFirstPage: boolean;
+  public fixCourseEnglishName: boolean;
 
   /** you can provide a CookieJar and / or CredentialProvider in the configuration */
   constructor(config?: HelperConfig) {
     this.previewFirstPage = config?.generatePreviewUrlForFirstPage ?? true;
+    this.fixCourseEnglishName = config?.fixCourseEnglishName ?? false;
     this.#provider = config?.provider;
     this.#rawFetch =
       config?.fetch ??
@@ -171,14 +175,17 @@ export class Learn2018Helper {
     }
     const courseListPageSource: string = await (await this.#rawFetch(URL.LEARN_STUDENT_COURSE_LIST_PAGE())).text();
     const tokenRegex = /^.*&_csrf=(\S*)".*$/gm;
-    const matches = [...courseListPageSource.matchAll(tokenRegex)];
-    if (matches.length == 0) {
+    const tokenMatches = [...courseListPageSource.matchAll(tokenRegex)];
+    if (tokenMatches.length == 0) {
       return Promise.reject({
         reason: FailReason.INVALID_RESPONSE,
         extra: 'cannot fetch CSRF token from source',
       } as ApiError);
     }
-    this.#csrfToken = matches[0][1];
+    this.#csrfToken = tokenMatches[0][1];
+    const langRegex = /<script src="\/f\/wlxt\/common\/languagejs\?lang=(\S*?)&v=(\d*?)"><\/script>/g;
+    const langMatches = [...courseListPageSource.matchAll(langRegex)];
+    if (langMatches.length !== 0) this.#lang = langMatches[0][1] as Language;
   }
 
   /**  logout (to make everyone happy) */
@@ -273,7 +280,7 @@ export class Learn2018Helper {
       result.map(async (c) => {
         courses.push({
           id: c.wlkcid,
-          name: c.kcm,
+          name: this.fixCourseEnglishName && this.#lang === Language.EN_US ? c.ywkcm : c.kcm,
           englishName: c.ywkcm,
           timeAndLocation: await (await this.#myFetchWithToken(URL.LEARN_COURSE_TIME_LOCATION(c.wlkcid))).json(),
           url: URL.LEARN_COURSE_PAGE(c.wlkcid, courseType),
@@ -665,5 +672,16 @@ export class Learn2018Helper {
         body: URL.LEARN_HOMEWORK_SUBMIT_FORM_DATA(studentHomeworkID, content, attachment, removeAttachment),
       })
     ).json();
+  }
+
+  public async setLanguage(lang: Language): Promise<void> {
+    await this.#myFetchWithToken(URL.LEARN_WEBSITE_LANGUAGE(lang), {
+      method: 'POST',
+    });
+    this.#lang = lang;
+  }
+
+  public getCurrentLanguage(): Language {
+    return this.#lang;
   }
 }

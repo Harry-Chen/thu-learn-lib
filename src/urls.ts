@@ -1,5 +1,5 @@
 import { FormData } from 'node-fetch-native';
-import { ContentType, CourseType, IHomeworkSubmitAttachment } from './types';
+import { ContentType, CourseType, IHomeworkSubmitAttachment, Language } from './types';
 import { getMkFromType } from './utils';
 
 export const LEARN_PREFIX = 'https://learn.tsinghua.edu.cn';
@@ -126,7 +126,7 @@ export const LEARN_HOMEWORK_SUBMIT_FORM_DATA = (
   if (removeAttachment) form.append('isDeleted', '1');
   else form.append('isDeleted', '0');
   return form;
-};  
+};
 
 export const LEARN_DISCUSSION_LIST = (courseID: string, courseType: CourseType) =>
   `${LEARN_PREFIX}/b/wlxt/bbs/bbs_tltb/${courseType}/kctlList?wlkcid=${courseID}&size=${MAX_SIZE}`;
@@ -147,6 +147,9 @@ export const LEARN_QUESTION_DETAIL = (courseID: string, questionID: string, cour
   courseType === CourseType.STUDENT
     ? `${LEARN_PREFIX}/f/wlxt/bbs/bbs_kcdy/student/viewDyById?wlkcid=${courseID}&id=${questionID}`
     : `${LEARN_PREFIX}/f/wlxt/bbs/bbs_kcdy/teacher/beforeEditDy?wlkcid=${courseID}&id=${questionID}`;
+
+export const LEARN_WEBSITE_LANGUAGE = (lang: Language) =>
+  `https://learn.tsinghua.edu.cn/f/wlxt/common/language?websiteShowLanguage=${lang}`;
 
 export const REGISTRAR_TICKET_FORM_DATA = () => {
   const form = new FormData();

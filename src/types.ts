@@ -8,6 +8,7 @@ export type HelperConfig = {
   fetch?: Fetch;
   cookieJar?: CookieJar;
   generatePreviewUrlForFirstPage?: boolean;
+  fixCourseEnglishName?: boolean;
 };
 
 export enum FailReason {
@@ -27,9 +28,9 @@ export interface ApiError {
 }
 
 export enum SemesterType {
-  FALL = '秋季学期',
-  SPRING = '春季学期',
-  SUMMER = '夏季学期',
+  FALL = 'fall',
+  SPRING = 'spring',
+  SUMMER = 'summer',
   UNKNOWN = '',
 }
 
@@ -211,4 +212,9 @@ export interface CalendarEvent {
   endTime: string;
   date: string;
   courseName: string;
+}
+
+export enum Language {
+  ZH_CN = 'zh_CN',
+  EN_US = 'en_US',
 }

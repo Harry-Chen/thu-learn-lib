@@ -1,6 +1,7 @@
+import { describe, it, expect, beforeAll, afterAll } from 'vitest';
 import { Learn2018Helper } from '../src';
 import * as dotenv from 'dotenv';
-import { FailReason, CourseType, ContentType } from '../src/types';
+import { FailReason, CourseType } from '../src/types';
 
 dotenv.config({ path: 'test/.env' });
 const U = process.env.U!; // username

@@ -1,3 +1,4 @@
+import { describe, it, expect } from 'vitest';
 import { Learn2018Helper } from '../src';
 import * as dotenv from 'dotenv';
 import { FailReason } from '../src/types';

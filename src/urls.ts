@@ -128,6 +128,12 @@ export const LEARN_HOMEWORK_SUBMIT_FORM_DATA = (
   return form;
 };
 
+export const LEARN_HOMEWORK_LIST_TEACHER = (courseID: string) =>
+  `${LEARN_PREFIX}/b/wlxt/kczy/zy/teacher/index/pageList?wlkcid=${courseID}&size=${MAX_SIZE}`;
+
+export const LEARN_HOMEWORK_DETAIL_TEACHER = (courseID: string, homeworkID: string) =>
+  `${LEARN_PREFIX}/f/wlxt/kczy/xszy/teacher/beforePageList?zyid=${homeworkID}&wlkcid=${courseID}`;
+
 export const LEARN_DISCUSSION_LIST = (courseID: string, courseType: CourseType) =>
   `${LEARN_PREFIX}/b/wlxt/bbs/bbs_tltb/${courseType}/kctlList?wlkcid=${courseID}&size=${MAX_SIZE}`;
 

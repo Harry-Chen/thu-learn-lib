@@ -33,6 +33,7 @@ import {
   IHomeworkSubmitAttachment,
   IHomeworkSubmitResult,
   Language,
+  HomeworkTA,
 } from './types';
 import {
   decodeHTML,
@@ -446,25 +447,60 @@ export class Learn2018Helper {
     return files;
   }
 
-  /** Get all homeworks （课程作业） of the specified course (support student version only). */
-  public async getHomeworkList(courseID: string, courseType: CourseType = CourseType.STUDENT): Promise<Homework[]> {
+  /** Get all homeworks （课程作业） of the specified course. */
+  public async getHomeworkList(courseID: string): Promise<Homework[]>;
+  public async getHomeworkList(courseID: string, courseType: CourseType.STUDENT): Promise<Homework[]>;
+  public async getHomeworkList(courseID: string, courseType: CourseType.TEACHER): Promise<HomeworkTA[]>;
+  public async getHomeworkList(
+    courseID: string,
+    courseType: CourseType = CourseType.STUDENT,
+  ): Promise<Homework[] | HomeworkTA[]> {
     if (courseType === CourseType.TEACHER) {
-      return Promise.reject({
-        reason: FailReason.NOT_IMPLEMENTED,
-        extra: 'currently getting homework list of TA courses is not supported',
-      } as ApiError);
+      const json = await (await this.#myFetchWithToken(URL.LEARN_HOMEWORK_LIST_TEACHER(courseID))).json();
+      if (json.result !== 'success') {
+        return Promise.reject({
+          reason: FailReason.INVALID_RESPONSE,
+          extra: json,
+        } as ApiError);
+      }
+
+      const result = (json.object?.aaData ?? []) as any[];
+      const homeworks: HomeworkTA[] = [];
+
+      await Promise.all(
+        result.map(async (d) => {
+          homeworks.push({
+            id: d.zyid,
+            index: d.wz,
+            title: decodeHTML(d.bt),
+            description: decodeHTML(Base64.decode(d.nr)),
+            publisherId: d.fbr,
+            publishTime: new Date(d.fbsj),
+            startTime: new Date(d.kssj),
+            deadline: new Date(d.jzsj),
+            url: URL.LEARN_HOMEWORK_DETAIL_TEACHER(courseID, d.zyid),
+            completionType: d.zywcfs,
+            submissionType: d.zytjfs,
+            gradedCount: d.ypys,
+            submittedCount: d.yjs,
+            unsubmittedCount: d.wjs,
+          });
+        }),
+      );
+
+      return homeworks;
+    } else {
+      const allHomework: Homework[] = [];
+
+      await Promise.all(
+        URL.LEARN_HOMEWORK_LIST_SOURCE(courseID).map(async (s) => {
+          const homeworks = await this.getHomeworkListAtUrl(s.url, s.status);
+          allHomework.push(...homeworks);
+        }),
+      );
+
+      return allHomework;
     }
-
-    const allHomework: Homework[] = [];
-
-    await Promise.all(
-      URL.LEARN_HOMEWORK_LIST_SOURCE(courseID).map(async (s) => {
-        const homeworks = await this.getHomeworkListAtUrl(s.url, s.status);
-        allHomework.push(...homeworks);
-      }),
-    );
-
-    return allHomework;
   }
 
   /** Get all discussions （课程讨论） of the specified course. */

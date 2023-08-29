@@ -161,6 +161,35 @@ export interface IHomeworkDetail {
 
 export type Homework = IHomework & IHomeworkDetail;
 
+export enum HomeworkCompletionType {
+  INDIVIDUA = 1,
+  GRUOP = 2,
+}
+
+export enum HomeworkSubmissionType {
+  WEB_LEARNING = 2,
+  OFFLINE = 0,
+}
+
+export interface IHomeworkTA {
+  id: string;
+  index: number;
+  title: string;
+  description: string;
+  publisherId: string;
+  publishTime: Date;
+  startTime: Date;
+  deadline: Date;
+  url: string;
+  completionType: HomeworkCompletionType;
+  submissionType: HomeworkSubmissionType;
+  gradedCount: number;
+  submittedCount: number;
+  unsubmittedCount: number;
+}
+
+export type HomeworkTA = IHomeworkTA;
+
 export interface IHomeworkSubmitAttachment {
   filename: string;
   content: Blob;

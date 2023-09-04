@@ -79,7 +79,7 @@ export class Learn2018Helper {
     return this.#myFetch(addCSRFTokenToUrl(url as string, this.#csrfToken), ...remaining);
   };
   #csrfToken = '';
-  #lang = Language.ZH_CN;
+  #lang = Language.ZH;
 
   readonly #withReAuth = (rawFetch: Fetch): Fetch => {
     const login = this.login.bind(this);
@@ -109,12 +109,10 @@ export class Learn2018Helper {
   };
 
   public previewFirstPage: boolean;
-  public fixCourseEnglishName: boolean;
 
   /** you can provide a CookieJar and / or CredentialProvider in the configuration */
   constructor(config?: HelperConfig) {
     this.previewFirstPage = config?.generatePreviewUrlForFirstPage ?? true;
-    this.fixCourseEnglishName = config?.fixCourseEnglishName ?? false;
     this.#provider = config?.provider;
     this.#rawFetch =
       config?.fetch ??
@@ -267,7 +265,7 @@ export class Learn2018Helper {
 
   /** get all courses in the specified semester */
   public async getCourseList(semesterID: string, courseType: CourseType = CourseType.STUDENT): Promise<CourseInfo[]> {
-    const json = await (await this.#myFetchWithToken(URL.LEARN_COURSE_LIST(semesterID, courseType))).json();
+    const json = await (await this.#myFetchWithToken(URL.LEARN_COURSE_LIST(semesterID, courseType, this.#lang))).json();
     if (json.message !== 'success' || !Array.isArray(json.resultList)) {
       return Promise.reject({
         reason: FailReason.INVALID_RESPONSE,
@@ -281,7 +279,8 @@ export class Learn2018Helper {
       result.map(async (c) => {
         courses.push({
           id: c.wlkcid,
-          name: this.fixCourseEnglishName && this.#lang === Language.EN_US ? c.ywkcm : c.kcm,
+          name: c.zywkcm,
+          chineseName: c.kcm,
           englishName: c.ywkcm,
           timeAndLocation: await (await this.#myFetchWithToken(URL.LEARN_COURSE_TIME_LOCATION(c.wlkcid))).json(),
           url: URL.LEARN_COURSE_PAGE(c.wlkcid, courseType),

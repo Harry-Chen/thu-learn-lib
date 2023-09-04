@@ -8,7 +8,6 @@ export type HelperConfig = {
   fetch?: Fetch;
   cookieJar?: CookieJar;
   generatePreviewUrlForFirstPage?: boolean;
-  fixCourseEnglishName?: boolean;
 };
 
 export enum FailReason {
@@ -61,6 +60,7 @@ export enum CourseType {
 interface ICourseInfo {
   id: string;
   name: string;
+  chineseName: string;
   englishName: string;
   timeAndLocation: string[];
   url: string;
@@ -244,6 +244,6 @@ export interface CalendarEvent {
 }
 
 export enum Language {
-  ZH_CN = 'zh_CN',
-  EN_US = 'en_US',
+  ZH = 'zh',
+  EN = 'en',
 }

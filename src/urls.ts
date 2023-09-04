@@ -29,9 +29,9 @@ export const LEARN_SEMESTER_LIST = () => `${LEARN_PREFIX}/b/wlxt/kc/v_wlkc_xs_xk
 
 export const LEARN_CURRENT_SEMESTER = () => `${LEARN_PREFIX}/b/kc/zhjw_v_code_xnxq/getCurrentAndNextSemester`;
 
-export const LEARN_COURSE_LIST = (semester: string, courseType: CourseType) =>
+export const LEARN_COURSE_LIST = (semester: string, courseType: CourseType, lang: Language) =>
   courseType === CourseType.STUDENT
-    ? `${LEARN_PREFIX}/b/wlxt/kc/v_wlkc_xs_xkb_kcb_extend/student/loadCourseBySemesterId/${semester}`
+    ? `${LEARN_PREFIX}/b/wlxt/kc/v_wlkc_xs_xkb_kcb_extend/student/loadCourseBySemesterId/${semester}/${lang}`
     : `${LEARN_PREFIX}/b/kc/v_wlkc_kcb/queryAsorCoCourseList/${semester}/0`;
 
 export const LEARN_COURSE_PAGE = (courseID: string, courseType: CourseType) =>
@@ -154,8 +154,13 @@ export const LEARN_QUESTION_DETAIL = (courseID: string, questionID: string, cour
     ? `${LEARN_PREFIX}/f/wlxt/bbs/bbs_kcdy/student/viewDyById?wlkcid=${courseID}&id=${questionID}`
     : `${LEARN_PREFIX}/f/wlxt/bbs/bbs_kcdy/teacher/beforeEditDy?wlkcid=${courseID}&id=${questionID}`;
 
+export const WebsiteShowLanguage = {
+  [Language.ZH]: 'zh_CN',
+  [Language.EN]: 'en_US',
+};
+
 export const LEARN_WEBSITE_LANGUAGE = (lang: Language) =>
-  `https://learn.tsinghua.edu.cn/f/wlxt/common/language?websiteShowLanguage=${lang}`;
+  `https://learn.tsinghua.edu.cn/f/wlxt/common/language?websiteShowLanguage=${WebsiteShowLanguage[lang]}`;
 
 export const REGISTRAR_TICKET_FORM_DATA = () => {
   const form = new FormData();

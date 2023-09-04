@@ -41,7 +41,7 @@ export const LEARN_CURRENT_SEMESTER = () => {
 
 export const LEARN_COURSE_LIST = (semester: string, courseType: CourseType) => {
   if (courseType === CourseType.STUDENT) {
-    return `${LEARN_PREFIX}/b/wlxt/kc/v_wlkc_xs_xkb_kcb_extend/student/loadCourseBySemesterId/${semester}`;
+    return `${LEARN_PREFIX}/b/wlxt/kc/v_wlkc_xs_xkb_kcb_extend/student/loadCourseBySemesterId/${semester}/zh`;
   } else {
     return `${LEARN_PREFIX}/b/kc/v_wlkc_kcb/queryAsorCoCourseList/${semester}/0`;
   }

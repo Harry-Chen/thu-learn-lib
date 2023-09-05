@@ -2,5 +2,3 @@ node_modules
 lib
 dist
 demo
-src/fake-parse5/**
-

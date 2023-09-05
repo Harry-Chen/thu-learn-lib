@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import * as cheerio from 'cheerio';
 import type * as DOM from 'domhandler';
 import { Base64 } from 'js-base64';

@@ -279,9 +279,9 @@ export class Learn2018Helper {
       result.map(async (c) => {
         courses.push({
           id: c.wlkcid,
-          name: c.zywkcm,
-          chineseName: c.kcm,
-          englishName: c.ywkcm,
+          name: decodeHTML(c.zywkcm),
+          chineseName: decodeHTML(c.kcm),
+          englishName: decodeHTML(c.ywkcm),
           timeAndLocation: await (await this.#myFetchWithToken(URL.LEARN_COURSE_TIME_LOCATION(c.wlkcid))).json(),
           url: URL.LEARN_COURSE_PAGE(c.wlkcid, courseType),
           teacherName: c.jsm ?? '', // teacher can not fetch this

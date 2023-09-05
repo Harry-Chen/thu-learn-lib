@@ -21,6 +21,7 @@
   "scripts": {
     "build": "tsup",
     "dev": "vite",
+    "dev:build": "vite build",
     "format": "prettier --write \"{src,test,demo}/**/*.{ts,html,json}\" \"*.{ts,md,json}\"",
     "lint": "eslint --ext .ts 'src/**'",
     "test": "vitest run"

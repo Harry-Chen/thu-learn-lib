@@ -1,9 +1,12 @@
-export type Fetch = <Args extends any[]>(...args: Args) => Promise<any>;
+import type { CookieJar } from 'tough-cookie';
+
+export type Fetch = typeof globalThis.fetch;
 export type Credential = { username: string; password: string };
 export type CredentialProvider = () => Credential | Promise<Credential>;
 export type HelperConfig = {
   provider?: CredentialProvider;
-  cookieJar?: any;
+  fetch?: Fetch;
+  cookieJar?: CookieJar;
   generatePreviewUrlForFirstPage?: boolean;
 };
 
@@ -20,13 +23,13 @@ export enum FailReason {
 
 export interface ApiError {
   reason: FailReason;
-  extra?: any;
+  extra?: unknown;
 }
 
 export enum SemesterType {
-  FALL = '秋季学期',
-  SPRING = '春季学期',
-  SUMMER = '夏季学期',
+  FALL = 'fall',
+  SPRING = 'spring',
+  SUMMER = 'summer',
   UNKNOWN = '',
 }
 
@@ -57,6 +60,7 @@ export enum CourseType {
 interface ICourseInfo {
   id: string;
   name: string;
+  chineseName: string;
   englishName: string;
   timeAndLocation: string[];
   url: string;
@@ -157,6 +161,46 @@ export interface IHomeworkDetail {
 
 export type Homework = IHomework & IHomeworkDetail;
 
+export enum HomeworkCompletionType {
+  INDIVIDUA = 1,
+  GRUOP = 2,
+}
+
+export enum HomeworkSubmissionType {
+  WEB_LEARNING = 2,
+  OFFLINE = 0,
+}
+
+export interface IHomeworkTA {
+  id: string;
+  index: number;
+  title: string;
+  description: string;
+  publisherId: string;
+  publishTime: Date;
+  startTime: Date;
+  deadline: Date;
+  url: string;
+  completionType: HomeworkCompletionType;
+  submissionType: HomeworkSubmissionType;
+  gradedCount: number;
+  submittedCount: number;
+  unsubmittedCount: number;
+}
+
+export type HomeworkTA = IHomeworkTA;
+
+export interface IHomeworkSubmitAttachment {
+  filename: string;
+  content: Blob;
+}
+
+export interface IHomeworkSubmitResult {
+  result: 'success' | 'error';
+  msg: string;
+  object: unknown;
+}
+
 export interface IDiscussionBase {
   id: string;
   title: string;
@@ -197,4 +241,9 @@ export interface CalendarEvent {
   endTime: string;
   date: string;
   courseName: string;
+}
+
+export enum Language {
+  ZH = 'zh',
+  EN = 'en',
 }

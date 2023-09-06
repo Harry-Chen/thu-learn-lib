@@ -1,13 +1,11 @@
 {
-    "compilerOptions": {
-      "target": "es2018",
-      "module": "esnext",
-      "moduleResolution": "bundler",
-      "declaration": true,
-      "outDir": "./lib",
-      "strict": true,
-      "esModuleInterop": true
-    },
-    "include": ["src"],
-    "exclude": ["node_modules", "**/__tests__/*"]
+  "compilerOptions": {
+    "target": "es2018",
+    "module": "esnext",
+    "moduleResolution": "bundler",
+    "noEmit": true,
+    "strict": true,
+    "esModuleInterop": true
+  },
+  "include": ["src"]
 }

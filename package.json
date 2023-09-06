@@ -1,21 +1,30 @@
 {
   "name": "thu-learn-lib",
-  "version": "3.0.4",
+  "version": "3.1.0",
   "description": "a JavaScript library to provide a program-friendly interface to Web Learning (2018) of Tsinghua University",
-  "main": "lib/index.js",
-  "module": "lib/index.js",
   "type": "module",
+  "module": "lib/index.js",
+  "types": "lib/index.d.ts",
   "files": [
-    "lib/**/*",
-    "src/**/*"
+    "lib"
   ],
+  "exports": {
+    ".": {
+      "import": "./lib/index.js",
+      "types": "./lib/index.d.ts"
+    },
+    "./lib/types": {
+      "import": "./lib/types.js",
+      "types": "./lib/types.d.ts"
+    }
+  },
   "scripts": {
-    "build": "tsc && sed -i -E \"s/from '(\\.\\/.*)'/from '\\1.js'/g\" lib/*.js",
-    "build-dist": "webpack --config webpack.config.js",
-    "watch-dist": "webpack -w --config webpack.config.js",
-    "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\" \"demo/**/*.ts\" \"./*.js\"",
+    "build": "tsup",
+    "dev": "vite",
+    "dev:build": "vite build",
+    "format": "prettier --write \"{src,test,demo}/**/*.{ts,html,json}\" \"*.{ts,md,json}\"",
     "lint": "eslint --ext .ts 'src/**'",
-    "test": "jest --config jest.config.json"
+    "test": "vitest run"
   },
   "keywords": [
     "tsinghua",
@@ -28,33 +37,29 @@
     "url": "https://github.com/Harry-Chen/thu-learn-lib.git"
   },
   "devDependencies": {
-    "@types/cheerio": "^0.22.31",
-    "@types/firefox-webext-browser": "^111.0.1",
-    "@types/jest": "^29.5.0",
-    "@typescript-eslint/eslint-plugin": "^5.57.1",
-    "@typescript-eslint/parser": "^5.57.1",
-    "copy-webpack-plugin": "^11.0.0",
-    "dotenv": "^16.0.3",
-    "eslint": "^8.38.0",
-    "html-webpack-plugin": "^5.5.0",
-    "jest": "^29.5.0",
-    "node-polyfill-webpack-plugin": "^2.0.1",
-    "prettier": "^2.8.7",
-    "remove-files-webpack-plugin": "^1.5.0",
-    "ts-jest": "^29.1.0",
-    "ts-loader": "^9.4.2",
-    "typescript": "^5.0.4",
-    "webextension-polyfill": "^0.10.0",
-    "webpack": "^5.78.0",
-    "webpack-cli": "^5.0.1"
+    "@types/node": "^20.5.9",
+    "@types/tough-cookie": "^4.0.2",
+    "@types/webextension-polyfill": "^0.10.2",
+    "@typescript-eslint/eslint-plugin": "^6.6.0",
+    "@typescript-eslint/parser": "^6.6.0",
+    "domhandler": "^5.0.3",
+    "dotenv": "^16.3.1",
+    "eslint": "^8.48.0",
+    "jest": "^29.6.4",
+    "prettier": "^3.0.3",
+    "tsup": "^7.2.0",
+    "typescript": "^5.2.2",
+    "vite": "^4.4.9",
+    "vite-plugin-web-extension": "^3.2.0",
+    "vitest": "^0.34.3",
+    "webextension-polyfill": "^0.10.0"
   },
   "dependencies": {
-    "cheerio": "^1.0.0-rc.10",
-    "cross-fetch": "^3.1.5",
-    "entities": "^4.4.0",
-    "es6-denodeify": "^0.1.5",
-    "form-data": "^4.0.0",
+    "cheerio": "^1.0.0-rc.12",
+    "entities": "^4.5.0",
+    "fetch-cookie": "^2.1.0",
     "js-base64": "^3.7.5",
-    "real-isomorphic-fetch": "^3.0.0"
+    "node-fetch-native": "^1.4.0",
+    "tough-cookie": "^4.1.3"
   }
 }

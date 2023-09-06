@@ -1,14 +1,10 @@
-import { defineConfig } from 'tsup';
+import { Options, defineConfig } from 'tsup';
 
-export default defineConfig({
+const COMMON_OPTIONS: Options = {
   globalName: 'LearnLib',
   entry: ['src/index.ts'],
   outDir: 'lib',
-  format: ['esm', 'iife'],
-  platform: 'browser',
   clean: true,
-  dts: true,
-  minify: true,
   esbuildOptions: (options, context) => {
     if (context.format === 'iife') {
       options.alias = {
@@ -17,4 +13,25 @@ export default defineConfig({
       };
     }
   },
-});
+  terserOptions: {
+    format: {
+      comments: false,
+      ecma: 2018,
+    },
+  },
+};
+
+export default defineConfig([
+  {
+    ...COMMON_OPTIONS,
+    format: 'esm',
+    dts: true,
+  },
+  {
+    ...COMMON_OPTIONS,
+    format: 'iife',
+    platform: 'browser',
+    minify: 'terser',
+    sourcemap: true,
+  },
+]);

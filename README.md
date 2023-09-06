@@ -24,16 +24,12 @@ In case of any syntax problems, just upgrade your browser / Node, or use any cor
 yarn add thu-learn-lib
 ```
 
-### Browser
+### Browser (IIFE)
 
 ```html
-<script src="https://cdn.jsdelivr.net/npm/thu-learn-lib@3.1.0"></script>
-```
-
-or
-
-```html
-<script src="https://unpkg.com/thu-learn-lib@3.1.0"></script>
+<script src="https://cdn.jsdelivr.net/npm/thu-learn-lib@3"></script>
+<!-- or -->
+<script src="https://unpkg.com/thu-learn-lib@3"></script>
 ```
 
 The library is exposed under `window.LearnLib`.
@@ -42,7 +38,7 @@ The library is exposed under `window.LearnLib`.
 
 ```html
 <script type="module">
-  import { Learn2018Helper } from 'https://cdn.skypack.dev/thu-learn-lib@3.1.0';
+  import { Learn2018Helper } from 'https://cdn.skypack.dev/thu-learn-lib@3';
 </script>
 ```
 
@@ -55,8 +51,8 @@ yarn run build
 You can find the bundled library in `lib/`.
 
 - `index.js`: ES module entry
-- `index.d.ts`: types file for TypeScript
-- `index.global.js`: IIFE for use in browser
+- `index.d.ts`: definition file for TypeScript
+- `index.global.js{,.map}`: IIFE for use in browser (with source map for debugging)
 
 ## Development in browser
 

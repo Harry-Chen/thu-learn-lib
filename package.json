@@ -5,6 +5,9 @@
   "type": "module",
   "module": "lib/index.js",
   "types": "lib/index.d.ts",
+  "browser": "lib/index.global.js",
+  "unpkg": "lib/index.global.js",
+  "jsdelivr": "lib/index.global.js",
   "files": [
     "lib"
   ],
@@ -12,10 +15,6 @@
     ".": {
       "import": "./lib/index.js",
       "types": "./lib/index.d.ts"
-    },
-    "./lib/types": {
-      "import": "./lib/types.js",
-      "types": "./lib/types.d.ts"
     }
   },
   "scripts": {
@@ -57,6 +56,7 @@
   "dependencies": {
     "cheerio": "^1.0.0-rc.12",
     "entities": "^4.5.0",
+    "fake-parse5": "^0.0.1",
     "fetch-cookie": "^2.1.0",
     "js-base64": "^3.7.5",
     "node-fetch-native": "^1.4.0",

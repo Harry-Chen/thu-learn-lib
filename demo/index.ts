@@ -1,4 +1,3 @@
-import { Learn2018Helper } from '../src';
-import { ContentType, CourseType } from '../src/types';
+import * as LearnLib from '../src';
 
-Object.assign(window, { Learn2018Helper, ContentType, CourseType });
+Object.assign(window, { LearnLib });

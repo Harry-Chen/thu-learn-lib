@@ -18,8 +18,32 @@ In case of any syntax problems, just upgrade your browser / Node, or use any cor
 
 ## Installation
 
+### Node / Bundler
+
 ```bash
 yarn add thu-learn-lib
+```
+
+### Browser
+
+```html
+<script src="https://cdn.jsdelivr.net/npm/thu-learn-lib@3.1.0"></script>
+```
+
+or
+
+```html
+<script src="https://unpkg.com/thu-learn-lib@3.1.0"></script>
+```
+
+The library is exposed under `window.LearnLib`.
+
+### Browser (ESM)
+
+```html
+<script type="module">
+  import { Learn2018Helper } from 'https://cdn.skypack.dev/thu-learn-lib@3.1.0';
+</script>
 ```
 
 ## Build
@@ -28,7 +52,11 @@ yarn add thu-learn-lib
 yarn run build
 ```
 
-You can find the bundled es library in `lib/`.
+You can find the bundled library in `lib/`.
+
+- `index.js`: ES module entry
+- `index.d.ts`: types file for TypeScript
+- `index.global.js`: IIFE for use in browser
 
 ## Development in browser
 
@@ -37,7 +65,7 @@ yarn run dev
 ```
 
 This will open a dev browser with a testing extension. Click the `t` icon in extension bar, then execute anything you want in the Console of Chrome Developer Tool.
-The helper class and utility types (`Learn2018Helper`, `ContentType`, `CourseType`) is exposed globally.
+The library is exposed under `window.LearnLib`.
 
 Use `yarn run dev:build` to build the extension that can be installed to your chrome browser manually.
 
@@ -143,10 +171,11 @@ It's ok if you meet `Timeout * Async callback was not invoked within the 5000ms 
     - Build tool: `webpack` -> `tsup`
     - Development tool: `webpack` -> `vite`
     - Test tool: `jest` -> `vitest`
-    - Fetch: 
+    - Fetch:
       - `cross-fetch` -> `node-fetch-native` (Node.js now has native `fetch`)
       - `real-isomorphic-fetch` -> `fetch-cookie` (`fetch-cookie` now can handle redirects)
       - `tough-cookie-no-native` -> `tough-cookie` (`tough-cookie` is now native)
+    - **(BREAKING)** Updated library output structure, now everything exported in index, cannot use `/lib` or `/lib/types` anymore
   - Added:
     - Submit homework
     - Language switching and related behaviour
@@ -154,167 +183,123 @@ It's ok if you meet `Timeout * Async callback was not invoked within the 5000ms 
   - Fixed:
     - **Web Learning API update**
     - Decode course name
-
+  - Other:
+    - Move `fake-parse5` to [a seperate library](https://github.com/AsakuraMizu/fake-parse5)
 - v3.0.4
   - No feature changes, upgrade dependencies
-
 - v3.0.3
   - No feature changes, upgrade dependencies
-
 - v3.0.2
   - No feature changes, upgrade dependencies to mitigate security vulnerabilities
-
 - v3.0.1
   - Add config `generatePreviewUrlForFirstPage` to switch preview URL type (default to `true`)
-
 - v3.0.0
   - (BREAKING CHANGE) Redesign exported types, use `RemoteFile` to represent a file on Web Learning
   - Add support for parsing attachment sizes & preview URLs in homework & notifications (Harry-Chen/Learn-Helper#109)
-
 - v2.5.4
   - Fix (sometimes) incorrect publish time of notifications (#36)
-
 - v2.5.3
   - Add `allowFailure` in `getAllContents` for convenience
-
 - v2.5.2
   - Allow retrieving CSRF token via `getCSRFToken` method
   - Export `addCSRFTokenToUrl` function as API for convenience
-
 - v2.5.1
   - No feature change, add support for direct `import` in Node.js
-
 - v2.5.0
   - Add transparent support for CSRF token (recently deployed) in all Web Learning APIs
-
 - v2.4.2
   - No functionality change, bump some dependencies to mitigate security concerns
-
 - v2.4.1
   - Replace `parse5` with `htmlparser2` in Cheerio and remove it from bundled file (replaced with `src/fake-parse5`)
   - Replace TSLint with ESLint
-
 - v2.4.0
   - Upgrade to TypeScript 4.1 & Webpack 5.15
   - Add more null checking for disabled functionalities (see [xxr3376/Learn-Project#90](https://github.com/xxr3376/Learn-Project/issues/90))
-
 - v2.3.2
   - Fix a problem in `v2.3.1` (not published) and `v2.3.0` that build output fails to be uploaded to npm
-
 - v2.3.0
   - Refine error detecting & handling by using `ApiError` in usage of `Promise.reject` (might be a breaking change)
-
 - v2.2.3
   - Add workaround for some strange behaviors in teacher mode (thanks to @MashPlant)
-
 - v2.2.2
   - Return error when API return any non-success result
-
 - v2.2.1
   - Fix a missing parameter in `previewUrl`
-
 - v2.2.0
   - Use ECMAScript private fields in `Learn2018Helper` class to protect credentials
   - Add `previewUrl` to `File`
   - Upgrade to TypeScript 3.8.2
-
 - v2.1.2
   - Fix problem in invoking JSONP callback (because some engines might do JIT)
-
 - v2.1.1
   - Remove usage of `eval` in `getCalendar`
-
 - v2.1.0
   - Catch errors returned by calendar API and throw user-defined error
   - Add documentation for all public APIs
-
 - v2.0.0
   - Use ES2018 in generated library
   - Add `FailReason` to represent all strings that will be used as the reason of rejected Promises
   - `login` and `logout` no longer return Promises
-
 - v1.2.2
   - Fix a function signature to keep compatibility
 - v1.2.1
   - Support TA version of many APIs (see above for usage)
   - Fix some wrong URLs in fetched data
-
 - v1.2.0
   - Support getting course calendars from academic.tsinghua.edu.cn (thanks to robertying)
   - Automatic retry logging in when fetching failed and `CredentialProvider` is provided (thanks to mayeths)
   - Add unit tests using `jest` (thanks to mayeths)
   - Filter out `null` values in `getSemesterIdList` API
   - Switch to `https://learn.tsinghua.edu.cn/` from `learn2018` permanently
-
 - v1.1.4
   - Return empty array if any content module is disabled
   - Add `getTACourseList` to get TA's course list (temporarily can not be used by other functions)
-
 - v1.1.3
   - Emergency fix of wrongly decoded base64 string, add `js-base64` back
-
 - v1.1.2
   - Switch to `Base64.js` instead of `js-base64`, which uses evil `eval`
-
 - v1.1.1
   - Decode HTML entities in the title of disscussions (the last one, I promise!)
-
 - v1.1.0
   - Fix an typo in grade level mapping
   - Bump to a new minor version
-
 - v1.0.16 (no v1.0.15 due to some publishing issues)
   - Switch to `yarn`
   - Add parsing of grade levels of homework (A+/A/.../F)
-
 - v1.0.14
   - Add prefix for `attachmentUrl` filed of Notification
   - Deprecate all old versions
-
 - v1.0.13
   - Decode HTML entities whenever possible
-
 - v1.0.12
   - Add `url` for Course
   - Fix `url` for Question (to display correct section name)
-
 - v1.0.11
   - Fix `url` error in Question
-
 - v1.0.10
   - Decode the HTML entities in the `description` field of homework
-
 - v1.0.9
   - Use `entities` to decode HTML entities
-
 - v1.0.8
   - Export type CourseContent
-
 - v1.0.7
   - No change made to code, update README
-
 - v1.0.6
   - Add API to fetching content for a list of courses
-
 - v1.0.5
   - Fix HTML entity replacement.
-
 - v1.0.4
   - No change made to code
   - Remove unused build commands
   - Fix multiple typos in README
-
 - v1.0.3
   - Add real logout API (thank @zhaofeng-shu33)
-
 - v1.0.2
   - Add API to get IDs of all semesters (thank @jiegec)
-
 - v1.0.1
   - Expose CookieJar in helper class
   - Fix some HTML entity decoding problems
   - **Rename of some APIs** (break compatibility before we have actual users)
-
 - v1.0.0
   - First release
   - Support parsing of notification, homework, file, discussion and **answered** questions

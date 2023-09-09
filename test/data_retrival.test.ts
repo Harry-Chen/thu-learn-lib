@@ -89,6 +89,17 @@ describe('helper data retrival', () => {
     }
   });
 
+  it('should get user info correctly', async () => {
+    const userInfo = await helper.getUserInfo();
+    expect(userInfo).toBeDefined();
+
+    expect(userInfo.name).toBeTruthy();
+    expect(typeof userInfo.name).toBe('string');
+
+    expect(userInfo.department).toBeTruthy();
+    expect(typeof userInfo.department).toBe('string');
+  });
+
   it('should get calendar items correctly and throw on invalid response', async () => {
     expect((await helper.getCalendar('20210501', '20210530')).length).toBeGreaterThanOrEqual(0);
     // await expect(helper.getCalendar('gg', 'GG')).rejects.toHaveProperty('reason', FailReason.INVALID_RESPONSE);

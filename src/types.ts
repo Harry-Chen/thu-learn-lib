@@ -41,6 +41,13 @@ export enum ContentType {
   QUESTION = 'question',
 }
 
+interface IUserInfo {
+  name: string;
+  department: string;
+}
+
+export type UserInfo = IUserInfo;
+
 interface ISemesterInfo {
   id: string;
   startDate: Date;

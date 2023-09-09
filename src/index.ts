@@ -33,6 +33,7 @@ import {
   IHomeworkSubmitResult,
   Language,
   HomeworkTA,
+  UserInfo,
 } from './types';
 import {
   decodeHTML,
@@ -189,6 +190,20 @@ export class Learn2018Helper {
   /**  logout (to make everyone happy) */
   public async logout(): Promise<void> {
     await this.#rawFetch(URL.LEARN_LOGOUT(), { method: 'POST' });
+  }
+
+  /** get user's name and department */
+  public async getUserInfo(courseType = CourseType.STUDENT): Promise<UserInfo> {
+    const content = await (await this.#myFetchWithToken(URL.LEARN_HOMEPAGE(courseType))).text();
+
+    const dom = $(content);
+    const name = dom('a.user-log').text().trim();
+    const department = dom('.fl.up-img-info p:nth-child(2) label').text().trim();
+
+    return {
+      name,
+      department,
+    };
   }
 
   /**

@@ -1,8 +1,7 @@
 import * as cheerio from 'cheerio';
 import type * as DOM from 'domhandler';
 import { Base64 } from 'js-base64';
-import { fetch } from 'node-fetch-native';
-import fetchCookie from 'fetch-cookie';
+import makeFetch from 'node-fetch-cookie-native';
 
 import * as URL from './urls';
 import {
@@ -114,11 +113,7 @@ export class Learn2018Helper {
   constructor(config?: HelperConfig) {
     this.previewFirstPage = config?.generatePreviewUrlForFirstPage ?? true;
     this.#provider = config?.provider;
-    this.#rawFetch =
-      config?.fetch ??
-      (typeof window !== 'undefined'
-        ? (input, init) => fetch(input, { ...init, credentials: 'include' })
-        : fetchCookie(fetch, config?.cookieJar));
+    this.#rawFetch = config?.fetch ?? makeFetch(config?.cookieJar);
     this.#myFetch = this.#provider
       ? this.#withReAuth(this.#rawFetch)
       : async (...args) => {

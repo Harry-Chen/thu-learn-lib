@@ -2467,7 +2467,7 @@ fetch-blob@^3.1.2, fetch-blob@^3.1.4:
     node-domexception "^1.0.0"
     web-streams-polyfill "^3.0.3"
 
-fetch-cookie@^2.1.0:
+fetch-cookie@*, fetch-cookie@^2.1.0:
   version "2.1.0"
   resolved "https://registry.yarnpkg.com/fetch-cookie/-/fetch-cookie-2.1.0.tgz#6e127909912f9e527533b045aab555c06b33801b"
   integrity sha512-39+cZRbWfbibmj22R2Jy6dmTbAWC+oqun1f1FzQaNurkPDUP4C38jpeZbiXCR88RKRVDp8UcDrbFXkNhN+NjYg==
@@ -4070,7 +4070,15 @@ node-domexception@^1.0.0:
   resolved "https://registry.yarnpkg.com/node-domexception/-/node-domexception-1.0.0.tgz#6888db46a1f71c0b76b3f7555016b63fe64766e5"
   integrity sha512-/jKZoMpw0F8GRwl4/eLROPA3cfcXtLApP0QzLmUT/HuPCZWyB7IY9ZrMeKw2O/nFIqPQB3PVM9aYm0F312AXDQ==
 
-node-fetch-native@^1.4.0:
+node-fetch-cookie-native@^0.0.1:
+  version "0.0.1"
+  resolved "https://registry.yarnpkg.com/node-fetch-cookie-native/-/node-fetch-cookie-native-0.0.1.tgz#c98fec548ae1c3ebf09aac9b13c84f0a91c1dbbc"
+  integrity sha512-V361Y6Gx0Q/4YFqSicNH+/wHiSwfBjVAstUzBBTKuggegkdDkChzmUzo5/zyk1jOrxAfx9YIJ7cbv13+gIyB0Q==
+  dependencies:
+    fetch-cookie "*"
+    node-fetch-native "*"
+
+node-fetch-native@*, node-fetch-native@^1.4.0:
   version "1.4.0"
   resolved "https://registry.yarnpkg.com/node-fetch-native/-/node-fetch-native-1.4.0.tgz#fbe8ac033cb6aa44bd106b5e4fd2b6277ba70fa1"
   integrity sha512-F5kfEj95kX8tkDhUCYdV8dg3/8Olx/94zB8+ZNthFs6Bz31UpUi8Xh40TN3thLwXgrwXry1pEg9lJ++tLWTcqA==

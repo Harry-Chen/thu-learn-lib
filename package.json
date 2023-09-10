@@ -60,6 +60,7 @@
     "entities": "^4.5.0",
     "fetch-cookie": "^2.1.0",
     "js-base64": "^3.7.5",
+    "node-fetch-cookie-native": "^0.0.1",
     "node-fetch-native": "^1.4.0",
     "tough-cookie": "^4.1.3"
   }

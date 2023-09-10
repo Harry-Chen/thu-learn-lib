@@ -162,6 +162,9 @@ It's ok if you meet `Timeout * Async callback was not invoked within the 5000ms 
 
 ## Changelog
 
+- v3.1.1
+  - Remove `fetch-cookie` dependency in browser build, reducing bundle size
+  - Add `getUserInfo` interface (#48, thanks to @robertying)
 - v3.1.0
   - **Refactor**:
     - Build tool: `webpack` -> `tsup`

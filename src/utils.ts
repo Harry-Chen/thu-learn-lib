@@ -27,14 +27,14 @@ export function getMkFromType(type: ContentType): string {
 }
 
 export function decodeHTML(html: string): string {
-  const text = _decodeHTML(html);
+  const text = _decodeHTML(html ?? '');
   // remove strange prefixes returned by web learning
   return text.startsWith('\xC2\x9E\xC3\xA9\x65')
-    ? text.substr(5)
+    ? text.slice(5)
     : text.startsWith('\x9E\xE9\x65')
-    ? text.substr(3)
+    ? text.slice(3)
     : text.startsWith('\xE9\x65')
-    ? text.substr(2)
+    ? text.slice(2)
     : text;
 }
 

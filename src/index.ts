@@ -177,7 +177,7 @@ export class Learn2018Helper {
       } as ApiError);
     }
     this.#csrfToken = tokenMatches[0][1];
-    const langRegex = /<script src="\/f\/wlxt\/common\/languagejs\?lang=(\S*?)&v=(\d*?)"><\/script>/g;
+    const langRegex = /<script src="\/f\/wlxt\/common\/languagejs\?lang=(zh|en)"><\/script>/g;
     const langMatches = [...courseListPageSource.matchAll(langRegex)];
     if (langMatches.length !== 0) this.#lang = langMatches[0][1] as Language;
   }

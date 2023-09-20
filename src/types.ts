@@ -136,6 +136,41 @@ export interface IHomeworkStatus {
   graded: boolean;
 }
 
+export enum HomeworkGradeLevel {
+  /** 已阅 */
+  CHECKED = 'checked',
+  A_PLUS = 'A+',
+  A = 'A',
+  A_MINUS = 'A-',
+  B_PLUS = 'B+',
+  /** 优秀 */
+  DISTINCTION = 'distinction',
+  B = 'B',
+  B_MINUS = 'B-',
+  C_PLUS = 'C+',
+  C = 'C',
+  C_MINUS = 'C-',
+  G = 'G',
+  D_PLUS = 'D+',
+  D = 'D',
+  /** 免课 */
+  EXEMPTED_COURSE = 'exempted course',
+  P = 'P',
+  EX = 'EX',
+  /** 免修 */
+  EXEMPTION = 'exemption',
+  /** 通过 */
+  PASS = 'pass',
+  /** 不通过 */
+  FAILURE = 'failure',
+  W = 'W',
+  I = 'I',
+  /** 缓考 */
+  INCOMPLETE = 'incomplete',
+  NA = 'NA',
+  F = 'F',
+}
+
 export interface IHomework extends IHomeworkStatus {
   id: string;
   studentHomeworkId: string;
@@ -146,7 +181,7 @@ export interface IHomework extends IHomeworkStatus {
   submitTime?: Date;
   grade?: number;
   /** some homework has levels but not grades, like A/B/.../F */
-  gradeLevel?: string;
+  gradeLevel?: HomeworkGradeLevel;
   gradeTime?: Date;
   graderName?: string;
   gradeContent?: string;
@@ -154,15 +189,15 @@ export interface IHomework extends IHomeworkStatus {
 
 export interface IHomeworkDetail {
   description?: string;
-  // attachment from teacher
+  /** attachment from teacher */
   attachment?: RemoteFile;
-  // answer from teacher
+  /** answer from teacher */
   answerContent?: string;
   answerAttachment?: RemoteFile;
-  // submitted content from student
+  /** submitted content from student */
   submittedContent?: string;
   submittedAttachment?: RemoteFile;
-  // grade from teacher
+  /** grade from teacher */
   gradeAttachment?: RemoteFile;
 }
 

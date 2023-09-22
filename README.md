@@ -12,7 +12,7 @@ This project is licensed under MIT License.
 
 ## Compatibility
 
-The library uses `node-fetch-native`, which uses native `fetch` as possible and fallbacks to `node-fetch` (e.g. before Node.js 18), providing cookie and redirection support in both browsers and Node (supported by `fetch-cookie`).
+The library uses [`node-fetch-cookie-native`](https://github.com/AsakuraMizu/node-fetch-cookie-native), which is a simple wrapper for [node-fetch-native](https://github.com/unjs/node-fetch-native) and [fetch-cookie](https://github.com/valeriangalliat/fetch-cookie), providing cookie and redirection support in both browsers and Node.
 
 In case of any syntax problems, just upgrade your browser / Node, or use any corresponding polyfills.
 
@@ -38,7 +38,7 @@ The library is exposed under `window.LearnLib`.
 
 ```html
 <script type="module">
-  import { Learn2018Helper } from 'https://cdn.skypack.dev/thu-learn-lib@3';
+  import { Learn2018Helper } from 'https://esm.sh/thu-learn-lib@3';
 </script>
 ```
 

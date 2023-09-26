@@ -1,7 +1,6 @@
 import { describe, it, expect, beforeAll, afterAll } from 'vitest';
-import { Learn2018Helper } from '../src';
 import * as dotenv from 'dotenv';
-import { FailReason, CourseType } from '../src/types';
+import { Learn2018Helper, CourseType, Language } from '../src';
 
 dotenv.config({ path: 'test/.env' });
 const U = process.env.U!; // username
@@ -17,11 +16,11 @@ describe('helper data retrival', () => {
     const _h = new Learn2018Helper();
     await _h.login(U, P);
     const currSemester = await _h.getCurrentSemester();
-    const courses = await _h.getCourseList(currSemester.id);
-    expect(courses.length).toBeGreaterThanOrEqual(0);
-    const taCourses = await _h.getCourseList(currSemester.id, CourseType.TEACHER);
-    expect(taCourses.length).toBeGreaterThanOrEqual(0);
     semesterTester = currSemester.id;
+    const courses = await _h.getCourseList(semesterTester);
+    expect(courses.length).toBeGreaterThanOrEqual(0);
+    const taCourses = await _h.getCourseList(semesterTester, CourseType.TEACHER);
+    expect(taCourses.length).toBeGreaterThanOrEqual(0);
     if (courses.length > 0) {
       courseTester = courses[0].id;
     }
@@ -35,6 +34,15 @@ describe('helper data retrival', () => {
   });
   afterAll(async () => {
     await helper.logout();
+  });
+
+  it('should get correct language', async () => {
+    const lang = helper.getCurrentLanguage();
+    expect(lang).toBeDefined();
+    const courses = await helper.getCourseList(semesterTester);
+    courses.forEach((course) => {
+      expect(course.name).toBe(lang === Language.EN ? course.englishName : course.chineseName);
+    });
   });
 
   it('should get semesterIdList correctly', async () => {
@@ -82,10 +90,7 @@ describe('helper data retrival', () => {
       // expect((await helper.getNotificationList(courseTATester, CourseType.TEACHER)).length).toBeGreaterThanOrEqual(0);
       expect((await helper.getFileList(courseTATester, CourseType.TEACHER)).length).toBeGreaterThanOrEqual(0);
       // expect((await helper.getAnsweredQuestionList(courseTATester, CourseType.TEACHER)).length).toBeGreaterThanOrEqual(0);
-      await expect(helper.getHomeworkList(courseTATester, CourseType.TEACHER)).rejects.toHaveProperty(
-        'reason',
-        FailReason.NOT_IMPLEMENTED,
-      );
+      expect((await helper.getHomeworkList(courseTATester, CourseType.TEACHER)).length).toBeGreaterThanOrEqual(0);
     }
   });
 

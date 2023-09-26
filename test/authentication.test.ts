@@ -1,13 +1,10 @@
 import { describe, it, expect } from 'vitest';
-import { Learn2018Helper } from '../src';
 import * as dotenv from 'dotenv';
-import { FailReason } from '../src/types';
+import { Learn2018Helper, FailReason } from '../src';
 
 dotenv.config({ path: 'test/.env' });
 const U = process.env.U!; // username
 const P = process.env.P!; // password
-//                     ^ note the exclamation mark here
-// prevent TS2322: Type 'string | undefined' is not assignable to type 'string'.
 
 describe('helper authentication', () => {
   it('should login & logout correctly if account is right', async () => {

@@ -1,6 +1,6 @@
 import { decodeHTML as _decodeHTML } from 'entities';
 
-import { SemesterType, FailReason, ContentType } from './types';
+import { SemesterType, FailReason, ContentType, HomeworkGradeLevel } from './types';
 
 export function parseSemesterType(n: number): SemesterType {
   if (n === 1) {
@@ -27,14 +27,14 @@ export function getMkFromType(type: ContentType): string {
 }
 
 export function decodeHTML(html: string): string {
-  const text = _decodeHTML(html);
+  const text = _decodeHTML(html ?? '');
   // remove strange prefixes returned by web learning
   return text.startsWith('\xC2\x9E\xC3\xA9\x65')
-    ? text.substr(5)
+    ? text.slice(5)
     : text.startsWith('\x9E\xE9\x65')
-    ? text.substr(3)
+    ? text.slice(3)
     : text.startsWith('\xE9\x65')
-    ? text.substr(2)
+    ? text.slice(2)
     : text;
 }
 
@@ -46,41 +46,33 @@ export function trimAndDefine(text: string | undefined | null): string | undefin
   return trimmed === '' ? undefined : decodeHTML(trimmed);
 }
 
-const GRADE_LEVEL_MAP = new Map([
-  [-100, '已阅'],
-  [-99, 'A+'],
-  [-98, 'A'],
-  [-92, 'A-'],
-  [-87, 'B+'],
-  [-85, '优秀'],
-  [-82, 'B'],
-  [-78, 'B-'],
-  [-74, 'C+'],
-  [-71, 'C'],
-  [-68, 'C-'],
-  [-67, 'G'],
-  [-66, 'D+'],
-  [-64, 'D'],
-  [-65, '免课'],
-  [-63, 'P'],
-  [-62, 'EX'],
-  [-61, '免修'],
-  [-60, '通过'],
-  [-59, '不通过'],
-  [-55, 'W'],
-  [-51, 'I'],
-  [-50, '缓考'],
-  [-31, 'NA'],
-  [-30, 'F'],
+export const GRADE_LEVEL_MAP = new Map([
+  [-100, HomeworkGradeLevel.CHECKED],
+  [-99, HomeworkGradeLevel.A_PLUS],
+  [-98, HomeworkGradeLevel.A],
+  [-92, HomeworkGradeLevel.A_MINUS],
+  [-87, HomeworkGradeLevel.B_PLUS],
+  [-85, HomeworkGradeLevel.DISTINCTION],
+  [-82, HomeworkGradeLevel.B],
+  [-78, HomeworkGradeLevel.B_MINUS],
+  [-74, HomeworkGradeLevel.C_PLUS],
+  [-71, HomeworkGradeLevel.C],
+  [-68, HomeworkGradeLevel.C_MINUS],
+  [-67, HomeworkGradeLevel.G],
+  [-66, HomeworkGradeLevel.D_PLUS],
+  [-64, HomeworkGradeLevel.D],
+  [-65, HomeworkGradeLevel.EXEMPTED_COURSE],
+  [-63, HomeworkGradeLevel.PASS],
+  [-62, HomeworkGradeLevel.EX],
+  [-61, HomeworkGradeLevel.EXEMPTION],
+  [-60, HomeworkGradeLevel.PASS],
+  [-59, HomeworkGradeLevel.FAILURE],
+  [-55, HomeworkGradeLevel.W],
+  [-51, HomeworkGradeLevel.I],
+  [-50, HomeworkGradeLevel.INCOMPLETE],
+  [-31, HomeworkGradeLevel.NA],
+  [-30, HomeworkGradeLevel.F],
 ]);
-
-export function mapGradeToLevel(grade: number | null): string | undefined {
-  if (grade !== null && GRADE_LEVEL_MAP.has(grade)) {
-    return GRADE_LEVEL_MAP.get(grade)!;
-  } else {
-    return undefined;
-  }
-}
 
 export const JSONP_EXTRACTOR_NAME = 'thu_learn_lib_jsonp_extractor';
 

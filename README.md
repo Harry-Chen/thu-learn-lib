@@ -162,6 +162,8 @@ It's ok if you meet `Timeout * Async callback was not invoked within the 5000ms 
 
 ## Changelog
 
+- v3.1.3
+  - Fix empty time and location of course (see [Harry-Chen/Learn-Helper#145](https://github.com/Harry-Chen/Learn-Helper/issues/145))
 - v3.1.2
   - Fix empty course name parsing
   - (Maybe BEARKING) `Homework.gradeLevel` changed to `HomeworkGradeLevel` (a string enum) for better i18n

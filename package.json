@@ -36,7 +36,7 @@
     "url": "https://github.com/Harry-Chen/thu-learn-lib.git"
   },
   "devDependencies": {
-    "@types/node": "^20.6.3",
+    "@types/node": "20.7.0",
     "@types/tough-cookie": "^4.0.3",
     "@types/webextension-polyfill": "^0.10.2",
     "@typescript-eslint/eslint-plugin": "^6.7.2",

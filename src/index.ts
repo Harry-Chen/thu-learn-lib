@@ -217,7 +217,9 @@ export class Learn2018Helper {
 
     await this.#myFetch(URLS.REGISTRAR_AUTH(ticket));
 
-    const response = await this.#myFetch(URLS.REGISTRAR_CALENDAR(startDate, endDate, graduate, JSONP_EXTRACTOR_NAME));
+    const response = await this.#myFetchWithToken(
+      URLS.REGISTRAR_CALENDAR(startDate, endDate, graduate, JSONP_EXTRACTOR_NAME),
+    );
 
     if (!response.ok) {
       return Promise.reject({

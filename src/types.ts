@@ -1,7 +1,7 @@
 import type { CookieJar } from 'tough-cookie';
 
 export type Fetch = typeof globalThis.fetch;
-export type Credential = { username: string; password: string };
+export type Credential = { username?: string; password?: string };
 export type CredentialProvider = () => Credential | Promise<Credential>;
 export type HelperConfig = {
   provider?: CredentialProvider;

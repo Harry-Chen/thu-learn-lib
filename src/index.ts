@@ -8,7 +8,6 @@ import {
   CredentialProvider,
   Fetch,
   HelperConfig,
-  Content,
   ContentType,
   CourseContent,
   CourseInfo,
@@ -33,6 +32,7 @@ import {
   Language,
   HomeworkTA,
   UserInfo,
+  ContentTypeMap,
 } from './types';
 import {
   decodeHTML,
@@ -316,36 +316,37 @@ export class Learn2018Helper {
    * Get certain type of content of all specified courses.
    * It actually wraps around other `getXXX` functions. You can ignore the failure caused by certain courses.
    */
-  public async getAllContents(
+  public async getAllContents<T extends ContentType>(
     courseIDs: string[],
-    type: ContentType,
+    type: T,
     courseType: CourseType = CourseType.STUDENT,
     allowFailure = false,
-  ): Promise<CourseContent> {
-    let fetchFunc: (courseID: string, courseType: CourseType) => Promise<Content[]>;
-    switch (type) {
-      case ContentType.NOTIFICATION:
-        fetchFunc = this.getNotificationList;
-        break;
-      case ContentType.FILE:
-        fetchFunc = this.getFileList;
-        break;
-      case ContentType.HOMEWORK:
-        fetchFunc = this.getHomeworkList;
-        break;
-      case ContentType.DISCUSSION:
-        fetchFunc = this.getDiscussionList;
-        break;
-      case ContentType.QUESTION:
-        fetchFunc = this.getAnsweredQuestionList;
-        break;
-    }
+  ) {
+    const fetchContentForCourse = <T extends ContentType>(type: T, id: string, courseType: CourseType) => {
+      switch (type) {
+        case ContentType.NOTIFICATION:
+          return this.getNotificationList(id, courseType) as Promise<ContentTypeMap[T][]>;
+        case ContentType.FILE:
+          return this.getFileList(id, courseType) as Promise<ContentTypeMap[T][]>;
+        case ContentType.HOMEWORK:
+          return this.getHomeworkList(id) as Promise<ContentTypeMap[T][]>;
+        case ContentType.DISCUSSION:
+          return this.getDiscussionList(id, courseType) as Promise<ContentTypeMap[T][]>;
+        case ContentType.QUESTION:
+          return this.getAnsweredQuestionList(id, courseType) as Promise<ContentTypeMap[T][]>;
+        default:
+          return Promise.reject({
+            reason: FailReason.NOT_IMPLEMENTED,
+            extra: 'Unknown content type',
+          } as ApiError);
+      }
+    };
 
-    const contents: CourseContent = {};
+    const contents: CourseContent<T> = {};
 
     const results = await Promise.allSettled(
       courseIDs.map(async (id) => {
-        contents[id] = await fetchFunc.bind(this)(id, courseType);
+        contents[id] = await fetchContentForCourse(type, id, courseType);
       }),
     );
 

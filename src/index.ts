@@ -141,6 +141,11 @@ export class Learn2018Helper {
       const credential = await this.#provider();
       username = credential.username;
       password = credential.password;
+      if (!username || !password) {
+        return Promise.reject({
+          reason: FailReason.NO_CREDENTIAL,
+        } as ApiError);
+      }
     }
     const ticketResponse = await this.#rawFetch(URL.ID_LOGIN(), {
       body: URL.ID_LOGIN_FORM_DATA(username, password),

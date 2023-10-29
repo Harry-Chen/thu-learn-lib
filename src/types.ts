@@ -268,13 +268,19 @@ interface IQuestion extends IDiscussionBase {
 
 export type Question = IQuestion;
 
-export type Content = Notification | File | Homework | Discussion | Question;
+export type ContentTypeMap = {
+  [ContentType.NOTIFICATION]: Notification;
+  [ContentType.FILE]: File;
+  [ContentType.HOMEWORK]: Homework;
+  [ContentType.DISCUSSION]: Discussion;
+  [ContentType.QUESTION]: Question;
+};
 
-interface ICourseContent {
-  [id: string]: Content[];
+interface ICourseContent<T extends ContentType> {
+  [id: string]: ContentTypeMap[T][];
 }
 
-export type CourseContent = ICourseContent;
+export type CourseContent<T extends ContentType> = ICourseContent<T>;
 
 export interface CalendarEvent {
   location: string;

@@ -3,7 +3,7 @@ import type * as DOM from 'domhandler';
 import { Base64 } from 'js-base64';
 import makeFetch from 'node-fetch-cookie-native';
 
-import * as URL from './urls';
+import * as URLS from './urls';
 import {
   CredentialProvider,
   Fetch,
@@ -57,12 +57,9 @@ const noLogin = (res: Response) => res.url.includes('login_timeout') || res.stat
 
 /** add CSRF token to any request URL as parameters */
 export const addCSRFTokenToUrl = (url: string, token: string): string => {
-  if (url.includes('?')) {
-    url += `&_csrf=${token}`;
-  } else {
-    url += `?_csrf=${token}`;
-  }
-  return url;
+  const newUrl = new URL(url);
+  newUrl.searchParams.set('_csrf', token);
+  return newUrl.toString();
 };
 
 /** the main helper class */
@@ -147,8 +144,8 @@ export class Learn2018Helper {
         } as ApiError);
       }
     }
-    const ticketResponse = await this.#rawFetch(URL.ID_LOGIN(), {
-      body: URL.ID_LOGIN_FORM_DATA(username, password),
+    const ticketResponse = await this.#rawFetch(URLS.ID_LOGIN(), {
+      body: URLS.ID_LOGIN_FORM_DATA(username, password),
       method: 'POST',
     });
     if (!ticketResponse.ok) {
@@ -166,13 +163,13 @@ export class Learn2018Helper {
         reason: FailReason.BAD_CREDENTIAL,
       } as ApiError);
     }
-    const loginResponse = await this.#rawFetch(URL.LEARN_AUTH_ROAM(ticket));
+    const loginResponse = await this.#rawFetch(URLS.LEARN_AUTH_ROAM(ticket));
     if (loginResponse.ok !== true) {
       return Promise.reject({
         reason: FailReason.ERROR_ROAMING,
       } as ApiError);
     }
-    const courseListPageSource: string = await (await this.#rawFetch(URL.LEARN_STUDENT_COURSE_LIST_PAGE())).text();
+    const courseListPageSource: string = await (await this.#rawFetch(URLS.LEARN_STUDENT_COURSE_LIST_PAGE())).text();
     const tokenRegex = /^.*&_csrf=(\S*)".*$/gm;
     const tokenMatches = [...courseListPageSource.matchAll(tokenRegex)];
     if (tokenMatches.length == 0) {
@@ -189,12 +186,12 @@ export class Learn2018Helper {
 
   /**  logout (to make everyone happy) */
   public async logout(): Promise<void> {
-    await this.#rawFetch(URL.LEARN_LOGOUT(), { method: 'POST' });
+    await this.#rawFetch(URLS.LEARN_LOGOUT(), { method: 'POST' });
   }
 
   /** get user's name and department */
   public async getUserInfo(courseType = CourseType.STUDENT): Promise<UserInfo> {
-    const content = await (await this.#myFetchWithToken(URL.LEARN_HOMEPAGE(courseType))).text();
+    const content = await (await this.#myFetchWithToken(URLS.LEARN_HOMEPAGE(courseType))).text();
 
     const dom = $(content);
     const name = dom('a.user-log').text().trim();
@@ -215,17 +212,19 @@ export class Learn2018Helper {
    * Otherwise it will return the parsed data (might be empty if the period is too far away from now)
    */
   public async getCalendar(startDate: string, endDate: string, graduate = false): Promise<CalendarEvent[]> {
-    const ticketResponse = await this.#myFetchWithToken(URL.REGISTRAR_TICKET(), {
+    const ticketResponse = await this.#myFetchWithToken(URLS.REGISTRAR_TICKET(), {
       method: 'POST',
-      body: URL.REGISTRAR_TICKET_FORM_DATA(),
+      body: URLS.REGISTRAR_TICKET_FORM_DATA(),
     });
 
     let ticket = (await ticketResponse.text()) as string;
     ticket = ticket.substring(1, ticket.length - 1);
 
-    await this.#myFetch(URL.REGISTRAR_AUTH(ticket));
+    await this.#myFetch(URLS.REGISTRAR_AUTH(ticket));
 
-    const response = await this.#myFetch(URL.REGISTRAR_CALENDAR(startDate, endDate, graduate, JSONP_EXTRACTOR_NAME));
+    const response = await this.#myFetchWithToken(
+      URLS.REGISTRAR_CALENDAR(startDate, endDate, graduate, JSONP_EXTRACTOR_NAME),
+    );
 
     if (!response.ok) {
       return Promise.reject({
@@ -246,7 +245,7 @@ export class Learn2018Helper {
   }
 
   public async getSemesterIdList(): Promise<string[]> {
-    const json = await (await this.#myFetchWithToken(URL.LEARN_SEMESTER_LIST())).json();
+    const json = await (await this.#myFetchWithToken(URLS.LEARN_SEMESTER_LIST())).json();
     if (!Array.isArray(json)) {
       return Promise.reject({
         reason: FailReason.INVALID_RESPONSE,
@@ -259,7 +258,7 @@ export class Learn2018Helper {
   }
 
   public async getCurrentSemester(): Promise<SemesterInfo> {
-    const json = await (await this.#myFetchWithToken(URL.LEARN_CURRENT_SEMESTER())).json();
+    const json = await (await this.#myFetchWithToken(URLS.LEARN_CURRENT_SEMESTER())).json();
     if (json.message !== 'success') {
       return Promise.reject({
         reason: FailReason.INVALID_RESPONSE,
@@ -279,7 +278,9 @@ export class Learn2018Helper {
 
   /** get all courses in the specified semester */
   public async getCourseList(semesterID: string, courseType: CourseType = CourseType.STUDENT): Promise<CourseInfo[]> {
-    const json = await (await this.#myFetchWithToken(URL.LEARN_COURSE_LIST(semesterID, courseType, this.#lang))).json();
+    const json = await (
+      await this.#myFetchWithToken(URLS.LEARN_COURSE_LIST(semesterID, courseType, this.#lang))
+    ).json();
     if (json.message !== 'success' || !Array.isArray(json.resultList)) {
       return Promise.reject({
         reason: FailReason.INVALID_RESPONSE,
@@ -294,7 +295,7 @@ export class Learn2018Helper {
         let timeAndLocation: string[] = [];
         try {
           // see https://github.com/Harry-Chen/Learn-Helper/issues/145
-          timeAndLocation = await (await this.#myFetchWithToken(URL.LEARN_COURSE_TIME_LOCATION(c.wlkcid))).json();
+          timeAndLocation = await (await this.#myFetchWithToken(URLS.LEARN_COURSE_TIME_LOCATION(c.wlkcid))).json();
         } catch (e) {
           /** ignore */
         }
@@ -304,7 +305,7 @@ export class Learn2018Helper {
           chineseName: decodeHTML(c.kcm),
           englishName: decodeHTML(c.ywkcm),
           timeAndLocation,
-          url: URL.LEARN_COURSE_PAGE(c.wlkcid, courseType),
+          url: URLS.LEARN_COURSE_PAGE(c.wlkcid, courseType),
           teacherName: c.jsm ?? '', // teacher can not fetch this
           teacherNumber: c.jsh,
           courseNumber: c.kch,
@@ -375,7 +376,7 @@ export class Learn2018Helper {
     courseID: string,
     courseType: CourseType = CourseType.STUDENT,
   ): Promise<Notification[]> {
-    const json = await (await this.#myFetchWithToken(URL.LEARN_NOTIFICATION_LIST(courseID, courseType))).json();
+    const json = await (await this.#myFetchWithToken(URLS.LEARN_NOTIFICATION_LIST(courseID, courseType))).json();
     if (json.result !== 'success') {
       return Promise.reject({
         reason: FailReason.INVALID_RESPONSE,
@@ -392,7 +393,7 @@ export class Learn2018Helper {
           id: n.ggid,
           content: decodeHTML(Base64.decode(n.ggnr ?? '')),
           title: decodeHTML(n.bt),
-          url: URL.LEARN_NOTIFICATION_DETAIL(courseID, n.ggid, courseType),
+          url: URLS.LEARN_NOTIFICATION_DETAIL(courseID, n.ggid, courseType),
           publisher: n.fbrxm,
           hasRead: n.sfyd === '是',
           markedImportant: Number(n.sfqd) === 1, // n.sfqd could be string '1' (teacher mode) or number 1 (student mode)
@@ -412,7 +413,7 @@ export class Learn2018Helper {
 
   /** Get all files （课程文件） of the specified course. */
   public async getFileList(courseID: string, courseType: CourseType = CourseType.STUDENT): Promise<File[]> {
-    const json = await (await this.#myFetchWithToken(URL.LEARN_FILE_LIST(courseID, courseType))).json();
+    const json = await (await this.#myFetchWithToken(URLS.LEARN_FILE_LIST(courseID, courseType))).json();
     if (json.result !== 'success') {
       return Promise.reject({
         reason: FailReason.INVALID_RESPONSE,
@@ -433,12 +434,12 @@ export class Learn2018Helper {
     await Promise.all(
       result.map(async (f) => {
         const title = decodeHTML(f.bt);
-        const downloadUrl = URL.LEARN_FILE_DOWNLOAD(
+        const downloadUrl = URLS.LEARN_FILE_DOWNLOAD(
           courseType === CourseType.STUDENT ? f.wjid : f.id,
           courseType,
           courseID,
         );
-        const previewUrl = URL.LEARN_FILE_PREVIEW(ContentType.FILE, f.wjid, courseType, this.previewFirstPage);
+        const previewUrl = URLS.LEARN_FILE_PREVIEW(ContentType.FILE, f.wjid, courseType, this.previewFirstPage);
         files.push({
           id: f.wjid,
           title: decodeHTML(f.bt),
@@ -476,7 +477,7 @@ export class Learn2018Helper {
     courseType: CourseType = CourseType.STUDENT,
   ): Promise<Homework[] | HomeworkTA[]> {
     if (courseType === CourseType.TEACHER) {
-      const json = await (await this.#myFetchWithToken(URL.LEARN_HOMEWORK_LIST_TEACHER(courseID))).json();
+      const json = await (await this.#myFetchWithToken(URLS.LEARN_HOMEWORK_LIST_TEACHER(courseID))).json();
       if (json.result !== 'success') {
         return Promise.reject({
           reason: FailReason.INVALID_RESPONSE,
@@ -498,7 +499,7 @@ export class Learn2018Helper {
             publishTime: new Date(d.fbsj),
             startTime: new Date(d.kssj),
             deadline: new Date(d.jzsj),
-            url: URL.LEARN_HOMEWORK_DETAIL_TEACHER(courseID, d.zyid),
+            url: URLS.LEARN_HOMEWORK_DETAIL_TEACHER(courseID, d.zyid),
             completionType: d.zywcfs,
             submissionType: d.zytjfs,
             gradedCount: d.ypys,
@@ -513,7 +514,7 @@ export class Learn2018Helper {
       const allHomework: Homework[] = [];
 
       await Promise.all(
-        URL.LEARN_HOMEWORK_LIST_SOURCE(courseID).map(async (s) => {
+        URLS.LEARN_HOMEWORK_LIST_SOURCE(courseID).map(async (s) => {
           const homeworks = await this.getHomeworkListAtUrl(s.url, s.status);
           allHomework.push(...homeworks);
         }),
@@ -525,7 +526,7 @@ export class Learn2018Helper {
 
   /** Get all discussions （课程讨论） of the specified course. */
   public async getDiscussionList(courseID: string, courseType: CourseType = CourseType.STUDENT): Promise<Discussion[]> {
-    const json = await (await this.#myFetchWithToken(URL.LEARN_DISCUSSION_LIST(courseID, courseType))).json();
+    const json = await (await this.#myFetchWithToken(URLS.LEARN_DISCUSSION_LIST(courseID, courseType))).json();
     if (json.result !== 'success') {
       return Promise.reject({
         reason: FailReason.INVALID_RESPONSE,
@@ -541,7 +542,7 @@ export class Learn2018Helper {
         discussions.push({
           ...this.parseDiscussionBase(d),
           boardId: d.bqid,
-          url: URL.LEARN_DISCUSSION_DETAIL(d.wlkcid, d.bqid, d.id, courseType),
+          url: URLS.LEARN_DISCUSSION_DETAIL(d.wlkcid, d.bqid, d.id, courseType),
         });
       }),
     );
@@ -557,7 +558,7 @@ export class Learn2018Helper {
     courseID: string,
     courseType: CourseType = CourseType.STUDENT,
   ): Promise<Question[]> {
-    const json = await (await this.#myFetchWithToken(URL.LEARN_QUESTION_LIST_ANSWERED(courseID, courseType))).json();
+    const json = await (await this.#myFetchWithToken(URLS.LEARN_QUESTION_LIST_ANSWERED(courseID, courseType))).json();
     if (json.result !== 'success') {
       return Promise.reject({
         reason: FailReason.INVALID_RESPONSE,
@@ -573,7 +574,7 @@ export class Learn2018Helper {
         questions.push({
           ...this.parseDiscussionBase(q),
           question: Base64.decode(q.wtnr),
-          url: URL.LEARN_QUESTION_DETAIL(q.wlkcid, q.id, courseType),
+          url: URLS.LEARN_QUESTION_DETAIL(q.wlkcid, q.id, courseType),
         });
       }),
     );
@@ -599,9 +600,9 @@ export class Learn2018Helper {
           id: h.zyid,
           studentHomeworkId: h.xszyid,
           title: decodeHTML(h.bt),
-          url: URL.LEARN_HOMEWORK_DETAIL(h.wlkcid, h.zyid, h.xszyid),
+          url: URLS.LEARN_HOMEWORK_DETAIL(h.wlkcid, h.zyid, h.xszyid),
           deadline: new Date(h.jzsj),
-          submitUrl: URL.LEARN_HOMEWORK_SUBMIT_PAGE(h.wlkcid, h.xszyid),
+          submitUrl: URLS.LEARN_HOMEWORK_SUBMIT_PAGE(h.wlkcid, h.xszyid),
           submitTime: h.scsj === null ? undefined : new Date(h.scsj),
           grade: h.cj === null ? undefined : h.cj,
           gradeLevel: GRADE_LEVEL_MAP.get(h.cj),
@@ -633,7 +634,7 @@ export class Learn2018Helper {
     // })).json();
     // const attachmentId = metadata.ggfjid as string;
     /// parsed from HTML
-    const response = await this.#myFetchWithToken(URL.LEARN_NOTIFICATION_DETAIL(courseID, id, courseType));
+    const response = await this.#myFetchWithToken(URLS.LEARN_NOTIFICATION_DETAIL(courseID, id, courseType));
     const result = $(await response.text());
     let path = '';
     if (courseType === CourseType.STUDENT) {
@@ -644,22 +645,22 @@ export class Learn2018Helper {
     const size = trimAndDefine(result('div#attachment > div.fl > span[class^="color"]').first().text())!;
     const params = new URLSearchParams(path.split('?').slice(-1)[0]);
     const attachmentId = params.get('wjid')!;
-    if (!path.startsWith(URL.LEARN_PREFIX)) {
-      path = URL.LEARN_PREFIX + path;
+    if (!path.startsWith(URLS.LEARN_PREFIX)) {
+      path = URLS.LEARN_PREFIX + path;
     }
     return {
       attachment: {
         name: attachmentName,
         id: attachmentId,
         downloadUrl: path,
-        previewUrl: URL.LEARN_FILE_PREVIEW(ContentType.NOTIFICATION, attachmentId, courseType, this.previewFirstPage),
+        previewUrl: URLS.LEARN_FILE_PREVIEW(ContentType.NOTIFICATION, attachmentId, courseType, this.previewFirstPage),
         size,
       },
     };
   }
 
   private async parseHomeworkDetail(courseID: string, id: string, studentHomeworkID: string): Promise<IHomeworkDetail> {
-    const response = await this.#myFetchWithToken(URL.LEARN_HOMEWORK_DETAIL(courseID, id, studentHomeworkID));
+    const response = await this.#myFetchWithToken(URLS.LEARN_HOMEWORK_DETAIL(courseID, id, studentHomeworkID));
     const result = $(await response.text());
 
     const fileDivs = result('div.list.fujian.clearfix');
@@ -682,15 +683,15 @@ export class Learn2018Helper {
       const params = new URLSearchParams(fileNode.attribs.href.split('?').slice(-1)[0]);
       const attachmentId = params.get('fileId')!;
       // so dirty here...
-      let downloadUrl = URL.LEARN_PREFIX + fileNode.attribs.href;
+      let downloadUrl = URLS.LEARN_PREFIX + fileNode.attribs.href;
       if (params.has('downloadUrl')) {
-        downloadUrl = URL.LEARN_PREFIX + params.get('downloadUrl')!;
+        downloadUrl = URLS.LEARN_PREFIX + params.get('downloadUrl')!;
       }
       return {
         id: attachmentId,
         name: (fileNode.children[0] as DOM.Text).data!,
         downloadUrl,
-        previewUrl: URL.LEARN_FILE_PREVIEW(
+        previewUrl: URLS.LEARN_FILE_PREVIEW(
           ContentType.HOMEWORK,
           attachmentId,
           CourseType.STUDENT,
@@ -723,15 +724,15 @@ export class Learn2018Helper {
     removeAttachment = false,
   ): Promise<IHomeworkSubmitResult> {
     return await (
-      await this.#myFetchWithToken(URL.LEARN_HOMEWORK_SUBMIT(), {
+      await this.#myFetchWithToken(URLS.LEARN_HOMEWORK_SUBMIT(), {
         method: 'POST',
-        body: URL.LEARN_HOMEWORK_SUBMIT_FORM_DATA(studentHomeworkID, content, attachment, removeAttachment),
+        body: URLS.LEARN_HOMEWORK_SUBMIT_FORM_DATA(studentHomeworkID, content, attachment, removeAttachment),
       })
     ).json();
   }
 
   public async setLanguage(lang: Language): Promise<void> {
-    await this.#myFetchWithToken(URL.LEARN_WEBSITE_LANGUAGE(lang), {
+    await this.#myFetchWithToken(URLS.LEARN_WEBSITE_LANGUAGE(lang), {
       method: 'POST',
     });
     this.#lang = lang;

@@ -32,10 +32,10 @@ export function decodeHTML(html: string): string {
   return text.startsWith('\xC2\x9E\xC3\xA9\x65')
     ? text.slice(5)
     : text.startsWith('\x9E\xE9\x65')
-    ? text.slice(3)
-    : text.startsWith('\xE9\x65')
-    ? text.slice(2)
-    : text;
+      ? text.slice(3)
+      : text.startsWith('\xE9\x65')
+        ? text.slice(2)
+        : text;
 }
 
 export function trimAndDefine(text: string | undefined | null): string | undefined {

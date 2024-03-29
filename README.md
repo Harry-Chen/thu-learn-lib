@@ -162,8 +162,13 @@ It's ok if you meet `Timeout * Async callback was not invoked within the 5000ms 
 
 ## Changelog
 
+- v3.1.4
+  - Allow and check for undefined credential in login (see [#52](https://github.com/Harry-Chen/Learn-Helper/issues/52))
+  - Discriminate `getAllContents` return type based on input content type (see [#53](https://github.com/Harry-Chen/Learn-Helper/issues/53))
+  - Use `searchParams` to set csrf token & add csrf token to `getCalendar` (see [#54](https://github.com/Harry-Chen/Learn-Helper/issues/54))
+  - Update bunches of dependencies
 - v3.1.3
-  - Fix empty time and location of course (see [Harry-Chen/Learn-Helper#145](https://github.com/Harry-Chen/Learn-Helper/issues/145))
+  - Fix empty time and location of course (see [#145](https://github.com/Harry-Chen/Learn-Helper/issues/145))
 - v3.1.2
   - Fix empty course name parsing
   - (Maybe BEARKING) `Homework.gradeLevel` changed to `HomeworkGradeLevel` (a string enum) for better i18n

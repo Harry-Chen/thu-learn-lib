@@ -131,6 +131,14 @@ interface IFile {
 
 export type File = IFile;
 
+interface IFileCategory {
+  id: string;
+  title: string;
+  creationTime: Date;
+}
+
+export type FileCategory = IFileCategory;
+
 export interface IHomeworkStatus {
   submitted: boolean;
   graded: boolean;

@@ -53,6 +53,9 @@ export const LEARN_FILE_LIST = (courseID: string, courseType: CourseType) =>
     ? `${LEARN_PREFIX}/b/wlxt/kj/wlkc_kjxxb/student/kjxxbByWlkcidAndSizeForStudent?wlkcid=${courseID}&size=${MAX_SIZE}`
     : `${LEARN_PREFIX}/b/wlxt/kj/v_kjxxb_wjwjb/teacher/queryByWlkcid?wlkcid=${courseID}&size=${MAX_SIZE}`;
 
+export const LEARN_FILE_CATEGORY_LIST = (courseID: string, courseType: CourseType) =>
+  `${LEARN_PREFIX}/b/wlxt/kj/wlkc_kjflb/${courseType}/pageList?wlkcid=${courseID}`
+
 export const LEARN_FILE_DOWNLOAD = (fileID: string, courseType: CourseType, courseID: string) =>
   courseType === CourseType.STUDENT
     ? `${LEARN_PREFIX}/b/wlxt/kj/wlkc_kjxxb/student/downloadFile?sfgk=0&wjid=${fileID}`
@@ -181,6 +184,5 @@ export const REGISTRAR_TICKET = () => `${LEARN_PREFIX}/b/wlxt/common/auth/gnt`;
 export const REGISTRAR_AUTH = (ticket: string) => `${REGISTRAR_PREFIX}/j_acegi_login.do?url=/&ticket=${ticket}`;
 
 export const REGISTRAR_CALENDAR = (startDate: string, endDate: string, graduate = false, callbackName = 'unknown') =>
-  `${REGISTRAR_PREFIX}/jxmh_out.do?m=${
-    graduate ? 'yjs' : 'bks'
+  `${REGISTRAR_PREFIX}/jxmh_out.do?m=${graduate ? 'yjs' : 'bks'
   }_jxrl_all&p_start_date=${startDate}&p_end_date=${endDate}&jsoncallback=${callbackName}`;

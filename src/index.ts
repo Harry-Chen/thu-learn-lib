@@ -3,44 +3,45 @@ import type * as DOM from 'domhandler';
 import { Base64 } from 'js-base64';
 import makeFetch from 'node-fetch-cookie-native';
 
-import * as URLS from './urls';
 import {
-  CredentialProvider,
-  Fetch,
-  HelperConfig,
+  ApiError,
+  CalendarEvent,
   ContentType,
+  ContentTypeMap,
   CourseContent,
   CourseInfo,
+  CourseType,
+  CredentialProvider,
   Discussion,
   FailReason,
+  Fetch,
   File,
+  FileCategory,
+  HelperConfig,
   Homework,
+  HomeworkTA,
   IDiscussionBase,
   IHomeworkDetail,
   IHomeworkStatus,
-  INotification,
-  INotificationDetail,
-  Notification,
-  Question,
-  SemesterInfo,
-  CourseType,
-  CalendarEvent,
-  ApiError,
-  RemoteFile,
   IHomeworkSubmitAttachment,
   IHomeworkSubmitResult,
+  INotification,
+  INotificationDetail,
   Language,
-  HomeworkTA,
+  Notification,
+  Question,
+  RemoteFile,
+  SemesterInfo,
   UserInfo,
-  ContentTypeMap,
 } from './types';
+import * as URLS from './urls';
 import {
+  GRADE_LEVEL_MAP,
+  JSONP_EXTRACTOR_NAME,
   decodeHTML,
+  extractJSONPResult,
   parseSemesterType,
   trimAndDefine,
-  JSONP_EXTRACTOR_NAME,
-  extractJSONPResult,
-  GRADE_LEVEL_MAP,
 } from './utils';
 
 const CHEERIO_CONFIG: cheerio.CheerioOptions = {
@@ -114,13 +115,13 @@ export class Learn2018Helper {
     this.#myFetch = this.#provider
       ? this.#withReAuth(this.#rawFetch)
       : async (...args) => {
-          const result = await this.#rawFetch(...args);
-          if (noLogin(result))
-            return Promise.reject({
-              reason: FailReason.NOT_LOGGED_IN,
-            } as ApiError);
-          return result;
-        };
+        const result = await this.#rawFetch(...args);
+        if (noLogin(result))
+          return Promise.reject({
+            reason: FailReason.NOT_LOGGED_IN,
+          } as ApiError);
+        return result;
+      };
   }
 
   /** fetch CSRF token from helper (invalid after login / re-login), might be '' if not logged in */
@@ -467,6 +468,24 @@ export class Learn2018Helper {
     );
 
     return files;
+  }
+
+  public async getFileCategoryList(courseID: string, courseType: CourseType = CourseType.STUDENT): Promise<FileCategory[]> {
+    const json = await (await this.#myFetchWithToken(URLS.LEARN_FILE_CATEGORY_LIST(courseID, courseType))).json();
+    if (json.result !== 'success') {
+      return Promise.reject({
+        reason: FailReason.INVALID_RESPONSE,
+        extra: json,
+      } as ApiError);
+    }
+
+    const result = (json.object?.rows ?? []) as any[];
+
+    return result.map((c) => ({
+      id: c.kjflid,
+      title: decodeHTML(c.bt),
+      creationTime: new Date(c.czsj),
+    } satisfies FileCategory));
   }
 
   /** Get all homeworks （课程作业） of the specified course. */

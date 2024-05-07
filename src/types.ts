@@ -109,6 +109,7 @@ export type Notification = INotification & INotificationDetail;
 
 interface IFile {
   id: string;
+  categoryId: string;
   /** size in byte */
   rawSize: number;
   /** inaccurate size description (like '1M') */

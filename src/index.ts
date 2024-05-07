@@ -115,13 +115,13 @@ export class Learn2018Helper {
     this.#myFetch = this.#provider
       ? this.#withReAuth(this.#rawFetch)
       : async (...args) => {
-        const result = await this.#rawFetch(...args);
-        if (noLogin(result))
-          return Promise.reject({
-            reason: FailReason.NOT_LOGGED_IN,
-          } as ApiError);
-        return result;
-      };
+          const result = await this.#rawFetch(...args);
+          if (noLogin(result))
+            return Promise.reject({
+              reason: FailReason.NOT_LOGGED_IN,
+            } as ApiError);
+          return result;
+        };
   }
 
   /** fetch CSRF token from helper (invalid after login / re-login), might be '' if not logged in */
@@ -431,46 +431,42 @@ export class Learn2018Helper {
       // student
       result = json.object;
     }
-    const files: File[] = [];
 
-    await Promise.all(
-      result.map(async (f) => {
-        const title = decodeHTML(f.bt);
-        const downloadUrl = URLS.LEARN_FILE_DOWNLOAD(
-          courseType === CourseType.STUDENT ? f.wjid : f.id,
-          courseType,
-          courseID,
-        );
-        const previewUrl = URLS.LEARN_FILE_PREVIEW(ContentType.FILE, f.wjid, courseType, this.previewFirstPage);
-        files.push({
-          id: f.wjid,
-          title: decodeHTML(f.bt),
-          description: decodeHTML(f.ms),
-          rawSize: f.wjdx,
-          size: f.fileSize,
-          uploadTime: new Date(f.scsj),
+    return result.map((f) => {
+      const title = decodeHTML(f.bt);
+      const id = f.kjxxid;
+      const downloadUrl = URLS.LEARN_FILE_DOWNLOAD(id, courseType, courseID);
+      const previewUrl = URLS.LEARN_FILE_PREVIEW(ContentType.FILE, id, courseType, this.previewFirstPage);
+      return {
+        id,
+        categoryId: f.kjflid,
+        title,
+        description: decodeHTML(f.ms),
+        rawSize: f.wjdx,
+        size: f.fileSize,
+        uploadTime: new Date(f.scsj),
+        downloadUrl,
+        previewUrl,
+        isNew: f.isNew ?? false,
+        markedImportant: f.sfqd === 1,
+        visitCount: f.xsllcs ?? f.llcs ?? 0,
+        downloadCount: f.xzcs ?? 0,
+        fileType: f.wjlx,
+        remoteFile: {
+          id,
+          name: title,
           downloadUrl,
           previewUrl,
-          isNew: f.isNew,
-          markedImportant: f.sfqd === 1,
-          visitCount: f.llcs ?? 0,
-          downloadCount: f.xzcs ?? 0,
-          fileType: f.wjlx,
-          remoteFile: {
-            id: f.wjid,
-            name: title,
-            downloadUrl,
-            previewUrl,
-            size: f.fileSize,
-          },
-        });
-      }),
-    );
-
-    return files;
+          size: f.fileSize,
+        },
+      } satisfies File;
+    });
   }
 
-  public async getFileCategoryList(courseID: string, courseType: CourseType = CourseType.STUDENT): Promise<FileCategory[]> {
+  public async getFileCategoryList(
+    courseID: string,
+    courseType: CourseType = CourseType.STUDENT,
+  ): Promise<FileCategory[]> {
     const json = await (await this.#myFetchWithToken(URLS.LEARN_FILE_CATEGORY_LIST(courseID, courseType))).json();
     if (json.result !== 'success') {
       return Promise.reject({
@@ -481,11 +477,14 @@ export class Learn2018Helper {
 
     const result = (json.object?.rows ?? []) as any[];
 
-    return result.map((c) => ({
-      id: c.kjflid,
-      title: decodeHTML(c.bt),
-      creationTime: new Date(c.czsj),
-    } satisfies FileCategory));
+    return result.map(
+      (c) =>
+        ({
+          id: c.kjflid,
+          title: decodeHTML(c.bt),
+          creationTime: new Date(c.czsj),
+        }) satisfies FileCategory,
+    );
   }
 
   /** Get all homeworks （课程作业） of the specified course. */

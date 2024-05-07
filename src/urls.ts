@@ -56,10 +56,11 @@ export const LEARN_FILE_LIST = (courseID: string, courseType: CourseType) =>
 export const LEARN_FILE_CATEGORY_LIST = (courseID: string, courseType: CourseType) =>
   `${LEARN_PREFIX}/b/wlxt/kj/wlkc_kjflb/${courseType}/pageList?wlkcid=${courseID}`;
 
-export const LEARN_FILE_DOWNLOAD = (fileID: string, courseType: CourseType, courseID: string) =>
-  courseType === CourseType.STUDENT
-    ? `${LEARN_PREFIX}/b/wlxt/kj/wlkc_kjxxb/student/downloadFile?sfgk=0&wjid=${fileID}`
-    : `${LEARN_PREFIX}/f/wlxt/kj/wlkc_kjxxb/teacher/beforeView?id=${fileID}&wlkcid=${courseID}`;
+export const LEARN_FILE_LIST_BY_CATEGORY_STUDENT = (courseID: string, categoryId: string) =>
+  `${LEARN_PREFIX}/b/wlxt/kj/wlkc_kjxxb/student/kjxxb/${courseID}/${categoryId}`;
+
+export const LEARN_FILE_DOWNLOAD = (fileID: string, courseType: CourseType) =>
+  `${LEARN_PREFIX}/b/wlxt/kj/wlkc_kjxxb/${courseType}/downloadFile?sfgk=0&wjid=${fileID}`;
 
 export const LEARN_FILE_PREVIEW = (type: ContentType, fileID: string, courseType: CourseType, firstPageOnly = false) =>
   `${LEARN_PREFIX}/f/wlxt/kc/wj_wjb/${courseType}/beforePlay?wjid=${fileID}&mk=${getMkFromType(

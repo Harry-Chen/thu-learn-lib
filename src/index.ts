@@ -40,6 +40,7 @@ import {
   JSONP_EXTRACTOR_NAME,
   decodeHTML,
   extractJSONPResult,
+  formatFileSize,
   parseSemesterType,
   trimAndDefine,
 } from './utils';
@@ -434,17 +435,20 @@ export class Learn2018Helper {
 
     return result.map((f) => {
       const title = decodeHTML(f.bt);
-      const id = f.kjxxid;
-      const downloadUrl = URLS.LEARN_FILE_DOWNLOAD(id, courseType, courseID);
+      const id = f.wjid;
+      const uploadTime = new Date(f.scsj);
+      const downloadUrl = URLS.LEARN_FILE_DOWNLOAD(id, courseType);
       const previewUrl = URLS.LEARN_FILE_PREVIEW(ContentType.FILE, id, courseType, this.previewFirstPage);
       return {
         id,
+        id2: f.kjxxid,
         categoryId: f.kjflid,
         title,
         description: decodeHTML(f.ms),
         rawSize: f.wjdx,
         size: f.fileSize,
-        uploadTime: new Date(f.scsj),
+        uploadTime,
+        publishTime: uploadTime,
         downloadUrl,
         previewUrl,
         isNew: f.isNew ?? false,
@@ -485,6 +489,62 @@ export class Learn2018Helper {
           creationTime: new Date(c.czsj),
         }) satisfies FileCategory,
     );
+  }
+
+  public async getFileListByCategory(
+    courseID: string,
+    categoryId: string,
+    courseType: CourseType = CourseType.STUDENT,
+  ): Promise<File[]> {
+    if (courseType === CourseType.TEACHER)
+      return Promise.reject({
+        reason: FailReason.NOT_IMPLEMENTED,
+      } satisfies ApiError);
+    const json = await (
+      await this.#myFetchWithToken(URLS.LEARN_FILE_LIST_BY_CATEGORY_STUDENT(courseID, categoryId))
+    ).json();
+    if (json.result !== 'success') {
+      return Promise.reject({
+        reason: FailReason.INVALID_RESPONSE,
+        extra: json,
+      } as ApiError);
+    }
+
+    const result = (json.object ?? []) as any[];
+
+    return result.map((f) => {
+      const id = f[7];
+      const title = decodeHTML(f[1]);
+      const rawSize = f[9];
+      const size = formatFileSize(rawSize);
+      const downloadUrl = URLS.LEARN_FILE_DOWNLOAD(id, courseType);
+      const previewUrl = URLS.LEARN_FILE_PREVIEW(ContentType.FILE, id, courseType, this.previewFirstPage);
+      return {
+        id,
+        id2: f[0],
+        categoryId,
+        title,
+        description: decodeHTML(f[5]),
+        rawSize,
+        size,
+        uploadTime: new Date(f[6]),
+        publishTime: new Date(f[10]),
+        downloadUrl,
+        previewUrl,
+        isNew: f[8] === 1,
+        markedImportant: f[2] === 1,
+        visitCount: 0,
+        downloadCount: 0,
+        fileType: f[13],
+        remoteFile: {
+          id,
+          name: title,
+          downloadUrl,
+          previewUrl,
+          size,
+        },
+      } satisfies File;
+    });
   }
 
   /** Get all homeworks （课程作业） of the specified course. */

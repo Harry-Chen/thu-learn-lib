@@ -109,6 +109,7 @@ export type Notification = INotification & INotificationDetail;
 
 interface IFile {
   id: string;
+  id2: string;
   categoryId: string;
   /** size in byte */
   rawSize: number;
@@ -117,6 +118,7 @@ interface IFile {
   title: string;
   description: string;
   uploadTime: Date;
+  publishTime: Date;
   /** for teachers, this url will not initiate download directly */
   downloadUrl: string;
   /** preview is not supported on all types of files, check before use */

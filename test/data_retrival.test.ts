@@ -94,6 +94,14 @@ describe('helper data retrival', () => {
     }
   });
 
+  it('should get file categories and list correctly', async () => {
+    if (courseTester !== undefined) {
+      const categories = await helper.getFileCategoryList(courseTester);
+      expect(categories.length).toBeGreaterThanOrEqual(0);
+      expect((await helper.getFileListByCategory(courseTester, categories[0].id)).length).toBeGreaterThanOrEqual(0);
+    }
+  });
+
   it('should get user info correctly', async () => {
     const userInfo = await helper.getUserInfo();
     expect(userInfo).toBeDefined();

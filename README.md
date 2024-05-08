@@ -162,6 +162,10 @@ It's ok if you meet `Timeout * Async callback was not invoked within the 5000ms 
 
 ## Changelog
 
+- (unreleased)
+  - Get file categories of course
+  - Get file list by category (currently not supported in TA)
+  - Fix file download url and visit count in TA
 - v3.1.4
   - Allow and check for undefined credential in login (see [#52](https://github.com/Harry-Chen/Learn-Helper/issues/52))
   - Discriminate `getAllContents` return type based on input content type (see [#53](https://github.com/Harry-Chen/Learn-Helper/issues/53))

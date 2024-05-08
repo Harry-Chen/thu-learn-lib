@@ -467,6 +467,7 @@ export class Learn2018Helper {
     });
   }
 
+  /** Get file categories of the specified course. */
   public async getFileCategoryList(
     courseID: string,
     courseType: CourseType = CourseType.STUDENT,
@@ -491,6 +492,10 @@ export class Learn2018Helper {
     );
   }
 
+  /**
+   * Get all files of the specified category of the specified course.
+   * Note: this cannot get `visitCount` and `downloadCount`
+   */
   public async getFileListByCategory(
     courseID: string,
     categoryId: string,

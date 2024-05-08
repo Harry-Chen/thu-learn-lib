@@ -36,6 +36,7 @@ export enum SemesterType {
 export enum ContentType {
   NOTIFICATION = 'notification',
   FILE = 'file',
+  FILE_CATEGORY = 'file_category',
   HOMEWORK = 'homework',
   DISCUSSION = 'discussion',
   QUESTION = 'question',
@@ -282,6 +283,7 @@ export type Question = IQuestion;
 export type ContentTypeMap = {
   [ContentType.NOTIFICATION]: Notification;
   [ContentType.FILE]: File;
+  [ContentType.FILE_CATEGORY]: FileCategory;
   [ContentType.HOMEWORK]: Homework;
   [ContentType.DISCUSSION]: Discussion;
   [ContentType.QUESTION]: Question;

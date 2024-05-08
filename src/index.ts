@@ -336,6 +336,8 @@ export class Learn2018Helper {
           return this.getNotificationList(id, courseType) as Promise<ContentTypeMap[T][]>;
         case ContentType.FILE:
           return this.getFileList(id, courseType) as Promise<ContentTypeMap[T][]>;
+        case ContentType.FILE_CATEGORY:
+          return this.getFileCategoryList(id, courseType) as Promise<ContentTypeMap[T][]>;
         case ContentType.HOMEWORK:
           return this.getHomeworkList(id) as Promise<ContentTypeMap[T][]>;
         case ContentType.DISCUSSION:

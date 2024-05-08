@@ -494,62 +494,108 @@ export class Learn2018Helper {
 
   /**
    * Get all files of the specified category of the specified course.
-   * Note: this cannot get `visitCount` and `downloadCount`
+   * Note: this cannot get correct `visitCount` and `downloadCount` for student
    */
   public async getFileListByCategory(
     courseID: string,
     categoryId: string,
     courseType: CourseType = CourseType.STUDENT,
   ): Promise<File[]> {
-    if (courseType === CourseType.TEACHER)
-      return Promise.reject({
-        reason: FailReason.NOT_IMPLEMENTED,
-      } satisfies ApiError);
-    const json = await (
-      await this.#myFetchWithToken(URLS.LEARN_FILE_LIST_BY_CATEGORY_STUDENT(courseID, categoryId))
-    ).json();
-    if (json.result !== 'success') {
-      return Promise.reject({
-        reason: FailReason.INVALID_RESPONSE,
-        extra: json,
-      } as ApiError);
-    }
+    if (courseType === CourseType.STUDENT) {
+      const json = await (
+        await this.#myFetchWithToken(URLS.LEARN_FILE_LIST_BY_CATEGORY_STUDENT(courseID, categoryId))
+      ).json();
+      if (json.result !== 'success') {
+        return Promise.reject({
+          reason: FailReason.INVALID_RESPONSE,
+          extra: json,
+        } as ApiError);
+      }
 
-    const result = (json.object ?? []) as any[];
+      const result = (json.object ?? []) as any[];
 
-    return result.map((f) => {
-      const id = f[7];
-      const title = decodeHTML(f[1]);
-      const rawSize = f[9];
-      const size = formatFileSize(rawSize);
-      const downloadUrl = URLS.LEARN_FILE_DOWNLOAD(id, courseType);
-      const previewUrl = URLS.LEARN_FILE_PREVIEW(ContentType.FILE, id, courseType, this.previewFirstPage);
-      return {
-        id,
-        id2: f[0],
-        categoryId,
-        title,
-        description: decodeHTML(f[5]),
-        rawSize,
-        size,
-        uploadTime: new Date(f[6]),
-        publishTime: new Date(f[10]),
-        downloadUrl,
-        previewUrl,
-        isNew: f[8] === 1,
-        markedImportant: f[2] === 1,
-        visitCount: 0,
-        downloadCount: 0,
-        fileType: f[13],
-        remoteFile: {
+      return result.map((f) => {
+        const id = f[7];
+        const title = decodeHTML(f[1]);
+        const rawSize = f[9];
+        const size = formatFileSize(rawSize);
+        const downloadUrl = URLS.LEARN_FILE_DOWNLOAD(id, courseType);
+        const previewUrl = URLS.LEARN_FILE_PREVIEW(ContentType.FILE, id, courseType, this.previewFirstPage);
+        return {
           id,
-          name: title,
+          id2: f[0],
+          categoryId,
+          title,
+          description: decodeHTML(f[5]),
+          rawSize,
+          size,
+          uploadTime: new Date(f[6]),
+          publishTime: new Date(f[10]),
           downloadUrl,
           previewUrl,
-          size,
-        },
-      } satisfies File;
-    });
+          isNew: f[8] === 1,
+          markedImportant: f[2] === 1,
+          visitCount: 0,
+          downloadCount: 0,
+          fileType: f[13],
+          remoteFile: {
+            id,
+            name: title,
+            downloadUrl,
+            previewUrl,
+            size,
+          },
+        } satisfies File;
+      });
+    } else {
+      const json = await (
+        await this.#myFetchWithToken(URLS.LEARN_FILE_LIST_BY_CATEGORY_TEACHER, {
+          method: 'POST',
+          body: URLS.LEARN_FILE_LIST_BY_CATEGORY_TEACHER_FORM_DATA(courseID, categoryId),
+        })
+      ).json();
+      if (json.result !== 'success') {
+        return Promise.reject({
+          reason: FailReason.INVALID_RESPONSE,
+          extra: json,
+        } as ApiError);
+      }
+
+      const result = (json.object.aaData ?? []) as any[];
+
+      return result.map((f) => {
+        const title = decodeHTML(f.bt);
+        const id = f.wjid;
+        const uploadTime = new Date(f.scsj);
+        const downloadUrl = URLS.LEARN_FILE_DOWNLOAD(id, courseType);
+        const previewUrl = URLS.LEARN_FILE_PREVIEW(ContentType.FILE, id, courseType, this.previewFirstPage);
+        return {
+          id,
+          id2: f.kjxxid,
+          categoryId,
+          title,
+          description: decodeHTML(f.ms),
+          rawSize: f.wjdx,
+          size: f.fileSize,
+          uploadTime,
+          publishTime: uploadTime,
+          downloadUrl,
+          previewUrl,
+          isNew: f.isNew ?? false,
+          markedImportant: f.sfqd === 1,
+          visitCount: f.xsllcs ?? f.llcs ?? 0,
+          downloadCount: f.xzcs ?? 0,
+          fileType: f.wjlx,
+          remoteFile: {
+            id,
+            name: title,
+            downloadUrl,
+            previewUrl,
+            size: f.fileSize,
+          },
+        } satisfies File;
+      });
+    }
   }
 
   /** Get all homeworks （课程作业） of the specified course. */

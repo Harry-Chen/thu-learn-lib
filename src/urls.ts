@@ -59,6 +59,20 @@ export const LEARN_FILE_CATEGORY_LIST = (courseID: string, courseType: CourseTyp
 export const LEARN_FILE_LIST_BY_CATEGORY_STUDENT = (courseID: string, categoryId: string) =>
   `${LEARN_PREFIX}/b/wlxt/kj/wlkc_kjxxb/student/kjxxb/${courseID}/${categoryId}`;
 
+export const LEARN_FILE_LIST_BY_CATEGORY_TEACHER = `${LEARN_PREFIX}/b/wlxt/kj/v_kjxxb_wjwjb/teacher/pageList`;
+
+export const LEARN_FILE_LIST_BY_CATEGORY_TEACHER_FORM_DATA = (courseID: string, categoryId: string) => {
+  const form = new FormData();
+  form.append(
+    'aoData',
+    JSON.stringify([
+      { name: 'wlkcid', value: courseID },
+      { name: 'kjflid', value: categoryId },
+    ]),
+  );
+  return form;
+};
+
 export const LEARN_FILE_DOWNLOAD = (fileID: string, courseType: CourseType) =>
   `${LEARN_PREFIX}/b/wlxt/kj/wlkc_kjxxb/${courseType}/downloadFile?sfgk=0&wjid=${fileID}`;
 

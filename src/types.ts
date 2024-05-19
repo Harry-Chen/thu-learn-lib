@@ -107,10 +107,19 @@ export interface INotificationDetail {
 
 export type Notification = INotification & INotificationDetail;
 
+interface IFileCategory {
+  id: string;
+  title: string;
+  creationTime: Date;
+}
+
+export type FileCategory = IFileCategory;
+
 interface IFile {
   id: string;
   id2: string;
-  categoryId: string;
+  /** note: will be unset when calling `getFileListByCategory` */
+  category?: FileCategory;
   /** size in byte */
   rawSize: number;
   /** inaccurate size description (like '1M') */
@@ -119,7 +128,6 @@ interface IFile {
   description: string;
   uploadTime: Date;
   publishTime: Date;
-  /** for teachers, this url will not initiate download directly */
   downloadUrl: string;
   /** preview is not supported on all types of files, check before use */
   previewUrl: string;
@@ -133,14 +141,6 @@ interface IFile {
 }
 
 export type File = IFile;
-
-interface IFileCategory {
-  id: string;
-  title: string;
-  creationTime: Date;
-}
-
-export type FileCategory = IFileCategory;
 
 export interface IHomeworkStatus {
   submitted: boolean;

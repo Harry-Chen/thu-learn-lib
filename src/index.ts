@@ -433,6 +433,8 @@ export class Learn2018Helper {
       result = json.object;
     }
 
+    const categories = new Map((await this.getFileCategoryList(courseID, courseType)).map((c) => [c.id, c]));
+
     return result.map((f) => {
       const title = decodeHTML(f.bt);
       const id = f.wjid;
@@ -442,7 +444,7 @@ export class Learn2018Helper {
       return {
         id,
         id2: f.kjxxid,
-        categoryId: f.kjflid,
+        category: categories.get(f.kjflid),
         title,
         description: decodeHTML(f.ms),
         rawSize: f.wjdx,
@@ -524,7 +526,6 @@ export class Learn2018Helper {
         return {
           id,
           id2: f[0],
-          categoryId,
           title,
           description: decodeHTML(f[5]),
           rawSize,
@@ -572,7 +573,6 @@ export class Learn2018Helper {
         return {
           id,
           id2: f.kjxxid,
-          categoryId,
           title,
           description: decodeHTML(f.ms),
           rawSize: f.wjdx,

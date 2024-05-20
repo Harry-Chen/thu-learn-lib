@@ -84,3 +84,11 @@ export function extractJSONPResult(jsonp: string): any {
   // evaluate the result
   return Function(`"use strict";const ${JSONP_EXTRACTOR_NAME}=(s)=>s;return ${jsonp};`)();
 }
+
+export function formatFileSize(size: number): string {
+  // this logic is extracted from `judgeSize` function from Web Learning
+  if (size < 1024) return size + 'B';
+  if (size < 1024 * 1024) return (size / 1024).toFixed(2) + 'K';
+  if (size < 1024 * 1024 * 1024) return (size / 1024 / 1024).toFixed(2) + 'M';
+  return (size / 1024 / 1024 / 1024).toFixed(2) + 'G';
+}

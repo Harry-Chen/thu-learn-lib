@@ -130,6 +130,11 @@ export class Learn2018Helper {
     return this.#csrfToken;
   }
 
+  /** manually set CSRF token (useful when you want to reuse previous token) */
+  public setCSRFToken(csrfToken: string): void {
+    this.#csrfToken = csrfToken;
+  }
+
   /** login is necessary if you do not provide a `CredentialProvider` */
   public async login(username?: string, password?: string): Promise<void> {
     if (!username || !password) {

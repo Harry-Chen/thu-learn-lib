@@ -291,7 +291,7 @@ interface ICourseContent<T extends ContentType> {
   [id: string]: ContentTypeMap[T][];
 }
 
-export type CourseContent<T extends ContentType> = ICourseContent<T>;
+export type CourseContent<T extends ContentType = ContentType> = ICourseContent<T>;
 
 export interface CalendarEvent {
   location: string;

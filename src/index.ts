@@ -442,13 +442,13 @@ export class Learn2018Helper {
 
     return result.map((f) => {
       const title = decodeHTML(f.bt);
-      const id = f.wjid;
+      const fileId = f.wjid;
       const uploadTime = new Date(f.scsj);
-      const downloadUrl = URLS.LEARN_FILE_DOWNLOAD(id, courseType);
-      const previewUrl = URLS.LEARN_FILE_PREVIEW(ContentType.FILE, id, courseType, this.previewFirstPage);
+      const downloadUrl = URLS.LEARN_FILE_DOWNLOAD(fileId, courseType);
+      const previewUrl = URLS.LEARN_FILE_PREVIEW(ContentType.FILE, fileId, courseType, this.previewFirstPage);
       return {
-        id,
-        id2: f.kjxxid,
+        id: f.kjxxid,
+        fileId,
         category: categories.get(f.kjflid),
         title,
         description: decodeHTML(f.ms),
@@ -464,7 +464,7 @@ export class Learn2018Helper {
         downloadCount: f.xzcs ?? 0,
         fileType: f.wjlx,
         remoteFile: {
-          id,
+          id: fileId,
           name: title,
           downloadUrl,
           previewUrl,
@@ -522,15 +522,15 @@ export class Learn2018Helper {
       const result = (json.object ?? []) as any[];
 
       return result.map((f) => {
-        const id = f[7];
+        const fileId = f[7];
         const title = decodeHTML(f[1]);
         const rawSize = f[9];
         const size = formatFileSize(rawSize);
-        const downloadUrl = URLS.LEARN_FILE_DOWNLOAD(id, courseType);
-        const previewUrl = URLS.LEARN_FILE_PREVIEW(ContentType.FILE, id, courseType, this.previewFirstPage);
+        const downloadUrl = URLS.LEARN_FILE_DOWNLOAD(fileId, courseType);
+        const previewUrl = URLS.LEARN_FILE_PREVIEW(ContentType.FILE, fileId, courseType, this.previewFirstPage);
         return {
-          id,
-          id2: f[0],
+          id: f[0],
+          fileId,
           title,
           description: decodeHTML(f[5]),
           rawSize,
@@ -545,7 +545,7 @@ export class Learn2018Helper {
           downloadCount: 0,
           fileType: f[13],
           remoteFile: {
-            id,
+            id: fileId,
             name: title,
             downloadUrl,
             previewUrl,
@@ -571,13 +571,13 @@ export class Learn2018Helper {
 
       return result.map((f) => {
         const title = decodeHTML(f.bt);
-        const id = f.wjid;
+        const fileId = f.wjid;
         const uploadTime = new Date(f.scsj);
-        const downloadUrl = URLS.LEARN_FILE_DOWNLOAD(id, courseType);
-        const previewUrl = URLS.LEARN_FILE_PREVIEW(ContentType.FILE, id, courseType, this.previewFirstPage);
+        const downloadUrl = URLS.LEARN_FILE_DOWNLOAD(fileId, courseType);
+        const previewUrl = URLS.LEARN_FILE_PREVIEW(ContentType.FILE, fileId, courseType, this.previewFirstPage);
         return {
-          id,
-          id2: f.kjxxid,
+          id: f.kjxxid,
+          fileId,
           title,
           description: decodeHTML(f.ms),
           rawSize: f.wjdx,
@@ -592,7 +592,7 @@ export class Learn2018Helper {
           downloadCount: f.xzcs ?? 0,
           fileType: f.wjlx,
           remoteFile: {
-            id,
+            id: fileId,
             name: title,
             downloadUrl,
             previewUrl,

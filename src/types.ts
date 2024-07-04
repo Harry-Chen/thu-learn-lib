@@ -116,8 +116,10 @@ interface IFileCategory {
 export type FileCategory = IFileCategory;
 
 interface IFile {
+  /** previously `id2` */
   id: string;
-  id2: string;
+  /** previously `id` */
+  fileId: string;
   /** note: will be unset when calling `getFileListByCategory` */
   category?: FileCategory;
   /** size in byte */

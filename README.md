@@ -162,6 +162,13 @@ It's ok if you meet `Timeout * Async callback was not invoked within the 5000ms 
 
 ## Changelog
 
+- v3.2.1
+  - Upgrade to eslint v9
+  - Add `setCSRFToken` function to manually reuse previous (maybe valid) token and prevent unnecessary re-login (see [#49](https://github.com/Harry-Chen/thu-learn-lib/issues/49))  
+    *Note:* To use this feature in Node.js, `cookieJar` should also be reused, otherwise it will not work. (not the case in browser env)
+  - Fix `CourseContent` type: default value for type param `T` (breaking change introduced in [#53](https://github.com/Harry-Chen/thu-learn-lib/issues/53))
+  - *(Breaking...?)* Rename `File.id2` added in previous version to actual `id` and previously used `id` to  `fileId` (see [#60](https://github.com/Harry-Chen/thu-learn-lib/issues/60))
+  - Upgrade dependencies
 - v3.2.0
   - Support file categories (see [#57](https://github.com/Harry-Chen/thu-learn-lib/issues/57)):
     - Add `FileCategory` type and optional `category` field in `File` type

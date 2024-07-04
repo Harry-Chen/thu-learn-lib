@@ -1,6 +1,6 @@
 import { FormData } from 'node-fetch-native';
 import { ContentType, CourseType, IHomeworkSubmitAttachment, Language } from './types';
-import { getMkFromType } from './utils';
+import { FAVORITE_TYPE_MAP, getMkFromType } from './utils';
 
 export const LEARN_PREFIX = 'https://learn.tsinghua.edu.cn';
 export const REGISTRAR_PREFIX = 'https://zhjw.cic.tsinghua.edu.cn';
@@ -187,6 +187,30 @@ export const WebsiteShowLanguage = {
 
 export const LEARN_WEBSITE_LANGUAGE = (lang: Language) =>
   `https://learn.tsinghua.edu.cn/f/wlxt/common/language?websiteShowLanguage=${WebsiteShowLanguage[lang]}`;
+
+export const LEARN_FAVORITE_ADD = (type: ContentType, id: string) =>
+  `${LEARN_PREFIX}/b/xt/wlkc_xsscb/student/add?ywid=${id}&ywlx=${FAVORITE_TYPE_MAP.get(type)}`;
+
+export const LEARN_FAVORITE_REMOVE = (id: string) => `${LEARN_PREFIX}/b/xt/wlkc_xsscb/student/delete?ywid=${id}`;
+
+export const LEARN_FAVORITE_LIST = (type?: ContentType) =>
+  `${LEARN_PREFIX}/b/xt/wlkc_xsscb/student/pageList?ywlx=${type ? FAVORITE_TYPE_MAP.get(type) : 'ALL'}`;
+
+export const LEARN_FAVORITE_LIST_FORM_DATA = (courseID?: string) => {
+  const form = new FormData();
+  form.append('aoData', JSON.stringify(courseID ? [{ name: 'wlkcid', value: courseID }] : []));
+  return form;
+};
+
+export const LEARN_FAVORITE_PIN = `${LEARN_PREFIX}/b/xt/wlkc_xsscb/student/addZd`;
+
+export const LEARN_FAVORITE_UNPIN = `${LEARN_PREFIX}/b/xt/wlkc_xsscb/student/delZd`;
+
+export const LEARN_FAVORITE_PIN_UNPIN_FORM_DATA = (id: string) => {
+  const form = new FormData();
+  form.append('ywid', id);
+  return form;
+};
 
 export const REGISTRAR_TICKET_FORM_DATA = () => {
   const form = new FormData();

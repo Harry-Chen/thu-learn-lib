@@ -14,6 +14,7 @@ import {
   CredentialProvider,
   Discussion,
   FailReason,
+  FavoriteItem,
   Fetch,
   File,
   FileCategory,
@@ -36,6 +37,7 @@ import {
 } from './types';
 import * as URLS from './urls';
 import {
+  FAVORITE_TYPE_MAP_REVERSE,
   GRADE_LEVEL_MAP,
   JSONP_EXTRACTOR_NAME,
   decodeHTML,
@@ -715,6 +717,108 @@ export class Learn2018Helper {
     );
 
     return questions;
+  }
+
+  /**
+   * Add an item to favorites. (收藏)
+   */
+  public async addToFavorites(type: ContentType, id: string): Promise<void> {
+    const json = await (await this.#myFetchWithToken(URLS.LEARN_FAVORITE_ADD(type, id))).json();
+    if (json.result !== 'success') {
+      return Promise.reject({
+        reason: FailReason.INVALID_RESPONSE,
+        extra: json,
+      } as ApiError);
+    }
+  }
+
+  /**
+   * Remove an item from favorites. (取消收藏)
+   */
+  public async removeFromFavorites(id: string): Promise<void> {
+    const json = await (await this.#myFetchWithToken(URLS.LEARN_FAVORITE_REMOVE(id))).json();
+    if (json.result !== 'success') {
+      return Promise.reject({
+        reason: FailReason.INVALID_RESPONSE,
+        extra: json,
+      } as ApiError);
+    }
+  }
+
+  /**
+   * Get favorites. (我的收藏)
+   * If `courseID` or `type` is specified, only return favorites of that course or type.
+   */
+  public async getFavorites(courseID?: string, type?: ContentType): Promise<FavoriteItem[]> {
+    const json = await (
+      await this.#myFetchWithToken(URLS.LEARN_FAVORITE_LIST(type), {
+        method: 'POST',
+        body: URLS.LEARN_FAVORITE_LIST_FORM_DATA(courseID),
+      })
+    ).json();
+    if (json.result !== 'success') {
+      return Promise.reject({
+        reason: FailReason.INVALID_RESPONSE,
+        extra: json,
+      } as ApiError);
+    }
+    const result = (json.object?.aaData ?? []) as any[];
+    return result
+      .map((e): FavoriteItem | undefined => {
+        const type = FAVORITE_TYPE_MAP_REVERSE.get(e.ywlx);
+        if (!type) return; // ignore unknown type
+        return {
+          id: e.ywid,
+          type,
+          title: decodeHTML(e.ywbt),
+          time: type === ContentType.DISCUSSION || type === ContentType.QUESTION ? new Date(e.tlsj) : new Date(e.ywsj),
+          state: e.ywzt,
+          extra: e.ywbz ?? undefined,
+          semesterId: e.xnxq,
+          courseId: e.wlkcid,
+          pinned: e.sfzd === '是',
+          pinnedTime: e.zdsj === null ? undefined : new Date(e.zdsj), // Note: this field is originally unix timestamp instead of string
+          addedTime: new Date(e.scsj),
+          itemId: e.id,
+        } satisfies FavoriteItem;
+      })
+      .filter((x) => !!x);
+  }
+
+  /**
+   * Pin a favorite item. (置顶)
+   */
+  public async pinFavoriteItem(id: string): Promise<void> {
+    const json = await (
+      await this.#myFetchWithToken(URLS.LEARN_FAVORITE_PIN, {
+        method: 'POST',
+        body: URLS.LEARN_FAVORITE_PIN_UNPIN_FORM_DATA(id),
+      })
+    ).json();
+    if (json.result !== 'success') {
+      return Promise.reject({
+        reason: FailReason.INVALID_RESPONSE,
+        extra: json,
+      } as ApiError);
+    }
+  }
+
+  /**
+   * Unpin a favorite item. (取消置顶)
+   */
+  public async unpinFavoriteItem(id: string): Promise<void> {
+    const json = await (
+      await this.#myFetchWithToken(URLS.LEARN_FAVORITE_UNPIN, {
+        method: 'POST',
+        body: URLS.LEARN_FAVORITE_PIN_UNPIN_FORM_DATA(id),
+      })
+    ).json();
+    if (json.result !== 'success') {
+      return Promise.reject({
+        reason: FailReason.INVALID_RESPONSE,
+        extra: json,
+      } as ApiError);
+    }
   }
 
   private async getHomeworkListAtUrl(url: string, status: IHomeworkStatus): Promise<Homework[]> {

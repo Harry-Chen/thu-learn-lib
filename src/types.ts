@@ -295,6 +295,26 @@ interface ICourseContent<T extends ContentType> {
 
 export type CourseContent<T extends ContentType = ContentType> = ICourseContent<T>;
 
+interface IFavoriteItem {
+  id: string;
+  type: ContentType;
+  title: string;
+  time: Date;
+  state: string;
+  /** extra message. For homework, this will be deadline (plus score if graded). It's too flexible and hard to parse so we leave it as is. */
+  extra?: string;
+  semesterId: string;
+  courseId: string;
+  pinned: boolean;
+  pinnedTime?: Date;
+  // comment?: string;
+  addedTime: Date;
+  /** for reference */
+  itemId: string;
+}
+
+export type FavoriteItem = IFavoriteItem;
+
 export interface CalendarEvent {
   location: string;
   status: string;

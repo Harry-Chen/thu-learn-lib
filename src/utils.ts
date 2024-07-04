@@ -14,16 +14,16 @@ export function parseSemesterType(n: number): SemesterType {
   }
 }
 
-const CONTENT_TYPE_MK_MAP = new Map([
-  [ContentType.NOTIFICATION, 'kcgg'],
-  [ContentType.FILE, 'kcwj'],
-  [ContentType.HOMEWORK, 'kczy'],
-  [ContentType.DISCUSSION, ''],
-  [ContentType.QUESTION, ''],
-]);
+const CONTENT_TYPE_MK_MAP = {
+  [ContentType.NOTIFICATION]: 'kcgg',
+  [ContentType.FILE]: 'kcwj',
+  [ContentType.HOMEWORK]: 'kczy',
+  [ContentType.DISCUSSION]: '',
+  [ContentType.QUESTION]: '',
+};
 
 export function getMkFromType(type: ContentType): string {
-  return 'mk_' + (CONTENT_TYPE_MK_MAP.get(type) ?? 'UNKNOWN');
+  return 'mk_' + (CONTENT_TYPE_MK_MAP[type] ?? 'UNKNOWN');
 }
 
 export function decodeHTML(html: string): string {
@@ -92,3 +92,19 @@ export function formatFileSize(size: number): string {
   if (size < 1024 * 1024 * 1024) return (size / 1024 / 1024).toFixed(2) + 'M';
   return (size / 1024 / 1024 / 1024).toFixed(2) + 'G';
 }
+
+export const FAVORITE_TYPE_MAP = new Map([
+  [ContentType.NOTIFICATION, 'KCGG'],
+  [ContentType.FILE, 'KCKJ'],
+  [ContentType.HOMEWORK, 'KCZY'],
+  [ContentType.DISCUSSION, 'KCTL'],
+  [ContentType.QUESTION, 'KCDY'],
+  // omitted: 问卷(KCWJ) & 课表(KCKB) as they are not supported now
+]);
+export const FAVORITE_TYPE_MAP_REVERSE = new Map([
+  [FAVORITE_TYPE_MAP.get(ContentType.NOTIFICATION)!, ContentType.NOTIFICATION],
+  [FAVORITE_TYPE_MAP.get(ContentType.FILE)!, ContentType.FILE],
+  [FAVORITE_TYPE_MAP.get(ContentType.HOMEWORK)!, ContentType.HOMEWORK],
+  [FAVORITE_TYPE_MAP.get(ContentType.DISCUSSION)!, ContentType.DISCUSSION],
+  [FAVORITE_TYPE_MAP.get(ContentType.QUESTION)!, ContentType.QUESTION],
+]);

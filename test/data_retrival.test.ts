@@ -1,68 +1,49 @@
-import { describe, it, expect, beforeAll, afterAll } from 'vitest';
-import * as dotenv from 'dotenv';
-import { Learn2018Helper, CourseType, Language } from '../src';
-
-dotenv.config({ path: 'test/.env' });
-const U = process.env.U!; // username
-const P = process.env.P!; // password
+import { afterAll, beforeAll, describe, expect, inject, it } from 'vitest';
+import { CourseType, Language, Learn2018Helper } from '../src';
+import { config } from './config';
 
 describe('helper data retrival', () => {
-  let helper: Learn2018Helper;
-  let semesterTester: string;
-  let courseTester: string;
-  let courseTATester: string;
+  const h = new Learn2018Helper(config);
 
   beforeAll(async () => {
-    const _h = new Learn2018Helper();
-    await _h.login(U, P);
-    const currSemester = await _h.getCurrentSemester();
-    semesterTester = currSemester.id;
-    const courses = await _h.getCourseList(semesterTester);
-    expect(courses.length).toBeGreaterThanOrEqual(0);
-    const taCourses = await _h.getCourseList(semesterTester, CourseType.TEACHER);
-    expect(taCourses.length).toBeGreaterThanOrEqual(0);
-    if (courses.length > 0) {
-      courseTester = courses[0].id;
-    }
-    if (taCourses.length > 0) {
-      courseTATester = taCourses[0].id;
-    }
-  });
-  beforeAll(async () => {
-    helper = new Learn2018Helper();
-    await helper.login(U, P);
+    await h.login();
   });
   afterAll(async () => {
-    await helper.logout();
+    await h.logout();
   });
 
+  const semesterTester = inject('S');
+  const courseTester = inject('C');
+  const semesterTATester = inject('ST');
+  const courseTATester = inject('CT');
+
   it('should get correct language', async () => {
-    const lang = helper.getCurrentLanguage();
+    const lang = h.getCurrentLanguage();
     expect(lang).toBeDefined();
-    const courses = await helper.getCourseList(semesterTester);
+    const courses = await h.getCourseList(semesterTester);
     courses.forEach((course) => {
       expect(course.name).toBe(lang === Language.EN ? course.englishName : course.chineseName);
     });
   });
 
   it('should get semesterIdList correctly', async () => {
-    const semesters = await helper.getSemesterIdList();
+    const semesters = await h.getSemesterIdList();
     expect(Array.isArray(semesters)).toEqual(true);
     for (const semester of semesters) {
       expect(typeof semester).toBe('string');
     }
     expect(semesters).toContain(semesterTester);
+    expect(semesters).toContain(semesterTATester);
   });
 
   it('should get currentSemester correctly', async () => {
-    const currSemester = await helper.getCurrentSemester();
+    const currSemester = await h.getCurrentSemester();
     expect(currSemester).not.toBeUndefined();
     expect(currSemester).not.toBeNull();
-    expect(currSemester.id).toEqual(semesterTester);
   });
 
   it('should get courseList correctly', async () => {
-    const courses = await helper.getCourseList(semesterTester);
+    const courses = await h.getCourseList(semesterTester);
     expect(courses.length).toBeGreaterThanOrEqual(0);
     if (courses.length > 0) {
       expect(courses.map((c) => c.id)).toContain(courseTester);
@@ -70,7 +51,7 @@ describe('helper data retrival', () => {
   });
 
   it('should get TAcourses correctly', async () => {
-    const courses = await helper.getCourseList(semesterTester, CourseType.TEACHER);
+    const courses = await h.getCourseList(semesterTATester, CourseType.TEACHER);
     expect(courses.length).toBeGreaterThanOrEqual(0);
     if (courses.length > 0) {
       expect(courses.map((c) => c.id)).toContain(courseTATester);
@@ -79,31 +60,38 @@ describe('helper data retrival', () => {
 
   it('should get contents (or throw on unimplemented function) correctly', async () => {
     if (courseTester !== undefined) {
-      expect((await helper.getHomeworkList(courseTester)).length).toBeGreaterThanOrEqual(0);
-      expect((await helper.getDiscussionList(courseTester)).length).toBeGreaterThanOrEqual(0);
-      expect((await helper.getNotificationList(courseTester)).length).toBeGreaterThanOrEqual(0);
-      expect((await helper.getFileList(courseTester)).length).toBeGreaterThanOrEqual(0);
-      expect((await helper.getAnsweredQuestionList(courseTester)).length).toBeGreaterThanOrEqual(0);
+      expect((await h.getHomeworkList(courseTester)).length).toBeGreaterThanOrEqual(0);
+      expect((await h.getDiscussionList(courseTester)).length).toBeGreaterThanOrEqual(0);
+      expect((await h.getNotificationList(courseTester)).length).toBeGreaterThanOrEqual(0);
+      expect((await h.getFileList(courseTester)).length).toBeGreaterThanOrEqual(0);
+      expect((await h.getAnsweredQuestionList(courseTester)).length).toBeGreaterThanOrEqual(0);
     }
     if (courseTATester !== undefined) {
-      // expect((await helper.getDiscussionList(courseTATester, CourseType.TEACHER)).length).toBeGreaterThanOrEqual(0);
-      // expect((await helper.getNotificationList(courseTATester, CourseType.TEACHER)).length).toBeGreaterThanOrEqual(0);
-      expect((await helper.getFileList(courseTATester, CourseType.TEACHER)).length).toBeGreaterThanOrEqual(0);
-      // expect((await helper.getAnsweredQuestionList(courseTATester, CourseType.TEACHER)).length).toBeGreaterThanOrEqual(0);
-      expect((await helper.getHomeworkList(courseTATester, CourseType.TEACHER)).length).toBeGreaterThanOrEqual(0);
+      // expect((await h.getDiscussionList(courseTATester, CourseType.TEACHER)).length).toBeGreaterThanOrEqual(0);
+      // expect((await h.getNotificationList(courseTATester, CourseType.TEACHER)).length).toBeGreaterThanOrEqual(0);
+      expect((await h.getFileList(courseTATester, CourseType.TEACHER)).length).toBeGreaterThanOrEqual(0);
+      // expect((await h.getAnsweredQuestionList(courseTATester, CourseType.TEACHER)).length).toBeGreaterThanOrEqual(0);
+      expect((await h.getHomeworkList(courseTATester, CourseType.TEACHER)).length).toBeGreaterThanOrEqual(0);
     }
   });
 
   it('should get file categories and list correctly', async () => {
     if (courseTester !== undefined) {
-      const categories = await helper.getFileCategoryList(courseTester);
+      const categories = await h.getFileCategoryList(courseTester);
       expect(categories.length).toBeGreaterThanOrEqual(0);
-      expect((await helper.getFileListByCategory(courseTester, categories[0].id)).length).toBeGreaterThanOrEqual(0);
+      expect((await h.getFileListByCategory(courseTester, categories[0].id)).length).toBeGreaterThanOrEqual(0);
+    }
+    if (courseTATester !== undefined) {
+      const categories = await h.getFileCategoryList(courseTATester, CourseType.TEACHER);
+      expect(categories.length).toBeGreaterThanOrEqual(0);
+      expect(
+        (await h.getFileListByCategory(courseTATester, categories[0].id, CourseType.TEACHER)).length,
+      ).toBeGreaterThanOrEqual(0);
     }
   });
 
   it('should get user info correctly', async () => {
-    const userInfo = await helper.getUserInfo();
+    const userInfo = await h.getUserInfo();
     expect(userInfo).toBeDefined();
 
     expect(userInfo.name).toBeTruthy();
@@ -114,7 +102,7 @@ describe('helper data retrival', () => {
   });
 
   it('should get calendar items correctly and throw on invalid response', async () => {
-    expect((await helper.getCalendar('20210501', '20210530')).length).toBeGreaterThanOrEqual(0);
-    // await expect(helper.getCalendar('gg', 'GG')).rejects.toHaveProperty('reason', FailReason.INVALID_RESPONSE);
+    expect((await h.getCalendar('20210501', '20210530')).length).toBeGreaterThanOrEqual(0);
+    // await expect(h.getCalendar('gg', 'GG')).rejects.toHaveProperty('reason', FailReason.INVALID_RESPONSE);
   });
 });

@@ -1,33 +1,28 @@
-import { describe, it, expect, beforeAll, afterAll } from 'vitest';
-import * as dotenv from 'dotenv';
+import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import { Language, Learn2018Helper } from '../src';
-
-dotenv.config({ path: 'test/.env' });
-const U = process.env.U!; // username
-const P = process.env.P!; // password
-const configs = { provider: () => ({ username: U, password: P }) };
+import { config } from './config';
 
 describe('helper interaction', () => {
-  let helper: Learn2018Helper;
+  const h = new Learn2018Helper(config);
 
   beforeAll(async () => {
-    helper = new Learn2018Helper(configs);
+    await h.login();
   });
   afterAll(async () => {
-    await helper.logout();
+    await h.logout();
   });
 
   it('should set lang', async () => {
-    await helper.login();
-    const pre_lang = helper.getCurrentLanguage();
+    await h.login();
+    const pre_lang = h.getCurrentLanguage();
     const toset_lang = pre_lang === Language.EN ? Language.ZH : Language.EN;
-    await helper.setLanguage(toset_lang);
-    expect(helper.getCurrentLanguage()).toBe(toset_lang);
+    await h.setLanguage(toset_lang);
+    expect(h.getCurrentLanguage()).toBe(toset_lang);
 
-    await helper.logout();
-    await helper.login();
-    expect(helper.getCurrentLanguage()).toBe(toset_lang);
+    await h.logout();
+    await h.login();
+    expect(h.getCurrentLanguage()).toBe(toset_lang);
 
-    await helper.setLanguage(pre_lang);
+    await h.setLanguage(pre_lang);
   });
 });

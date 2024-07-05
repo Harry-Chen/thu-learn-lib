@@ -33,7 +33,7 @@ describe('helper interaction', () => {
       const file = (await h.getFileList(courseTester)).find((f) => !oldFavorites.find((fav) => fav.id === f.id));
       const discuss = (await h.getDiscussionList(courseTester)).find((d) => !oldFavorites.find((f) => f.id === d.id));
       if (noti) await h.addToFavorites(ContentType.NOTIFICATION, noti.id);
-      if (hw) await h.addToFavorites(ContentType.HOMEWORK, hw.studentHomeworkId);
+      if (hw) await h.addToFavorites(ContentType.HOMEWORK, hw.id);
       if (file) await h.addToFavorites(ContentType.FILE, file.id);
       if (discuss) await h.addToFavorites(ContentType.DISCUSSION, discuss.id);
       const pinned = noti || hw || file || discuss;
@@ -54,10 +54,8 @@ describe('helper interaction', () => {
         await h.removeFromFavorites(noti.id);
       }
       if (hw) {
-        expect(
-          addedFavorites.find((f) => f.type === ContentType.HOMEWORK && f.id === hw.studentHomeworkId),
-        ).toBeDefined();
-        await h.removeFromFavorites(hw.studentHomeworkId);
+        expect(addedFavorites.find((f) => f.type === ContentType.HOMEWORK && f.id === hw.id)).toBeDefined();
+        await h.removeFromFavorites(hw.id);
       }
       if (file) {
         expect(addedFavorites.find((f) => f.type === ContentType.FILE && f.id === file.id)).toBeDefined();

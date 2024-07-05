@@ -186,7 +186,9 @@ export enum HomeworkGradeLevel {
 
 export interface IHomework extends IHomeworkStatus {
   id: string;
+  /** @deprecated use `id` */
   studentHomeworkId: string;
+  baseId: string;
   title: string;
   deadline: Date;
   url: string;

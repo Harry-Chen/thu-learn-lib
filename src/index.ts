@@ -836,10 +836,11 @@ export class Learn2018Helper {
     await Promise.all(
       result.map(async (h) => {
         homeworks.push({
-          id: h.zyid,
+          id: h.xszyid,
           studentHomeworkId: h.xszyid,
+          baseId: h.zyid,
           title: decodeHTML(h.bt),
-          url: URLS.LEARN_HOMEWORK_DETAIL(h.wlkcid, h.zyid, h.xszyid),
+          url: URLS.LEARN_HOMEWORK_DETAIL(h.wlkcid, h.xszyid),
           deadline: new Date(h.jzsj),
           submitUrl: URLS.LEARN_HOMEWORK_SUBMIT_PAGE(h.wlkcid, h.xszyid),
           submitTime: h.scsj === null ? undefined : new Date(h.scsj),
@@ -849,7 +850,7 @@ export class Learn2018Helper {
           gradeContent: trimAndDefine(h.pynr),
           gradeTime: h.pysj === null ? undefined : new Date(h.pysj),
           ...status,
-          ...(await this.parseHomeworkDetail(h.wlkcid, h.zyid, h.xszyid)),
+          ...(await this.parseHomeworkDetail(h.wlkcid, h.xszyid)),
         });
       }),
     );
@@ -898,8 +899,8 @@ export class Learn2018Helper {
     };
   }
 
-  private async parseHomeworkDetail(courseID: string, id: string, studentHomeworkID: string): Promise<IHomeworkDetail> {
-    const response = await this.#myFetchWithToken(URLS.LEARN_HOMEWORK_DETAIL(courseID, id, studentHomeworkID));
+  private async parseHomeworkDetail(courseID: string, id: string): Promise<IHomeworkDetail> {
+    const response = await this.#myFetchWithToken(URLS.LEARN_HOMEWORK_DETAIL(courseID, id));
     const result = $(await response.text());
 
     const fileDivs = result('div.list.fujian.clearfix');
@@ -957,7 +958,7 @@ export class Learn2018Helper {
   }
 
   public async submitHomework(
-    studentHomeworkID: string,
+    id: string,
     content = '',
     attachment?: IHomeworkSubmitAttachment,
     removeAttachment = false,
@@ -965,7 +966,7 @@ export class Learn2018Helper {
     return await (
       await this.#myFetchWithToken(URLS.LEARN_HOMEWORK_SUBMIT(), {
         method: 'POST',
-        body: URLS.LEARN_HOMEWORK_SUBMIT_FORM_DATA(studentHomeworkID, content, attachment, removeAttachment),
+        body: URLS.LEARN_HOMEWORK_SUBMIT_FORM_DATA(id, content, attachment, removeAttachment),
       })
     ).json();
   }

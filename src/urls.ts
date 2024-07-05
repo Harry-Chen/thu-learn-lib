@@ -127,25 +127,25 @@ export const LEARN_HOMEWORK_LIST_SUBMITTED = (courseID: string) =>
 export const LEARN_HOMEWORK_LIST_GRADED = (courseID: string) =>
   `${LEARN_PREFIX}/b/wlxt/kczy/zy/student/index/zyListYpg?wlkcid=${courseID}&size=${MAX_SIZE}`;
 
-export const LEARN_HOMEWORK_DETAIL = (courseID: string, homeworkID: string, studentHomeworkID: string) =>
-  `${LEARN_PREFIX}/f/wlxt/kczy/zy/student/viewCj?wlkcid=${courseID}&zyid=${homeworkID}&xszyid=${studentHomeworkID}`;
+export const LEARN_HOMEWORK_DETAIL = (courseID: string, id: string) =>
+  `${LEARN_PREFIX}/f/wlxt/kczy/zy/student/viewCj?wlkcid=${courseID}&xszyid=${id}`;
 
 export const LEARN_HOMEWORK_DOWNLOAD = (courseID: string, attachmentID: string) =>
   `${LEARN_PREFIX}/b/wlxt/kczy/zy/student/downloadFile/${courseID}/${attachmentID}`;
 
-export const LEARN_HOMEWORK_SUBMIT_PAGE = (courseID: string, studentHomeworkID: string) =>
-  `${LEARN_PREFIX}/f/wlxt/kczy/zy/student/tijiao?wlkcid=${courseID}&xszyid=${studentHomeworkID}`;
+export const LEARN_HOMEWORK_SUBMIT_PAGE = (courseID: string, id: string) =>
+  `${LEARN_PREFIX}/f/wlxt/kczy/zy/student/tijiao?wlkcid=${courseID}&xszyid=${id}`;
 
 export const LEARN_HOMEWORK_SUBMIT = () => `${LEARN_PREFIX}/b/wlxt/kczy/zy/student/tjzy`;
 
 export const LEARN_HOMEWORK_SUBMIT_FORM_DATA = (
-  studentHomeworkID: string,
+  id: string,
   content = '',
   attachment?: IHomeworkSubmitAttachment,
   removeAttachment = false,
 ) => {
   const form = new FormData();
-  form.append('xszyid', studentHomeworkID);
+  form.append('xszyid', id);
   form.append('zynr', content ?? '');
   if (attachment) form.append('fileupload', attachment.content, attachment.filename);
   else form.append('fileupload', 'undefined');

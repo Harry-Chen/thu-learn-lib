@@ -59,6 +59,8 @@ const $ = (html: string | DOM.Element | DOM.Element[]): cheerio.CheerioAPI => {
 
 const noLogin = (res: Response) => res.url.includes('login_timeout') || res.status == 403;
 
+const YES = '是';
+
 /** add CSRF token to any request URL as parameters */
 export const addCSRFTokenToUrl = (url: string, token: string): string => {
   const newUrl = new URL(url);
@@ -405,9 +407,10 @@ export class Learn2018Helper {
           title: decodeHTML(n.bt),
           url: URLS.LEARN_NOTIFICATION_DETAIL(courseID, n.ggid, courseType),
           publisher: n.fbrxm,
-          hasRead: n.sfyd === '是',
+          hasRead: n.sfyd === YES,
           markedImportant: Number(n.sfqd) === 1, // n.sfqd could be string '1' (teacher mode) or number 1 (student mode)
           publishTime: new Date(n.fbsj && typeof n.fbsj === 'string' ? n.fbsj : n.fbsjStr),
+          isFavorite: n.sfsc === YES,
         };
         let detail: INotificationDetail = {};
         const attachmentName = courseType === CourseType.STUDENT ? n.fjmc : n.fjbt;
@@ -553,6 +556,7 @@ export class Learn2018Helper {
             previewUrl,
             size,
           },
+          isFavorite: f[11],
         } satisfies File;
       });
     } else {
@@ -776,7 +780,7 @@ export class Learn2018Helper {
           extra: e.ywbz ?? undefined,
           semesterId: e.xnxq,
           courseId: e.wlkcid,
-          pinned: e.sfzd === '是',
+          pinned: e.sfzd === YES,
           pinnedTime: e.zdsj === null ? undefined : new Date(e.zdsj), // Note: this field is originally unix timestamp instead of string
           addedTime: new Date(e.scsj),
           itemId: e.id,
@@ -849,6 +853,8 @@ export class Learn2018Helper {
           graderName: trimAndDefine(h.jsm),
           gradeContent: trimAndDefine(h.pynr),
           gradeTime: h.pysj === null ? undefined : new Date(h.pysj),
+          isFavorite: h.sfsc === YES,
+          favoriteTime: h.scsj === null || h.sfsc !== YES ? undefined : new Date(h.scsj),
           ...status,
           ...(await this.parseHomeworkDetail(h.wlkcid, h.xszyid)),
         });

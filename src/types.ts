@@ -99,6 +99,7 @@ export interface INotification {
   markedImportant: boolean;
   publishTime: Date;
   publisher: string;
+  isFavorite: boolean;
 }
 
 export interface INotificationDetail {
@@ -140,6 +141,8 @@ interface IFile {
   fileType: string;
   /** for compatibility */
   remoteFile: RemoteFile;
+  /** could not get favorite info when using `getFileList` or for TA */
+  isFavorite?: boolean;
 }
 
 export type File = IFile;
@@ -200,6 +203,8 @@ export interface IHomework extends IHomeworkStatus {
   gradeTime?: Date;
   graderName?: string;
   gradeContent?: string;
+  isFavorite: boolean;
+  favoriteTime?: Date;
 }
 
 export interface IHomeworkDetail {

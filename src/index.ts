@@ -299,9 +299,8 @@ export class Learn2018Helper {
       } as ApiError);
     }
     const result = (json.resultList ?? []) as any[];
-    const courses: CourseInfo[] = [];
 
-    await Promise.all(
+    return Promise.all(
       result.map(async (c) => {
         let timeAndLocation: string[] = [];
         try {
@@ -310,7 +309,7 @@ export class Learn2018Helper {
         } catch (e) {
           /** ignore */
         }
-        courses.push({
+        return {
           id: c.wlkcid,
           name: decodeHTML(c.zywkcm),
           chineseName: decodeHTML(c.kcm),
@@ -322,11 +321,9 @@ export class Learn2018Helper {
           courseNumber: c.kch,
           courseIndex: Number(c.kxh), // c.kxh could be string (teacher mode) or number (student mode)
           courseType,
-        });
+        } satisfies CourseInfo;
       }),
     );
-
-    return courses;
   }
 
   /**
@@ -397,9 +394,8 @@ export class Learn2018Helper {
     }
 
     const result = (json.object?.aaData ?? json.object?.resultsList ?? []) as any[];
-    const notifications: Notification[] = [];
 
-    await Promise.all(
+    return Promise.all(
       result.map(async (n) => {
         const notification: INotification = {
           id: n.ggid,
@@ -417,11 +413,9 @@ export class Learn2018Helper {
         if (attachmentName) {
           detail = await this.parseNotificationDetail(courseID, notification.id, courseType, attachmentName);
         }
-        notifications.push({ ...notification, ...detail });
+        return { ...notification, ...detail } satisfies Notification;
       }),
     );
-
-    return notifications;
   }
 
   /** Get all files （课程文件） of the specified course. */
@@ -627,11 +621,10 @@ export class Learn2018Helper {
       }
 
       const result = (json.object?.aaData ?? []) as any[];
-      const homeworks: HomeworkTA[] = [];
 
-      await Promise.all(
-        result.map(async (d) => {
-          homeworks.push({
+      return result.map(
+        (d) =>
+          ({
             id: d.zyid,
             index: d.wz,
             title: decodeHTML(d.bt),
@@ -646,22 +639,12 @@ export class Learn2018Helper {
             gradedCount: d.ypys,
             submittedCount: d.yjs,
             unsubmittedCount: d.wjs,
-          });
-        }),
+          }) satisfies HomeworkTA,
       );
-
-      return homeworks;
     } else {
-      const allHomework: Homework[] = [];
-
-      await Promise.all(
-        URLS.LEARN_HOMEWORK_LIST_SOURCE(courseID).map(async (s) => {
-          const homeworks = await this.getHomeworkListAtUrl(s.url, s.status);
-          allHomework.push(...homeworks);
-        }),
-      );
-
-      return allHomework;
+      return Promise.all(
+        URLS.LEARN_HOMEWORK_LIST_SOURCE(courseID).map((s) => this.getHomeworkListAtUrl(s.url, s.status)),
+      ).then((results) => results.flat());
     }
   }
 
@@ -676,19 +659,15 @@ export class Learn2018Helper {
     }
 
     const result = (json.object?.resultsList ?? []) as any[];
-    const discussions: Discussion[] = [];
 
-    await Promise.all(
-      result.map(async (d) => {
-        discussions.push({
+    return result.map(
+      (d) =>
+        ({
           ...this.parseDiscussionBase(d),
           boardId: d.bqid,
           url: URLS.LEARN_DISCUSSION_DETAIL(d.wlkcid, d.bqid, d.id, courseType),
-        });
-      }),
+        }) satisfies Discussion,
     );
-
-    return discussions;
   }
 
   /**
@@ -708,19 +687,15 @@ export class Learn2018Helper {
     }
 
     const result = (json.object?.resultsList ?? []) as any[];
-    const questions: Question[] = [];
 
-    await Promise.all(
-      result.map(async (q) => {
-        questions.push({
+    return result.map(
+      (q) =>
+        ({
           ...this.parseDiscussionBase(q),
           question: Base64.decode(q.wtnr),
           url: URLS.LEARN_QUESTION_DETAIL(q.wlkcid, q.id, courseType),
-        });
-      }),
+        }) satisfies Question,
     );
-
-    return questions;
   }
 
   /**
@@ -853,33 +828,31 @@ export class Learn2018Helper {
     }
 
     const result = (json.object?.aaData ?? []) as any[];
-    const homeworks: Homework[] = [];
 
-    await Promise.all(
-      result.map(async (h) => {
-        homeworks.push({
-          id: h.xszyid,
-          studentHomeworkId: h.xszyid,
-          baseId: h.zyid,
-          title: decodeHTML(h.bt),
-          url: URLS.LEARN_HOMEWORK_DETAIL(h.wlkcid, h.xszyid),
-          deadline: new Date(h.jzsj),
-          submitUrl: URLS.LEARN_HOMEWORK_SUBMIT_PAGE(h.wlkcid, h.xszyid),
-          submitTime: h.scsj === null ? undefined : new Date(h.scsj),
-          grade: h.cj === null ? undefined : h.cj,
-          gradeLevel: GRADE_LEVEL_MAP.get(h.cj),
-          graderName: trimAndDefine(h.jsm),
-          gradeContent: trimAndDefine(h.pynr),
-          gradeTime: h.pysj === null ? undefined : new Date(h.pysj),
-          isFavorite: h.sfsc === YES,
-          favoriteTime: h.scsj === null || h.sfsc !== YES ? undefined : new Date(h.scsj),
-          ...status,
-          ...(await this.parseHomeworkDetail(h.wlkcid, h.xszyid)),
-        });
-      }),
+    return Promise.all(
+      result.map(
+        async (h) =>
+          ({
+            id: h.xszyid,
+            studentHomeworkId: h.xszyid,
+            baseId: h.zyid,
+            title: decodeHTML(h.bt),
+            url: URLS.LEARN_HOMEWORK_DETAIL(h.wlkcid, h.xszyid),
+            deadline: new Date(h.jzsj),
+            submitUrl: URLS.LEARN_HOMEWORK_SUBMIT_PAGE(h.wlkcid, h.xszyid),
+            submitTime: h.scsj === null ? undefined : new Date(h.scsj),
+            grade: h.cj === null ? undefined : h.cj,
+            gradeLevel: GRADE_LEVEL_MAP.get(h.cj),
+            graderName: trimAndDefine(h.jsm),
+            gradeContent: trimAndDefine(h.pynr),
+            gradeTime: h.pysj === null ? undefined : new Date(h.pysj),
+            isFavorite: h.sfsc === YES,
+            favoriteTime: h.scsj === null || h.sfsc !== YES ? undefined : new Date(h.scsj),
+            ...status,
+            ...(await this.parseHomeworkDetail(h.wlkcid, h.xszyid)),
+          }) satisfies Homework,
+      ),
     );
-
-    return homeworks;
   }
 
   private async parseNotificationDetail(

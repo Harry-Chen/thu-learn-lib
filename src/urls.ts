@@ -1,6 +1,6 @@
 import { FormData } from 'node-fetch-native';
 import { ContentType, CourseType, IHomeworkSubmitAttachment, Language } from './types';
-import { FAVORITE_TYPE_MAP, getMkFromType } from './utils';
+import { CONTENT_TYPE_MAP, getMkFromType } from './utils';
 
 export const LEARN_PREFIX = 'https://learn.tsinghua.edu.cn';
 export const REGISTRAR_PREFIX = 'https://zhjw.cic.tsinghua.edu.cn';
@@ -189,18 +189,12 @@ export const LEARN_WEBSITE_LANGUAGE = (lang: Language) =>
   `https://learn.tsinghua.edu.cn/f/wlxt/common/language?websiteShowLanguage=${WebsiteShowLanguage[lang]}`;
 
 export const LEARN_FAVORITE_ADD = (type: ContentType, id: string) =>
-  `${LEARN_PREFIX}/b/xt/wlkc_xsscb/student/add?ywid=${id}&ywlx=${FAVORITE_TYPE_MAP.get(type)}`;
+  `${LEARN_PREFIX}/b/xt/wlkc_xsscb/student/add?ywid=${id}&ywlx=${CONTENT_TYPE_MAP.get(type)}`;
 
 export const LEARN_FAVORITE_REMOVE = (id: string) => `${LEARN_PREFIX}/b/xt/wlkc_xsscb/student/delete?ywid=${id}`;
 
 export const LEARN_FAVORITE_LIST = (type?: ContentType) =>
-  `${LEARN_PREFIX}/b/xt/wlkc_xsscb/student/pageList?ywlx=${type ? FAVORITE_TYPE_MAP.get(type) : 'ALL'}`;
-
-export const LEARN_FAVORITE_LIST_FORM_DATA = (courseID?: string) => {
-  const form = new FormData();
-  form.append('aoData', JSON.stringify(courseID ? [{ name: 'wlkcid', value: courseID }] : []));
-  return form;
-};
+  `${LEARN_PREFIX}/b/xt/wlkc_xsscb/student/pageList?ywlx=${type ? CONTENT_TYPE_MAP.get(type) : 'ALL'}`;
 
 export const LEARN_FAVORITE_PIN = `${LEARN_PREFIX}/b/xt/wlkc_xsscb/student/addZd`;
 
@@ -209,6 +203,25 @@ export const LEARN_FAVORITE_UNPIN = `${LEARN_PREFIX}/b/xt/wlkc_xsscb/student/del
 export const LEARN_FAVORITE_PIN_UNPIN_FORM_DATA = (id: string) => {
   const form = new FormData();
   form.append('ywid', id);
+  return form;
+};
+
+export const LEARN_COMMENT_SET = `${LEARN_PREFIX}/b/wlxt/xt/wlkc_xsbjb/add`;
+
+export const LEARN_COMMENT_SET_FORM_DATA = (type: ContentType, id: string, content: string) => {
+  const form = new FormData();
+  form.append('ywlx', CONTENT_TYPE_MAP.get(type) ?? '');
+  form.append('ywid', id);
+  form.append('bznr', content);
+  return form;
+};
+
+export const LEARN_COMMENT_LIST = (type?: ContentType) =>
+  `${LEARN_PREFIX}/b/wlxt/xt/wlkc_xsbjb/student/pageList?ywlx=${type ? CONTENT_TYPE_MAP.get(type) : 'ALL'}`;
+
+export const LEARN_FAVORITE_OR_COMMENT_LIST_FORM_DATA = (courseID?: string) => {
+  const form = new FormData();
+  form.append('aoData', JSON.stringify(courseID ? [{ name: 'wlkcid', value: courseID }] : []));
   return form;
 };
 

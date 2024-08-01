@@ -93,7 +93,7 @@ export function formatFileSize(size: number): string {
   return (size / 1024 / 1024 / 1024).toFixed(2) + 'G';
 }
 
-export const FAVORITE_TYPE_MAP = new Map([
+export const CONTENT_TYPE_MAP = new Map([
   [ContentType.NOTIFICATION, 'KCGG'],
   [ContentType.FILE, 'KCKJ'],
   [ContentType.HOMEWORK, 'KCZY'],
@@ -101,10 +101,10 @@ export const FAVORITE_TYPE_MAP = new Map([
   [ContentType.QUESTION, 'KCDY'],
   // omitted: 问卷(KCWJ) & 课表(KCKB) as they are not supported now
 ]);
-export const FAVORITE_TYPE_MAP_REVERSE = new Map([
-  [FAVORITE_TYPE_MAP.get(ContentType.NOTIFICATION)!, ContentType.NOTIFICATION],
-  [FAVORITE_TYPE_MAP.get(ContentType.FILE)!, ContentType.FILE],
-  [FAVORITE_TYPE_MAP.get(ContentType.HOMEWORK)!, ContentType.HOMEWORK],
-  [FAVORITE_TYPE_MAP.get(ContentType.DISCUSSION)!, ContentType.DISCUSSION],
-  [FAVORITE_TYPE_MAP.get(ContentType.QUESTION)!, ContentType.QUESTION],
+export const CONTENT_TYPE_MAP_REVERSE = new Map([
+  [CONTENT_TYPE_MAP.get(ContentType.NOTIFICATION)!, ContentType.NOTIFICATION],
+  [CONTENT_TYPE_MAP.get(ContentType.FILE)!, ContentType.FILE],
+  [CONTENT_TYPE_MAP.get(ContentType.HOMEWORK)!, ContentType.HOMEWORK],
+  [CONTENT_TYPE_MAP.get(ContentType.DISCUSSION)!, ContentType.DISCUSSION],
+  [CONTENT_TYPE_MAP.get(ContentType.QUESTION)!, ContentType.QUESTION],
 ]);

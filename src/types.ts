@@ -100,6 +100,7 @@ export interface INotification {
   publishTime: Date;
   publisher: string;
   isFavorite: boolean;
+  comment?: string;
 }
 
 export interface INotificationDetail {
@@ -141,8 +142,9 @@ interface IFile {
   fileType: string;
   /** for compatibility */
   remoteFile: RemoteFile;
-  /** could not get favorite info when using `getFileList` or for TA */
+  /** could not get favorite or comment info when using `getFileList` or in TA mode */
   isFavorite?: boolean;
+  comment?: string;
 }
 
 export type File = IFile;
@@ -205,6 +207,7 @@ export interface IHomework extends IHomeworkStatus {
   gradeContent?: string;
   isFavorite: boolean;
   favoriteTime?: Date;
+  comment?: string;
 }
 
 export interface IHomeworkDetail {
@@ -272,6 +275,8 @@ export interface IDiscussionBase {
   lastReplyTime: Date;
   visitCount: number;
   replyCount: number;
+  isFavorite: boolean;
+  comment?: string;
 }
 
 interface IDiscussion extends IDiscussionBase {
@@ -314,13 +319,28 @@ interface IFavoriteItem {
   courseId: string;
   pinned: boolean;
   pinnedTime?: Date;
-  // comment?: string;
+  comment?: string;
   addedTime: Date;
   /** for reference */
   itemId: string;
 }
 
 export type FavoriteItem = IFavoriteItem;
+
+interface ICommentItem {
+  id: string;
+  type: ContentType;
+  content: string;
+  contentHTML: string;
+  title: string;
+  semesterId: string;
+  courseId: string;
+  commentTime: Date;
+  /** for reference */
+  itemId: string;
+}
+
+export type CommentItem = ICommentItem;
 
 export interface CalendarEvent {
   location: string;

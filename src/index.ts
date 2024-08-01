@@ -6,6 +6,7 @@ import makeFetch from 'node-fetch-cookie-native';
 import {
   ApiError,
   CalendarEvent,
+  CommentItem,
   ContentType,
   ContentTypeMap,
   CourseContent,
@@ -37,7 +38,7 @@ import {
 } from './types';
 import * as URLS from './urls';
 import {
-  FAVORITE_TYPE_MAP_REVERSE,
+  CONTENT_TYPE_MAP_REVERSE,
   GRADE_LEVEL_MAP,
   JSONP_EXTRACTOR_NAME,
   decodeHTML,
@@ -407,6 +408,7 @@ export class Learn2018Helper {
           markedImportant: Number(n.sfqd) === 1, // n.sfqd could be string '1' (teacher mode) or number 1 (student mode)
           publishTime: new Date(n.fbsj && typeof n.fbsj === 'string' ? n.fbsj : n.fbsjStr),
           isFavorite: n.sfsc === YES,
+          comment: n.bznr ?? undefined,
         };
         let detail: INotificationDetail = {};
         const attachmentName = courseType === CourseType.STUDENT ? n.fjmc : n.fjbt;
@@ -551,6 +553,7 @@ export class Learn2018Helper {
             size,
           },
           isFavorite: f[11],
+          comment: f[14] ?? undefined,
         } satisfies File;
       });
     } else {
@@ -703,7 +706,7 @@ export class Learn2018Helper {
    */
   public async addToFavorites(type: ContentType, id: string): Promise<void> {
     const json = await (await this.#myFetchWithToken(URLS.LEARN_FAVORITE_ADD(type, id))).json();
-    if (json.result !== 'success') {
+    if (json.result !== 'success' || !json.msg?.endsWith?.('成功')) {
       return Promise.reject({
         reason: FailReason.INVALID_RESPONSE,
         extra: json,
@@ -716,7 +719,7 @@ export class Learn2018Helper {
    */
   public async removeFromFavorites(id: string): Promise<void> {
     const json = await (await this.#myFetchWithToken(URLS.LEARN_FAVORITE_REMOVE(id))).json();
-    if (json.result !== 'success') {
+    if (json.result !== 'success' || !json.msg?.endsWith?.('成功')) {
       return Promise.reject({
         reason: FailReason.INVALID_RESPONSE,
         extra: json,
@@ -732,7 +735,7 @@ export class Learn2018Helper {
     const json = await (
       await this.#myFetchWithToken(URLS.LEARN_FAVORITE_LIST(type), {
         method: 'POST',
-        body: URLS.LEARN_FAVORITE_LIST_FORM_DATA(courseID),
+        body: URLS.LEARN_FAVORITE_OR_COMMENT_LIST_FORM_DATA(courseID),
       })
     ).json();
     if (json.result !== 'success') {
@@ -744,7 +747,7 @@ export class Learn2018Helper {
     const result = (json.object?.aaData ?? []) as any[];
     return result
       .map((e): FavoriteItem | undefined => {
-        const type = FAVORITE_TYPE_MAP_REVERSE.get(e.ywlx);
+        const type = CONTENT_TYPE_MAP_REVERSE.get(e.ywlx);
         if (!type) return; // ignore unknown type
         return {
           id: e.ywid,
@@ -757,6 +760,7 @@ export class Learn2018Helper {
           courseId: e.wlkcid,
           pinned: e.sfzd === YES,
           pinnedTime: e.zdsj === null ? undefined : new Date(e.zdsj), // Note: this field is originally unix timestamp instead of string
+          comment: e.bznr ?? undefined,
           addedTime: new Date(e.scsj),
           itemId: e.id,
         } satisfies FavoriteItem;
@@ -798,6 +802,62 @@ export class Learn2018Helper {
         extra: json,
       } as ApiError);
     }
+  }
+
+  /**
+   * Set a comment. (备注)
+   * Set an empty string to remove the comment.
+   */
+  public async setComment(type: ContentType, id: string, content: string): Promise<void> {
+    const json = await (
+      await this.#myFetchWithToken(URLS.LEARN_COMMENT_SET, {
+        method: 'POST',
+        body: URLS.LEARN_COMMENT_SET_FORM_DATA(type, id, content),
+      })
+    ).json();
+    if (json.result !== 'success' || !json.msg?.endsWith?.('成功')) {
+      return Promise.reject({
+        reason: FailReason.INVALID_RESPONSE,
+        extra: json,
+      } as ApiError);
+    }
+  }
+
+  /**
+   * Get comments. (我的备注)
+   * If `courseID` or `type` is specified, only return favorites of that course or type.
+   */
+  public async getComments(courseID?: string, type?: ContentType): Promise<CommentItem[]> {
+    const json = await (
+      await this.#myFetchWithToken(URLS.LEARN_COMMENT_LIST(type), {
+        method: 'POST',
+        body: URLS.LEARN_FAVORITE_OR_COMMENT_LIST_FORM_DATA(courseID),
+      })
+    ).json();
+    if (json.result !== 'success') {
+      return Promise.reject({
+        reason: FailReason.INVALID_RESPONSE,
+        extra: json,
+      } as ApiError);
+    }
+    const result = (json.object?.aaData ?? []) as any[];
+    return result
+      .map((e): CommentItem | undefined => {
+        const type = CONTENT_TYPE_MAP_REVERSE.get(e.ywlx);
+        if (!type) return; // ignore unknown type
+        return {
+          id: e.ywid,
+          type,
+          content: e.bt,
+          contentHTML: decodeHTML(e.bznrstring),
+          title: decodeHTML(e.ywbt),
+          semesterId: e.xnxq,
+          courseId: e.wlkcid,
+          commentTime: new Date(e.cjsj),
+          itemId: e.id,
+        } satisfies CommentItem;
+      })
+      .filter((x) => !!x);
   }
 
   public async sortCourses(courseIDs: string[]): Promise<void> {
@@ -848,6 +908,7 @@ export class Learn2018Helper {
             gradeTime: h.pysj === null ? undefined : new Date(h.pysj),
             isFavorite: h.sfsc === YES,
             favoriteTime: h.scsj === null || h.sfsc !== YES ? undefined : new Date(h.scsj),
+            comment: h.bznr ?? undefined,
             ...status,
             ...(await this.parseHomeworkDetail(h.wlkcid, h.xszyid)),
           }) satisfies Homework,
@@ -951,6 +1012,8 @@ export class Learn2018Helper {
       lastReplierName: d.zhhfrxm,
       visitCount: d.djs ?? 0, // teacher cannot fetch this
       replyCount: d.hfcs,
+      isFavorite: d.sfsc === YES,
+      comment: d.bznr ?? undefined,
     };
   }
 

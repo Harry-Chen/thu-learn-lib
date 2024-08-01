@@ -825,6 +825,24 @@ export class Learn2018Helper {
     }
   }
 
+  public async sortCourses(courseIDs: string[]): Promise<void> {
+    const json = await (
+      await this.#myFetchWithToken(URLS.LEARN_SORT_COURSES, {
+        method: 'POST',
+        body: JSON.stringify(courseIDs.map((id, index) => ({ wlkcid: id, xh: index + 1 }))),
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      })
+    ).json();
+    if (json.result !== 'success') {
+      return Promise.reject({
+        reason: FailReason.INVALID_RESPONSE,
+        extra: json,
+      } as ApiError);
+    }
+  }
+
   private async getHomeworkListAtUrl(url: string, status: IHomeworkStatus): Promise<Homework[]> {
     const json = await (await this.#myFetchWithToken(url)).json();
     if (json.result !== 'success') {

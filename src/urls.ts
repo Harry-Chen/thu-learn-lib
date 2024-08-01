@@ -212,6 +212,8 @@ export const LEARN_FAVORITE_PIN_UNPIN_FORM_DATA = (id: string) => {
   return form;
 };
 
+export const LEARN_SORT_COURSES = `${LEARN_PREFIX}/b/wlxt/kc/wlkc_kcpxb/addorUpdate`;
+
 export const REGISTRAR_TICKET_FORM_DATA = () => {
   const form = new FormData();
   form.append('appId', 'ALL_ZHJW');

@@ -26,7 +26,6 @@ import {
   IHomeworkDetail,
   IHomeworkStatus,
   IHomeworkSubmitAttachment,
-  IHomeworkSubmitResult,
   INotification,
   INotificationDetail,
   Language,
@@ -708,7 +707,7 @@ export class Learn2018Helper {
     const json = await (await this.#myFetchWithToken(URLS.LEARN_FAVORITE_ADD(type, id))).json();
     if (json.result !== 'success' || !json.msg?.endsWith?.('成功')) {
       return Promise.reject({
-        reason: FailReason.INVALID_RESPONSE,
+        reason: FailReason.OPERATION_FAILED,
         extra: json,
       } as ApiError);
     }
@@ -721,7 +720,7 @@ export class Learn2018Helper {
     const json = await (await this.#myFetchWithToken(URLS.LEARN_FAVORITE_REMOVE(id))).json();
     if (json.result !== 'success' || !json.msg?.endsWith?.('成功')) {
       return Promise.reject({
-        reason: FailReason.INVALID_RESPONSE,
+        reason: FailReason.OPERATION_FAILED,
         extra: json,
       } as ApiError);
     }
@@ -780,7 +779,7 @@ export class Learn2018Helper {
     ).json();
     if (json.result !== 'success') {
       return Promise.reject({
-        reason: FailReason.INVALID_RESPONSE,
+        reason: FailReason.OPERATION_FAILED,
         extra: json,
       } as ApiError);
     }
@@ -798,7 +797,7 @@ export class Learn2018Helper {
     ).json();
     if (json.result !== 'success') {
       return Promise.reject({
-        reason: FailReason.INVALID_RESPONSE,
+        reason: FailReason.OPERATION_FAILED,
         extra: json,
       } as ApiError);
     }
@@ -817,7 +816,7 @@ export class Learn2018Helper {
     ).json();
     if (json.result !== 'success' || !json.msg?.endsWith?.('成功')) {
       return Promise.reject({
-        reason: FailReason.INVALID_RESPONSE,
+        reason: FailReason.OPERATION_FAILED,
         extra: json,
       } as ApiError);
     }
@@ -872,7 +871,7 @@ export class Learn2018Helper {
     ).json();
     if (json.result !== 'success') {
       return Promise.reject({
-        reason: FailReason.INVALID_RESPONSE,
+        reason: FailReason.OPERATION_FAILED,
         extra: json,
       } as ApiError);
     }
@@ -1022,13 +1021,19 @@ export class Learn2018Helper {
     content = '',
     attachment?: IHomeworkSubmitAttachment,
     removeAttachment = false,
-  ): Promise<IHomeworkSubmitResult> {
-    return await (
+  ) {
+    const json = await (
       await this.#myFetchWithToken(URLS.LEARN_HOMEWORK_SUBMIT(), {
         method: 'POST',
         body: URLS.LEARN_HOMEWORK_SUBMIT_FORM_DATA(id, content, attachment, removeAttachment),
       })
     ).json();
+    if (json.result !== 'success') {
+      return Promise.reject({
+        reason: FailReason.OPERATION_FAILED,
+        extra: json,
+      } as ApiError);
+    }
   }
 
   public async setLanguage(lang: Language): Promise<void> {

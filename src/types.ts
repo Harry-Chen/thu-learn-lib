@@ -19,6 +19,7 @@ export enum FailReason {
   NOT_IMPLEMENTED = 'not implemented',
   INVALID_RESPONSE = 'invalid response',
   UNEXPECTED_STATUS = 'unexpected status',
+  OPERATION_FAILED = 'operation failed',
 }
 
 export interface ApiError {
@@ -258,12 +259,6 @@ export type HomeworkTA = IHomeworkTA;
 export interface IHomeworkSubmitAttachment {
   filename: string;
   content: Blob;
-}
-
-export interface IHomeworkSubmitResult {
-  result: 'success' | 'error';
-  msg: string;
-  object: unknown;
 }
 
 export interface IDiscussionBase {

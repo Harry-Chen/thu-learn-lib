@@ -47,11 +47,7 @@ import {
   trimAndDefine,
 } from './utils';
 
-const CHEERIO_CONFIG: cheerio.CheerioOptions = {
-  // _useHtmlParser2
-  xml: true,
-  decodeEntities: false,
-};
+const CHEERIO_CONFIG: cheerio.CheerioOptions = { xml: true };
 
 const $ = (html: string | DOM.Element | DOM.Element[]): cheerio.CheerioAPI => {
   return cheerio.load(html, CHEERIO_CONFIG);

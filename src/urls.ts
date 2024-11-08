@@ -1,5 +1,5 @@
 import { FormData } from 'node-fetch-native';
-import { ContentType, CourseType, IHomeworkSubmitAttachment, Language } from './types';
+import { ContentType, CourseType, IHomeworkSubmitAttachment, Language, QNRType } from './types';
 import { CONTENT_TYPE_MAP, getMkFromType } from './utils';
 
 export const LEARN_PREFIX = 'https://learn.tsinghua.edu.cn';
@@ -180,6 +180,11 @@ export const LEARN_QUESTION_DETAIL = (courseID: string, questionID: string, cour
     ? `${LEARN_PREFIX}/f/wlxt/bbs/bbs_kcdy/student/viewDyById?wlkcid=${courseID}&id=${questionID}`
     : `${LEARN_PREFIX}/f/wlxt/bbs/bbs_kcdy/teacher/beforeEditDy?wlkcid=${courseID}&id=${questionID}`;
 
+export const LEARN_QNR_LIST_ONGOING = `${LEARN_PREFIX}/b/wlxt/kcwj/wlkc_wjb/student/pageListWks`;
+export const LEARN_QNR_LIST_ENDED = `${LEARN_PREFIX}/b/wlxt/kcwj/wlkc_wjb/student/pageListYjs`;
+export const LEARN_QNR_DETAIL = (courseID: string, qnrID: string, type: QNRType) =>
+  `${LEARN_PREFIX}/f/wlxt/kcwj/wlkc_wjb/student/beforeAdd?wlkcid=${courseID}&wjid=${qnrID}&wjlx=${type}&jswj=no`;
+
 export const WebsiteShowLanguage = {
   [Language.ZH]: 'zh_CN',
   [Language.EN]: 'en_US',
@@ -219,7 +224,7 @@ export const LEARN_COMMENT_SET_FORM_DATA = (type: ContentType, id: string, conte
 export const LEARN_COMMENT_LIST = (type?: ContentType) =>
   `${LEARN_PREFIX}/b/wlxt/xt/wlkc_xsbjb/student/pageList?ywlx=${type ? CONTENT_TYPE_MAP.get(type) : 'ALL'}`;
 
-export const LEARN_FAVORITE_OR_COMMENT_LIST_FORM_DATA = (courseID?: string) => {
+export const LEARN_PAGE_LIST_FORM_DATA = (courseID?: string) => {
   const form = new FormData();
   form.append('aoData', JSON.stringify(courseID ? [{ name: 'wlkcid', value: courseID }] : []));
   return form;

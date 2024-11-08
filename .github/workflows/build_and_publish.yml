@@ -2,21 +2,41 @@ name: Build and Publish
 
 on: [push, pull_request]
 
+env:
+    YARN_ENABLE_GLOBAL_CACHE: false
+
 jobs:
     build:
         runs-on: ubuntu-latest
         if: ${{ !contains(github.event.head_commit.message, 'ci skip') }}
         steps:
             - uses: actions/checkout@v4
+
             - uses: actions/setup-node@v4
               with:
                 node-version: 'lts/*'
+
+            - name: Get the Yarn cache directory path
+              id: yarn-cache-dir-path
+              run: echo "dir=$(corepack yarn config get cacheFolder)" >> $GITHUB_OUTPUT
+              shell: bash
+
+            - uses: actions/cache@v4
+              with:
+                path: ${{steps.yarn-cache-dir-path.outputs.dir}}
+                key: ${{runner.os}}-yarn-${{hashFiles('**/yarn.lock')}}
+                restore-keys: |
+                    ${{runner.os}}-yarn-
+
             - name: Install dependencies
-              run: yarn install --frozen-lockfile
+              run: corepack yarn install --immutable
+            - name: Lint
+              run: corepack yarn lint
             - name: Build library
-              run: yarn build
+              run: corepack yarn build
             - name: Build demo extension
-              run: yarn dev:build
+              run: corepack yarn dev:build
+
             - name: Show files to publish
               run: npm publish --dry-run
             - name: Upload built library

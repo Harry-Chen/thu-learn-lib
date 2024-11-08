@@ -1,0 +1,5 @@
+{
+  "vitest.nodeEnv": {
+    "OPENSSL_CONF": "./openssl.cnf"
+  }
+}

@@ -38,7 +38,6 @@
   "devDependencies": {
     "@eslint/js": "^9.14.0",
     "@types/node": "20.14.9",
-    "@types/tough-cookie": "^4.0.5",
     "@types/webextension-polyfill": "^0.12.1",
     "domhandler": "^5.0.3",
     "dotenv": "^16.4.5",
@@ -62,5 +61,6 @@
     "node-fetch-cookie-native": "^0.0.2",
     "node-fetch-native": "^1.6.4",
     "tough-cookie": "^5.0.0"
-  }
+  },
+  "packageManager": "yarn@4.5.1"
 }

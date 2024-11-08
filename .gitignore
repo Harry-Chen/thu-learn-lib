@@ -3,5 +3,8 @@ node_modules
 /lib
 /dist
 .env
-.vscode
 .npmrc
+.yarn/*
+!.yarn/releases
+!.yarn/plugins
+.pnp.*

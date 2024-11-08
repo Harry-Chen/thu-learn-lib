@@ -302,9 +302,7 @@ export class Learn2018Helper {
         try {
           // see https://github.com/Harry-Chen/Learn-Helper/issues/145
           timeAndLocation = await (await this.#myFetchWithToken(URLS.LEARN_COURSE_TIME_LOCATION(c.wlkcid))).json();
-        } catch (e) {
-          /** ignore */
-        }
+        } catch (e) {}
         return {
           id: c.wlkcid,
           name: decodeHTML(c.zywkcm),

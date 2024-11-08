@@ -65,6 +65,7 @@ describe('helper data retrival', () => {
       expect((await h.getNotificationList(courseTester)).length).toBeGreaterThanOrEqual(0);
       expect((await h.getFileList(courseTester)).length).toBeGreaterThanOrEqual(0);
       expect((await h.getAnsweredQuestionList(courseTester)).length).toBeGreaterThanOrEqual(0);
+      expect((await h.getQuestionnaireList(courseTester)).length).toBeGreaterThanOrEqual(0);
     }
     if (courseTATester !== undefined) {
       // expect((await h.getDiscussionList(courseTATester, CourseType.TEACHER)).length).toBeGreaterThanOrEqual(0);

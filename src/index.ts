@@ -31,6 +31,7 @@ import {
   Language,
   Notification,
   QNR,
+  QNRDetail,
   QNRType,
   Question,
   RemoteFile,
@@ -709,7 +710,7 @@ export class Learn2018Helper {
     ]).then((r) => r.flat());
   }
 
-  async getQuestionnaireListAtUrl(courseID: string, url: string): Promise<QNR[]> {
+  private async getQuestionnaireListAtUrl(courseID: string, url: string): Promise<QNR[]> {
     const json = await (
       await this.#myFetchWithToken(url, { method: 'POST', body: URLS.LEARN_PAGE_LIST_FORM_DATA(courseID) })
     ).json();
@@ -720,23 +721,51 @@ export class Learn2018Helper {
       } as ApiError);
     }
     const result = (json.object?.aaData ?? []) as any[];
-    return result.map((e) => {
-      const type = QNR_TYPE_MAP.get(e.wjlx) ?? QNRType.SURVEY;
-      return {
-        id: e.wjid,
-        type,
-        title: decodeHTML(e.wjbt),
-        startTime: new Date(e.kssj),
-        endTime: new Date(e.jssj),
-        uploadTime: new Date(e.scsj),
-        uploaderId: e.scr,
-        uploaderName: e.scrxm,
-        submitTime: e.tjsj ? new Date(e.tjsj) : undefined,
-        isFavorite: e.sfsc === YES,
-        comment: e.bznr ?? undefined,
-        url: URLS.LEARN_QNR_DETAIL(e.wlkcid, e.wjid, type),
-      } satisfies QNR;
-    });
+    return Promise.all(
+      result.map(async (e) => {
+        const type = QNR_TYPE_MAP.get(e.wjlx) ?? QNRType.SURVEY;
+        return {
+          id: e.wjid,
+          type,
+          title: decodeHTML(e.wjbt),
+          startTime: new Date(e.kssj),
+          endTime: new Date(e.jssj),
+          uploadTime: new Date(e.scsj),
+          uploaderId: e.scr,
+          uploaderName: e.scrxm,
+          submitTime: e.tjsj ? new Date(e.tjsj) : undefined,
+          isFavorite: e.sfsc === YES,
+          comment: e.bznr ?? undefined,
+          url: URLS.LEARN_QNR_SUBMIT_PAGE(e.wlkcid, e.wjid, type),
+          detail: await this.getQuestionnaireDetail(courseID, e.wjid),
+        } satisfies QNR;
+      }),
+    );
+  }
+
+  private async getQuestionnaireDetail(courseID: string, qnrID: string): Promise<QNRDetail[]> {
+    const json = await (
+      await this.#myFetchWithToken(URLS.LEARN_QNR_DETAIL, {
+        method: 'POST',
+        body: URLS.LEARN_QNR_DETAIL_FORM(courseID, qnrID),
+      })
+    ).json();
+    return (json as any[]).map(
+      (e) =>
+        ({
+          id: e.wtid,
+          index: Number(e.wtbh),
+          type: e.type,
+          required: e.require == YES,
+          title: decodeHTML(e.wtbt),
+          score: e.wtfz ? Number(e.wtfz) : undefined, // unsure about original type
+          options: (e.list as any[])?.map((o) => ({
+            id: o.xxid,
+            index: Number(o.xxbh),
+            title: decodeHTML(o.xxbt),
+          })),
+        }) satisfies QNRDetail,
+    );
   }
 
   /**

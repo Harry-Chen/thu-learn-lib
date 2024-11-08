@@ -289,13 +289,33 @@ interface IQuestion extends IDiscussionBase {
 
 export type Question = IQuestion;
 
+export enum QNRDetailType {
+  SINGLE = 'dnx',
+  MULTI = 'dox',
+  TEXT = 'wd',
+}
+
+export interface QNRDetail {
+  id: string;
+  index: number;
+  type: QNRDetailType;
+  required: boolean;
+  title: string;
+  score?: number;
+  options?: {
+    id: string;
+    index: number;
+    title: string;
+  }[];
+}
+
 export enum QNRType {
   VOTE = 'tp',
   FORM = 'tb',
   SURVEY = 'wj',
 }
 
-interface IQNR {
+export interface IQNR {
   id: string;
   type: QNRType;
   title: string;
@@ -308,6 +328,7 @@ interface IQNR {
   isFavorite: boolean;
   comment?: string;
   url: string;
+  detail: QNRDetail[];
 }
 
 export type QNR = IQNR;

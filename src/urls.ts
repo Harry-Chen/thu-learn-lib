@@ -182,8 +182,16 @@ export const LEARN_QUESTION_DETAIL = (courseID: string, questionID: string, cour
 
 export const LEARN_QNR_LIST_ONGOING = `${LEARN_PREFIX}/b/wlxt/kcwj/wlkc_wjb/student/pageListWks`;
 export const LEARN_QNR_LIST_ENDED = `${LEARN_PREFIX}/b/wlxt/kcwj/wlkc_wjb/student/pageListYjs`;
-export const LEARN_QNR_DETAIL = (courseID: string, qnrID: string, type: QNRType) =>
+export const LEARN_QNR_SUBMIT_PAGE = (courseID: string, qnrID: string, type: QNRType) =>
   `${LEARN_PREFIX}/f/wlxt/kcwj/wlkc_wjb/student/beforeAdd?wlkcid=${courseID}&wjid=${qnrID}&wjlx=${type}&jswj=no`;
+export const LEARN_QNR_DETAIL = `${LEARN_PREFIX}/b/wlxt/kcwj/wlkc_wjb/student/getWjnr`;
+
+export const LEARN_QNR_DETAIL_FORM = (courseID: string, qnrID: string) => {
+  const form = new FormData();
+  form.append('wlkcid', courseID);
+  form.append('wjid', qnrID);
+  return form;
+};
 
 export const WebsiteShowLanguage = {
   [Language.ZH]: 'zh_CN',
@@ -191,7 +199,7 @@ export const WebsiteShowLanguage = {
 };
 
 export const LEARN_WEBSITE_LANGUAGE = (lang: Language) =>
-  `https://learn.tsinghua.edu.cn/f/wlxt/common/language?websiteShowLanguage=${WebsiteShowLanguage[lang]}`;
+  `${LEARN_PREFIX}/f/wlxt/common/language?websiteShowLanguage=${WebsiteShowLanguage[lang]}`;
 
 export const LEARN_FAVORITE_ADD = (type: ContentType, id: string) =>
   `${LEARN_PREFIX}/b/xt/wlkc_xsscb/student/add?ywid=${id}&ywlx=${CONTENT_TYPE_MAP.get(type)}`;

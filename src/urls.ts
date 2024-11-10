@@ -1,5 +1,5 @@
 import { FormData } from 'node-fetch-native';
-import { ContentType, CourseType, IHomeworkSubmitAttachment, Language, QNRType } from './types';
+import { ContentType, CourseType, IHomeworkSubmitAttachment, Language, QuestionnaireType } from './types';
 import { CONTENT_TYPE_MAP, getMkFromType } from './utils';
 
 export const LEARN_PREFIX = 'https://learn.tsinghua.edu.cn';
@@ -182,7 +182,8 @@ export const LEARN_QUESTION_DETAIL = (courseID: string, questionID: string, cour
 
 export const LEARN_QNR_LIST_ONGOING = `${LEARN_PREFIX}/b/wlxt/kcwj/wlkc_wjb/student/pageListWks`;
 export const LEARN_QNR_LIST_ENDED = `${LEARN_PREFIX}/b/wlxt/kcwj/wlkc_wjb/student/pageListYjs`;
-export const LEARN_QNR_SUBMIT_PAGE = (courseID: string, qnrID: string, type: QNRType) =>
+/** Note: This page is accessible even with an invalid `qnrID` as long as you have access to the given `courseID`. */
+export const LEARN_QNR_SUBMIT_PAGE = (courseID: string, qnrID: string, type: QuestionnaireType) =>
   `${LEARN_PREFIX}/f/wlxt/kcwj/wlkc_wjb/student/beforeAdd?wlkcid=${courseID}&wjid=${qnrID}&wjlx=${type}&jswj=no`;
 export const LEARN_QNR_DETAIL = `${LEARN_PREFIX}/b/wlxt/kcwj/wlkc_wjb/student/getWjnr`;
 

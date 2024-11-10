@@ -30,9 +30,9 @@ import {
   INotificationDetail,
   Language,
   Notification,
-  QNR,
-  QNRDetail,
-  QNRType,
+  Questionnaire,
+  QuestionnaireDetail,
+  QuestionnaireType,
   Question,
   RemoteFile,
   SemesterInfo,
@@ -346,7 +346,7 @@ export class Learn2018Helper {
           return this.getDiscussionList(id, courseType) as Promise<ContentTypeMap[T][]>;
         case ContentType.QUESTION:
           return this.getAnsweredQuestionList(id, courseType) as Promise<ContentTypeMap[T][]>;
-        case ContentType.QNR:
+        case ContentType.QUESTIONNAIRE:
           return this.getQuestionnaireList(id) as Promise<ContentTypeMap[T][]>;
         default:
           return Promise.reject({
@@ -703,14 +703,14 @@ export class Learn2018Helper {
   /**
    * Get all questionnaires （课程问卷/QNR） of the specified course.
    */
-  public async getQuestionnaireList(courseID: string): Promise<QNR[]> {
+  public async getQuestionnaireList(courseID: string): Promise<Questionnaire[]> {
     return Promise.all([
       this.getQuestionnaireListAtUrl(courseID, URLS.LEARN_QNR_LIST_ONGOING),
       this.getQuestionnaireListAtUrl(courseID, URLS.LEARN_QNR_LIST_ENDED),
     ]).then((r) => r.flat());
   }
 
-  private async getQuestionnaireListAtUrl(courseID: string, url: string): Promise<QNR[]> {
+  private async getQuestionnaireListAtUrl(courseID: string, url: string): Promise<Questionnaire[]> {
     const json = await (
       await this.#myFetchWithToken(url, { method: 'POST', body: URLS.LEARN_PAGE_LIST_FORM_DATA(courseID) })
     ).json();
@@ -723,7 +723,7 @@ export class Learn2018Helper {
     const result = (json.object?.aaData ?? []) as any[];
     return Promise.all(
       result.map(async (e) => {
-        const type = QNR_TYPE_MAP.get(e.wjlx) ?? QNRType.SURVEY;
+        const type = QNR_TYPE_MAP.get(e.wjlx) ?? QuestionnaireType.SURVEY;
         return {
           id: e.wjid,
           type,
@@ -738,12 +738,12 @@ export class Learn2018Helper {
           comment: e.bznr ?? undefined,
           url: URLS.LEARN_QNR_SUBMIT_PAGE(e.wlkcid, e.wjid, type),
           detail: await this.getQuestionnaireDetail(courseID, e.wjid),
-        } satisfies QNR;
+        } satisfies Questionnaire;
       }),
     );
   }
 
-  private async getQuestionnaireDetail(courseID: string, qnrID: string): Promise<QNRDetail[]> {
+  private async getQuestionnaireDetail(courseID: string, qnrID: string): Promise<QuestionnaireDetail[]> {
     const json = await (
       await this.#myFetchWithToken(URLS.LEARN_QNR_DETAIL, {
         method: 'POST',
@@ -764,7 +764,7 @@ export class Learn2018Helper {
             index: Number(o.xxbh),
             title: decodeHTML(o.xxbt),
           })),
-        }) satisfies QNRDetail,
+        }) satisfies QuestionnaireDetail,
     );
   }
 

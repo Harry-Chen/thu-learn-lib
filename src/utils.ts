@@ -1,6 +1,6 @@
 import { decodeHTML as _decodeHTML } from 'entities';
 
-import { ContentType, FailReason, HomeworkGradeLevel, QNRType, SemesterType } from './types';
+import { ContentType, FailReason, HomeworkGradeLevel, QuestionnaireType, SemesterType } from './types';
 
 export function parseSemesterType(n: number): SemesterType {
   if (n === 1) {
@@ -20,7 +20,7 @@ const CONTENT_TYPE_MK_MAP = {
   [ContentType.HOMEWORK]: 'kczy',
   [ContentType.DISCUSSION]: '',
   [ContentType.QUESTION]: '',
-  [ContentType.QNR]: '',
+  [ContentType.QUESTIONNAIRE]: '',
 };
 
 export function getMkFromType(type: ContentType): string {
@@ -100,7 +100,7 @@ export const CONTENT_TYPE_MAP = new Map([
   [ContentType.HOMEWORK, 'KCZY'],
   [ContentType.DISCUSSION, 'KCTL'],
   [ContentType.QUESTION, 'KCDY'],
-  [ContentType.QNR, 'KCWJ'],
+  [ContentType.QUESTIONNAIRE, 'KCWJ'],
   // omitted: 课表(KCKB)
 ]);
 export const CONTENT_TYPE_MAP_REVERSE = new Map([
@@ -109,11 +109,11 @@ export const CONTENT_TYPE_MAP_REVERSE = new Map([
   [CONTENT_TYPE_MAP.get(ContentType.HOMEWORK)!, ContentType.HOMEWORK],
   [CONTENT_TYPE_MAP.get(ContentType.DISCUSSION)!, ContentType.DISCUSSION],
   [CONTENT_TYPE_MAP.get(ContentType.QUESTION)!, ContentType.QUESTION],
-  [CONTENT_TYPE_MAP.get(ContentType.QNR)!, ContentType.QNR],
+  [CONTENT_TYPE_MAP.get(ContentType.QUESTIONNAIRE)!, ContentType.QUESTIONNAIRE],
 ]);
 
 export const QNR_TYPE_MAP = new Map([
-  ['投票', QNRType.VOTE],
-  ['填表', QNRType.FORM],
-  ['问卷', QNRType.SURVEY],
+  ['投票', QuestionnaireType.VOTE],
+  ['填表', QuestionnaireType.FORM],
+  ['问卷', QuestionnaireType.SURVEY],
 ]);

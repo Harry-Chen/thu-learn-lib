@@ -40,6 +40,7 @@ export enum ContentType {
   HOMEWORK = 'homework',
   DISCUSSION = 'discussion',
   QUESTION = 'question',
+  QUESTIONNAIRE = 'questionnaire',
 }
 
 interface IUserInfo {
@@ -288,12 +289,57 @@ interface IQuestion extends IDiscussionBase {
 
 export type Question = IQuestion;
 
+export enum QuestionnaireDetailType {
+  SINGLE = 'dnx',
+  MULTI = 'dox',
+  TEXT = 'wd',
+}
+
+export interface QuestionnaireDetail {
+  id: string;
+  index: number;
+  type: QuestionnaireDetailType;
+  required: boolean;
+  title: string;
+  score?: number;
+  options?: {
+    id: string;
+    index: number;
+    title: string;
+  }[];
+}
+
+export enum QuestionnaireType {
+  VOTE = 'tp',
+  FORM = 'tb',
+  SURVEY = 'wj',
+}
+
+export interface IQuestionnaire {
+  id: string;
+  type: QuestionnaireType;
+  title: string;
+  startTime: Date;
+  endTime: Date;
+  uploadTime: Date;
+  uploaderId: string;
+  uploaderName: string;
+  submitTime?: Date;
+  isFavorite: boolean;
+  comment?: string;
+  url: string;
+  detail: QuestionnaireDetail[];
+}
+
+export type Questionnaire = IQuestionnaire;
+
 export type ContentTypeMap = {
   [ContentType.NOTIFICATION]: Notification;
   [ContentType.FILE]: File;
   [ContentType.HOMEWORK]: Homework;
   [ContentType.DISCUSSION]: Discussion;
   [ContentType.QUESTION]: Question;
+  [ContentType.QUESTIONNAIRE]: Questionnaire;
 };
 
 interface ICourseContent<T extends ContentType> {

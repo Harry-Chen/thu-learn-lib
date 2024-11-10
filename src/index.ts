@@ -30,6 +30,9 @@ import {
   INotificationDetail,
   Language,
   Notification,
+  Questionnaire,
+  QuestionnaireDetail,
+  QuestionnaireType,
   Question,
   RemoteFile,
   SemesterInfo,
@@ -40,6 +43,7 @@ import {
   CONTENT_TYPE_MAP_REVERSE,
   GRADE_LEVEL_MAP,
   JSONP_EXTRACTOR_NAME,
+  QNR_TYPE_MAP,
   decodeHTML,
   extractJSONPResult,
   formatFileSize,
@@ -342,6 +346,8 @@ export class Learn2018Helper {
           return this.getDiscussionList(id, courseType) as Promise<ContentTypeMap[T][]>;
         case ContentType.QUESTION:
           return this.getAnsweredQuestionList(id, courseType) as Promise<ContentTypeMap[T][]>;
+        case ContentType.QUESTIONNAIRE:
+          return this.getQuestionnaireList(id) as Promise<ContentTypeMap[T][]>;
         default:
           return Promise.reject({
             reason: FailReason.NOT_IMPLEMENTED,
@@ -695,6 +701,74 @@ export class Learn2018Helper {
   }
 
   /**
+   * Get all questionnaires （课程问卷/QNR） of the specified course.
+   */
+  public async getQuestionnaireList(courseID: string): Promise<Questionnaire[]> {
+    return Promise.all([
+      this.getQuestionnaireListAtUrl(courseID, URLS.LEARN_QNR_LIST_ONGOING),
+      this.getQuestionnaireListAtUrl(courseID, URLS.LEARN_QNR_LIST_ENDED),
+    ]).then((r) => r.flat());
+  }
+
+  private async getQuestionnaireListAtUrl(courseID: string, url: string): Promise<Questionnaire[]> {
+    const json = await (
+      await this.#myFetchWithToken(url, { method: 'POST', body: URLS.LEARN_PAGE_LIST_FORM_DATA(courseID) })
+    ).json();
+    if (json.result !== 'success') {
+      return Promise.reject({
+        reason: FailReason.INVALID_RESPONSE,
+        extra: json,
+      } as ApiError);
+    }
+    const result = (json.object?.aaData ?? []) as any[];
+    return Promise.all(
+      result.map(async (e) => {
+        const type = QNR_TYPE_MAP.get(e.wjlx) ?? QuestionnaireType.SURVEY;
+        return {
+          id: e.wjid,
+          type,
+          title: decodeHTML(e.wjbt),
+          startTime: new Date(e.kssj),
+          endTime: new Date(e.jssj),
+          uploadTime: new Date(e.scsj),
+          uploaderId: e.scr,
+          uploaderName: e.scrxm,
+          submitTime: e.tjsj ? new Date(e.tjsj) : undefined,
+          isFavorite: e.sfsc === YES,
+          comment: e.bznr ?? undefined,
+          url: URLS.LEARN_QNR_SUBMIT_PAGE(e.wlkcid, e.wjid, type),
+          detail: await this.getQuestionnaireDetail(courseID, e.wjid),
+        } satisfies Questionnaire;
+      }),
+    );
+  }
+
+  private async getQuestionnaireDetail(courseID: string, qnrID: string): Promise<QuestionnaireDetail[]> {
+    const json = await (
+      await this.#myFetchWithToken(URLS.LEARN_QNR_DETAIL, {
+        method: 'POST',
+        body: URLS.LEARN_QNR_DETAIL_FORM(courseID, qnrID),
+      })
+    ).json();
+    return (json as any[]).map(
+      (e) =>
+        ({
+          id: e.wtid,
+          index: Number(e.wtbh),
+          type: e.type,
+          required: e.require == YES,
+          title: decodeHTML(e.wtbt),
+          score: e.wtfz ? Number(e.wtfz) : undefined, // unsure about original type
+          options: (e.list as any[])?.map((o) => ({
+            id: o.xxid,
+            index: Number(o.xxbh),
+            title: decodeHTML(o.xxbt),
+          })),
+        }) satisfies QuestionnaireDetail,
+    );
+  }
+
+  /**
    * Add an item to favorites. (收藏)
    */
   public async addToFavorites(type: ContentType, id: string): Promise<void> {
@@ -728,7 +802,7 @@ export class Learn2018Helper {
     const json = await (
       await this.#myFetchWithToken(URLS.LEARN_FAVORITE_LIST(type), {
         method: 'POST',
-        body: URLS.LEARN_FAVORITE_OR_COMMENT_LIST_FORM_DATA(courseID),
+        body: URLS.LEARN_PAGE_LIST_FORM_DATA(courseID),
       })
     ).json();
     if (json.result !== 'success') {
@@ -824,7 +898,7 @@ export class Learn2018Helper {
     const json = await (
       await this.#myFetchWithToken(URLS.LEARN_COMMENT_LIST(type), {
         method: 'POST',
-        body: URLS.LEARN_FAVORITE_OR_COMMENT_LIST_FORM_DATA(courseID),
+        body: URLS.LEARN_PAGE_LIST_FORM_DATA(courseID),
       })
     ).json();
     if (json.result !== 'success') {

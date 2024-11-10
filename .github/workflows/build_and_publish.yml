@@ -1,6 +1,9 @@
 name: Build and Publish
 
-on: [push, pull_request]
+on:
+    push:
+        branches: [ master ]
+    pull_request:
 
 env:
     YARN_ENABLE_GLOBAL_CACHE: false

@@ -162,6 +162,13 @@ It's ok if you meet `Timeout * Async callback was not invoked within the 5000ms 
 
 ## Changelog
 
+- v4.0.0
+  - Upgrade cheerio to 1.0
+  - Add support for questionnaire (add `getQuestionnaireList` API and some public types)
+  - Add support for managing favorite items
+  - Add support for sorting courses (i.e. manage the order on web learning)
+  - Add support for managing comments on content (e.g. files, notifications)
+  - (*BREAKING CHANGE*) Deprecate usage of `studentHomeworkId` 
 - v3.2.1
   - Upgrade to eslint v9
   - Add `setCSRFToken` function to manually reuse previous (maybe valid) token and prevent unnecessary re-login (see [#49](https://github.com/Harry-Chen/thu-learn-lib/issues/49))  

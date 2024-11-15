@@ -231,8 +231,8 @@ export interface IHomeworkDetail {
 export type Homework = IHomework & IHomeworkDetail;
 
 export enum HomeworkCompletionType {
-  INDIVIDUA = 1,
-  GRUOP = 2,
+  INDIVIDUAL = 1,
+  GROUP = 2,
 }
 
 export enum HomeworkSubmissionType {

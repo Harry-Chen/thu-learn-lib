@@ -198,6 +198,7 @@ export interface IHomework extends IHomeworkStatus {
   baseId: string;
   title: string;
   deadline: Date;
+  lateSubmissionDeadline: Date;
   url: string;
   completionType: HomeworkCompletionType;
   submissionType: HomeworkSubmissionType;
@@ -249,6 +250,7 @@ export interface IHomeworkTA {
   publishTime: Date;
   startTime: Date;
   deadline: Date;
+  lateSubmissionDeadline: Date;
   url: string;
   completionType: HomeworkCompletionType;
   submissionType: HomeworkSubmissionType;

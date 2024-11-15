@@ -199,6 +199,8 @@ export interface IHomework extends IHomeworkStatus {
   title: string;
   deadline: Date;
   url: string;
+  completionType: HomeworkCompletionType;
+  submissionType: HomeworkSubmissionType;
   submitUrl: string;
   submitTime?: Date;
   grade?: number;

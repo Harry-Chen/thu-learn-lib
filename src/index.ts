@@ -966,6 +966,8 @@ export class Learn2018Helper {
             title: decodeHTML(h.bt),
             url: URLS.LEARN_HOMEWORK_DETAIL(h.wlkcid, h.xszyid),
             deadline: new Date(h.jzsj),
+            completionType: h.zywcfs,
+            submissionType: h.zytjfs,
             submitUrl: URLS.LEARN_HOMEWORK_SUBMIT_PAGE(h.wlkcid, h.xszyid),
             submitTime: h.scsj === null ? undefined : new Date(h.scsj),
             grade: h.cj === null ? undefined : h.cj,

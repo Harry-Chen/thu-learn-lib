@@ -198,12 +198,13 @@ export interface IHomework extends IHomeworkStatus {
   baseId: string;
   title: string;
   deadline: Date;
-  lateSubmissionDeadline: Date;
+  lateSubmissionDeadline?: Date;
   url: string;
   completionType: HomeworkCompletionType;
   submissionType: HomeworkSubmissionType;
   submitUrl: string;
   submitTime?: Date;
+  isLateSubmission: boolean;
   grade?: number;
   /** some homework has levels but not grades, like A/B/.../F */
   gradeLevel?: HomeworkGradeLevel;
@@ -250,7 +251,7 @@ export interface IHomeworkTA {
   publishTime: Date;
   startTime: Date;
   deadline: Date;
-  lateSubmissionDeadline: Date;
+  lateSubmissionDeadline?: Date;
   url: string;
   completionType: HomeworkCompletionType;
   submissionType: HomeworkSubmissionType;

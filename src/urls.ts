@@ -81,10 +81,10 @@ export const LEARN_FILE_PREVIEW = (type: ContentType, fileID: string, courseType
     type,
   )}&browser=-1&sfgk=0&pageType=${firstPageOnly ? 'first' : 'all'}`;
 
-export const LEARN_NOTIFICATION_LIST = (courseID: string, courseType: CourseType) =>
-  courseType === CourseType.STUDENT
-    ? `${LEARN_PREFIX}/b/wlxt/kcgg/wlkc_ggb/student/kcggListXs?wlkcid=${courseID}&size=${MAX_SIZE}`
-    : `${LEARN_PREFIX}/b/wlxt/kcgg/wlkc_ggb/teacher/kcggList?wlkcid=${courseID}&size=${MAX_SIZE}`;
+export const LEARN_NOTIFICATION_LIST = (courseType: CourseType, expired: boolean) =>
+  `${LEARN_PREFIX}/b/wlxt/kcgg/wlkc_ggb/` +
+  (courseType === CourseType.STUDENT ? 'student/pageListXsby' : 'teacher/pageListby') +
+  (expired ? 'Ygq' : 'Wgq');
 
 export const LEARN_NOTIFICATION_DETAIL = (courseID: string, notificationID: string, courseType: CourseType) =>
   courseType === CourseType.STUDENT

@@ -385,7 +385,23 @@ export class Learn2018Helper {
     courseID: string,
     courseType: CourseType = CourseType.STUDENT,
   ): Promise<Notification[]> {
-    const json = await (await this.#myFetchWithToken(URLS.LEARN_NOTIFICATION_LIST(courseID, courseType))).json();
+    return Promise.all([
+      this.getNotificationListKind(courseID, courseType, false),
+      this.getNotificationListKind(courseID, courseType, true),
+    ]).then((r) => r.flat());
+  }
+
+  private async getNotificationListKind(
+    courseID: string,
+    courseType: CourseType,
+    expired: boolean,
+  ): Promise<Notification[]> {
+    const json = await (
+      await this.#myFetchWithToken(URLS.LEARN_NOTIFICATION_LIST(courseType, expired), {
+        method: 'POST',
+        body: URLS.LEARN_PAGE_LIST_FORM_DATA(courseID),
+      })
+    ).json();
     if (json.result !== 'success') {
       return Promise.reject({
         reason: FailReason.INVALID_RESPONSE,

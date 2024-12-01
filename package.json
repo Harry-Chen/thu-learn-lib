@@ -36,21 +36,21 @@
     "url": "https://github.com/Harry-Chen/thu-learn-lib.git"
   },
   "devDependencies": {
-    "@eslint/js": "^9.14.0",
-    "@types/node": "22.9.0",
+    "@eslint/js": "^9.16.0",
+    "@types/node": "22.10.1",
     "@types/webextension-polyfill": "^0.12.1",
     "domhandler": "^5.0.3",
     "dotenv": "^16.4.5",
-    "eslint": "^9.14.0",
+    "eslint": "^9.16.0",
     "fake-parse5": "^0.0.1",
-    "prettier": "^3.3.3",
+    "prettier": "^3.4.1",
     "terser": "^5.36.0",
     "tsup": "^8.3.5",
-    "typescript": "^5.6.3",
-    "typescript-eslint": "^8.14.0",
-    "vite": "^5.4.11",
-    "vite-plugin-web-extension": "^4.2.0",
-    "vitest": "^2.1.4",
+    "typescript": "^5.7.2",
+    "typescript-eslint": "^8.16.0",
+    "vite": "^6.0.1",
+    "vite-plugin-web-extension": "^4.3.1",
+    "vitest": "^2.1.6",
     "webextension-polyfill": "^0.12.0"
   },
   "dependencies": {
@@ -62,5 +62,5 @@
     "node-fetch-native": "^1.6.4",
     "tough-cookie": "^5.0.0"
   },
-  "packageManager": "yarn@4.5.1"
+  "packageManager": "yarn@4.5.3"
 }

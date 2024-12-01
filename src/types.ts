@@ -101,6 +101,7 @@ export interface INotification {
   markedImportant: boolean;
   publishTime: Date;
   publisher: string;
+  expireTime?: Date;
   isFavorite: boolean;
   comment?: string;
 }

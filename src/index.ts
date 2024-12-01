@@ -631,7 +631,12 @@ export class Learn2018Helper {
     courseType: CourseType = CourseType.STUDENT,
   ): Promise<Homework[] | HomeworkTA[]> {
     if (courseType === CourseType.TEACHER) {
-      const json = await (await this.#myFetchWithToken(URLS.LEARN_HOMEWORK_LIST_TEACHER(courseID))).json();
+      const json = await (
+        await this.#myFetchWithToken(URLS.LEARN_HOMEWORK_LIST_TEACHER, {
+          method: 'POST',
+          body: URLS.LEARN_PAGE_LIST_FORM_DATA(courseID),
+        })
+      ).json();
       if (json.result !== 'success') {
         return Promise.reject({
           reason: FailReason.INVALID_RESPONSE,
@@ -663,8 +668,8 @@ export class Learn2018Helper {
       );
     } else {
       return Promise.all(
-        URLS.LEARN_HOMEWORK_LIST_SOURCE(courseID).map((s) => this.getHomeworkListAtUrl(s.url, s.status)),
-      ).then((results) => results.flat());
+        URLS.LEARN_HOMEWORK_LIST_SOURCE.map((s) => this.getHomeworkListAtUrl(courseID, s.url, s.status)),
+      ).then((r) => r.flat());
     }
   }
 
@@ -963,8 +968,13 @@ export class Learn2018Helper {
     }
   }
 
-  private async getHomeworkListAtUrl(url: string, status: IHomeworkStatus): Promise<Homework[]> {
-    const json = await (await this.#myFetchWithToken(url)).json();
+  private async getHomeworkListAtUrl(courseID: string, url: string, status: IHomeworkStatus): Promise<Homework[]> {
+    const json = await (
+      await this.#myFetchWithToken(url, {
+        method: 'POST',
+        body: URLS.LEARN_PAGE_LIST_FORM_DATA(courseID),
+      })
+    ).json();
     if (json.result !== 'success') {
       return Promise.reject({
         reason: FailReason.INVALID_RESPONSE,

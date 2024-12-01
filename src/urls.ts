@@ -94,38 +94,32 @@ export const LEARN_NOTIFICATION_DETAIL = (courseID: string, notificationID: stri
 export const LEARN_NOTIFICATION_EDIT = (courseType: CourseType): string =>
   `${LEARN_PREFIX}/b/wlxt/kcgg/wlkc_ggb/${courseType}/editKcgg`;
 
-export const LEARN_HOMEWORK_LIST_SOURCE = (courseID: string) => [
+export const LEARN_HOMEWORK_LIST_NEW = `${LEARN_PREFIX}/b/wlxt/kczy/zy/student/zyListWj`;
+export const LEARN_HOMEWORK_LIST_SUBMITTED = `${LEARN_PREFIX}/b/wlxt/kczy/zy/student/zyListYjwg`;
+export const LEARN_HOMEWORK_LIST_GRADED = `${LEARN_PREFIX}/b/wlxt/kczy/zy/student/zyListYpg`;
+export const LEARN_HOMEWORK_LIST_SOURCE = [
   {
-    url: LEARN_HOMEWORK_LIST_NEW(courseID),
+    url: LEARN_HOMEWORK_LIST_NEW,
     status: {
       submitted: false,
       graded: false,
     },
   },
   {
-    url: LEARN_HOMEWORK_LIST_SUBMITTED(courseID),
+    url: LEARN_HOMEWORK_LIST_SUBMITTED,
     status: {
       submitted: true,
       graded: false,
     },
   },
   {
-    url: LEARN_HOMEWORK_LIST_GRADED(courseID),
+    url: LEARN_HOMEWORK_LIST_GRADED,
     status: {
       submitted: true,
       graded: true,
     },
   },
 ];
-
-export const LEARN_HOMEWORK_LIST_NEW = (courseID: string) =>
-  `${LEARN_PREFIX}/b/wlxt/kczy/zy/student/index/zyListWj?wlkcid=${courseID}&size=${MAX_SIZE}`;
-
-export const LEARN_HOMEWORK_LIST_SUBMITTED = (courseID: string) =>
-  `${LEARN_PREFIX}/b/wlxt/kczy/zy/student/index/zyListYjwg?wlkcid=${courseID}&size=${MAX_SIZE}`;
-
-export const LEARN_HOMEWORK_LIST_GRADED = (courseID: string) =>
-  `${LEARN_PREFIX}/b/wlxt/kczy/zy/student/index/zyListYpg?wlkcid=${courseID}&size=${MAX_SIZE}`;
 
 export const LEARN_HOMEWORK_DETAIL = (courseID: string, id: string) =>
   `${LEARN_PREFIX}/f/wlxt/kczy/zy/student/viewCj?wlkcid=${courseID}&xszyid=${id}`;
@@ -154,8 +148,7 @@ export const LEARN_HOMEWORK_SUBMIT_FORM_DATA = (
   return form;
 };
 
-export const LEARN_HOMEWORK_LIST_TEACHER = (courseID: string) =>
-  `${LEARN_PREFIX}/b/wlxt/kczy/zy/teacher/index/pageList?wlkcid=${courseID}&size=${MAX_SIZE}`;
+export const LEARN_HOMEWORK_LIST_TEACHER = `${LEARN_PREFIX}/b/wlxt/kczy/zy/teacher/pageList`;
 
 export const LEARN_HOMEWORK_DETAIL_TEACHER = (courseID: string, homeworkID: string) =>
   `${LEARN_PREFIX}/f/wlxt/kczy/xszy/teacher/beforePageList?zyid=${homeworkID}&wlkcid=${courseID}`;

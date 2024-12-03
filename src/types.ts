@@ -215,7 +215,7 @@ export interface IHomework extends IHomeworkStatus {
   isFavorite: boolean;
   favoriteTime?: Date;
   comment?: string;
-  exemplaryHomeworkList?: ExemplaryHomework[];
+  excellentHomeworkList?: ExcellentHomework[];
 }
 
 export interface IHomeworkDetail {
@@ -244,7 +244,7 @@ export enum HomeworkSubmissionType {
   OFFLINE = 0,
 }
 
-export interface ExemplaryHomework {
+export interface ExcellentHomework {
   id: string;
   baseId: string;
   title: string;

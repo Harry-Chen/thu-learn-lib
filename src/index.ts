@@ -37,7 +37,7 @@ import {
   RemoteFile,
   SemesterInfo,
   UserInfo,
-  ExemplaryHomework,
+  ExcellentHomework,
 } from './types';
 import * as URLS from './urls';
 import {
@@ -985,11 +985,11 @@ export class Learn2018Helper {
 
     const result = (json.object?.aaData ?? []) as any[];
 
-    let exemplaryHomeworkListByHomework: { [id: string]: ExemplaryHomework[] } = {};
+    let excellentHomeworkListByHomework: { [id: string]: ExcellentHomework[] } = {};
     try {
-      exemplaryHomeworkListByHomework = await this.getExemplaryHomeworkListByHomework(courseID);
+      excellentHomeworkListByHomework = await this.getExcellentHomeworkListByHomework(courseID);
     } catch (e) {
-      // Don't block the whole process if exemplary homework list cannot be fetched
+      // Don't block the whole process if excellent homework list cannot be fetched
     }
 
     return Promise.all(
@@ -1016,7 +1016,7 @@ export class Learn2018Helper {
             isFavorite: h.sfsc === YES,
             favoriteTime: h.scsj === null || h.sfsc !== YES ? undefined : new Date(h.scsj),
             comment: h.bznr ?? undefined,
-            exemplaryHomeworkList: exemplaryHomeworkListByHomework[h.zyid],
+            excellentHomeworkList: excellentHomeworkListByHomework[h.zyid],
             ...status,
             ...(await this.parseHomeworkDetail(h.wlkcid, h.xszyid)),
           }) satisfies Homework,
@@ -1024,9 +1024,9 @@ export class Learn2018Helper {
     );
   }
 
-  private async getExemplaryHomeworkListByHomework(courseID: string): Promise<{ [id: string]: ExemplaryHomework[] }> {
+  private async getExcellentHomeworkListByHomework(courseID: string): Promise<{ [id: string]: ExcellentHomework[] }> {
     const json = await (
-      await this.#myFetchWithToken(URLS.LEARN_HOMEWORK_LIST_EXEMPLARY, {
+      await this.#myFetchWithToken(URLS.LEARN_HOMEWORK_LIST_EXCELLENT, {
         method: 'POST',
         body: URLS.LEARN_PAGE_LIST_FORM_DATA(courseID),
       })
@@ -1055,7 +1055,7 @@ export class Learn2018Helper {
           name: h.cy?.split(' ')?.[1],
         },
       }))
-      .reduce<{ [id: string]: ExemplaryHomework[] }>((acc, cur) => {
+      .reduce<{ [id: string]: ExcellentHomework[] }>((acc, cur) => {
         if (!acc[cur.baseId]) {
           acc[cur.baseId] = [];
         }

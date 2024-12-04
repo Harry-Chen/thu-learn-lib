@@ -97,6 +97,7 @@ export const LEARN_NOTIFICATION_EDIT = (courseType: CourseType): string =>
 export const LEARN_HOMEWORK_LIST_NEW = `${LEARN_PREFIX}/b/wlxt/kczy/zy/student/zyListWj`;
 export const LEARN_HOMEWORK_LIST_SUBMITTED = `${LEARN_PREFIX}/b/wlxt/kczy/zy/student/zyListYjwg`;
 export const LEARN_HOMEWORK_LIST_GRADED = `${LEARN_PREFIX}/b/wlxt/kczy/zy/student/zyListYpg`;
+export const LEARN_HOMEWORK_LIST_EXCELLENT = `${LEARN_PREFIX}/b/wlxt/kczy/zy/student/yxzylist`;
 export const LEARN_HOMEWORK_LIST_SOURCE = [
   {
     url: LEARN_HOMEWORK_LIST_NEW,

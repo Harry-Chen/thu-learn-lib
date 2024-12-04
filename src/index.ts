@@ -37,6 +37,7 @@ import {
   RemoteFile,
   SemesterInfo,
   UserInfo,
+  ExcellentHomework,
 } from './types';
 import * as URLS from './urls';
 import {
@@ -984,6 +985,13 @@ export class Learn2018Helper {
 
     const result = (json.object?.aaData ?? []) as any[];
 
+    let excellentHomeworkListByHomework: { [id: string]: ExcellentHomework[] } = {};
+    try {
+      excellentHomeworkListByHomework = await this.getExcellentHomeworkListByHomework(courseID);
+    } catch (e) {
+      // Don't block the whole process if excellent homework list cannot be fetched
+    }
+
     return Promise.all(
       result.map(
         async (h) =>
@@ -1008,11 +1016,52 @@ export class Learn2018Helper {
             isFavorite: h.sfsc === YES,
             favoriteTime: h.scsj === null || h.sfsc !== YES ? undefined : new Date(h.scsj),
             comment: h.bznr ?? undefined,
+            excellentHomeworkList: excellentHomeworkListByHomework[h.zyid],
             ...status,
             ...(await this.parseHomeworkDetail(h.wlkcid, h.xszyid)),
           }) satisfies Homework,
       ),
     );
+  }
+
+  private async getExcellentHomeworkListByHomework(courseID: string): Promise<{ [id: string]: ExcellentHomework[] }> {
+    const json = await (
+      await this.#myFetchWithToken(URLS.LEARN_HOMEWORK_LIST_EXCELLENT, {
+        method: 'POST',
+        body: URLS.LEARN_PAGE_LIST_FORM_DATA(courseID),
+      })
+    ).json();
+    if (json.result !== 'success') {
+      return Promise.reject({
+        reason: FailReason.INVALID_RESPONSE,
+        extra: json,
+      } as ApiError);
+    }
+
+    const result = (json.object?.aaData ?? []) as any[];
+
+    return result
+      .map((h) => ({
+        id: h.xszyid,
+        baseId: h.zyid,
+        title: decodeHTML(h.bt),
+        attachment: {
+          id: h.zyfjid,
+          downloadUrl: URLS.LEARN_HOMEWORK_DOWNLOAD(h.wlkcid, h.zyfjid),
+        },
+        completionType: h.zywcfs,
+        author: {
+          id: h.cy?.split(' ')?.[0],
+          name: h.cy?.split(' ')?.[1],
+        },
+      }))
+      .reduce<{ [id: string]: ExcellentHomework[] }>((acc, cur) => {
+        if (!acc[cur.baseId]) {
+          acc[cur.baseId] = [];
+        }
+        acc[cur.baseId].push(cur);
+        return acc;
+      }, {});
   }
 
   private async parseNotificationDetail(

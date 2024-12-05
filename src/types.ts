@@ -244,20 +244,20 @@ export enum HomeworkSubmissionType {
   OFFLINE = 0,
 }
 
-export interface ExcellentHomework {
+export interface IExcellentHomework {
   id: string;
   baseId: string;
   title: string;
-  attachment: {
-    id: string;
-    downloadUrl: string;
-  };
+  url: string;
   completionType: HomeworkCompletionType;
   author: {
     id: string;
     name: string;
+    anonymous: boolean;
   };
 }
+
+export type ExcellentHomework = IExcellentHomework & IHomeworkDetail;
 
 export interface IHomeworkTA {
   id: string;

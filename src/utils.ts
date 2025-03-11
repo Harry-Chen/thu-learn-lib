@@ -27,7 +27,7 @@ export function getMkFromType(type: ContentType): string {
   return 'mk_' + (CONTENT_TYPE_MK_MAP[type] ?? 'UNKNOWN');
 }
 
-export function decodeHTML(html: string): string {
+export function decodeHTML(html: string | undefined | null): string {
   const text = _decodeHTML(html ?? '');
   // remove strange prefixes returned by web learning
   return text.startsWith('\xC2\x9E\xC3\xA9\x65')
@@ -44,7 +44,12 @@ export function trimAndDefine(text: string | undefined | null): string | undefin
     return undefined;
   }
   const trimmed = text.trim();
-  return trimmed === '' ? undefined : decodeHTML(trimmed);
+  return trimmed === '' ? undefined : trimmed;
+}
+
+export function trimAndDecode(text: string | undefined | null): string | undefined {
+  const trimmed = trimAndDefine(text);
+  return trimmed === undefined ? undefined : decodeHTML(trimmed);
 }
 
 export const GRADE_LEVEL_MAP = new Map([

@@ -51,6 +51,7 @@ import {
   extractJSONPResult,
   formatFileSize,
   parseSemesterType,
+  trimAndDecode,
   trimAndDefine,
 } from './utils';
 
@@ -1013,8 +1014,8 @@ export class Learn2018Helper {
               submitTime: h.scsj === null ? undefined : new Date(h.scsj),
               grade: h.cj === null ? undefined : h.cj,
               gradeLevel: GRADE_LEVEL_MAP.get(h.cj),
-              graderName: trimAndDefine(h.jsm),
-              gradeContent: trimAndDefine(h.pynr),
+              graderName: trimAndDecode(h.jsm),
+              gradeContent: trimAndDecode(h.pynr),
               gradeTime: h.pysj === null ? undefined : new Date(h.pysj),
               isFavorite: h.sfsc === YES,
               favoriteTime: h.scsj === null || h.sfsc !== YES ? undefined : new Date(h.scsj),
@@ -1108,7 +1109,7 @@ export class Learn2018Helper {
     } else {
       path = result('#wjid').attr('href')!;
     }
-    const size = trimAndDefine(result('div#attachment > div.fl > span[class^="color"]').first().text())!;
+    const size = trimAndDecode(result('div#attachment > div.fl > span[class^="color"]').first().text())!;
     const params = new URLSearchParams(path.split('?').slice(-1)[0]);
     const attachmentId = params.get('wjid')!;
     if (!path.startsWith(URLS.LEARN_PREFIX)) {
@@ -1145,7 +1146,7 @@ export class Learn2018Helper {
   private parseHomeworkFile(fileDiv: DOM.Element): RemoteFile | undefined {
     const fileNode = ($(fileDiv)('.ftitle').children('a')[0] ?? $(fileDiv)('.fl').children('a')[0]) as DOM.Element;
     if (fileNode !== undefined) {
-      const size = trimAndDefine($(fileDiv)('.fl > span[class^="color"]').first().text())!;
+      const size = trimAndDecode($(fileDiv)('.fl > span[class^="color"]').first().text())!;
       const params = new URLSearchParams(fileNode.attribs.href.split('?').slice(-1)[0]);
       const attachmentId = params.get('fileId')!;
       // so dirty here...

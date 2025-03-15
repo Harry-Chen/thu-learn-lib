@@ -36,8 +36,6 @@ jobs:
         run: corepack yarn lint
       - name: Build library
         run: corepack yarn build
-      - name: Build demo extension
-        run: corepack yarn dev:build
       - name: Show files to publish
         run: npm publish --dry-run
       - name: Upload built library
@@ -45,11 +43,6 @@ jobs:
         with:
           name: thu-learn-lib
           path: lib/
-      - name: Upload built demo extension
-        uses: actions/upload-artifact@v4
-        with:
-          name: thu-learn-lib-demo
-          path: dist/
 
   publish-to-npm:
     needs: build

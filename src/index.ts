@@ -4,42 +4,42 @@ import { Base64 } from 'js-base64';
 import makeFetch from 'node-fetch-cookie-native';
 
 import {
-  ApiError,
-  CalendarEvent,
-  CommentItem,
+  type ApiError,
+  type CalendarEvent,
+  type CommentItem,
   ContentType,
-  ContentTypeMap,
-  CourseContent,
-  CourseInfo,
+  type ContentTypeMap,
+  type CourseContent,
+  type CourseInfo,
   CourseType,
-  CredentialProvider,
-  Discussion,
+  type CredentialProvider,
+  type Discussion,
+  type ExcellentHomework,
   FailReason,
-  FavoriteItem,
-  Fetch,
-  File,
-  FileCategory,
-  HelperConfig,
-  Homework,
-  HomeworkTA,
-  IDiscussionBase,
-  IHomeworkDetail,
-  IHomeworkStatus,
-  IHomeworkSubmitAttachment,
-  INotification,
-  INotificationDetail,
+  type FavoriteItem,
+  type Fetch,
+  type File,
+  type FileCategory,
+  type HelperConfig,
+  type Homework,
+  type HomeworkTA,
+  type IDiscussionBase,
+  type IExcellentHomework,
+  type IHomework,
+  type IHomeworkDetail,
+  type IHomeworkStatus,
+  type IHomeworkSubmitAttachment,
+  type INotification,
+  type INotificationDetail,
   Language,
-  Notification,
-  Questionnaire,
-  QuestionnaireDetail,
+  type Notification,
+  type Question,
+  type Questionnaire,
+  type QuestionnaireDetail,
   QuestionnaireType,
-  Question,
-  RemoteFile,
-  SemesterInfo,
-  UserInfo,
-  ExcellentHomework,
-  IExcellentHomework,
-  IHomework,
+  type RemoteFile,
+  type SemesterInfo,
+  type UserInfo,
 } from './types';
 import * as URLS from './urls';
 import {
@@ -61,7 +61,7 @@ const $ = (html: string | DOM.Element | DOM.Element[]): cheerio.CheerioAPI => {
   return cheerio.load(html, CHEERIO_CONFIG);
 };
 
-const noLogin = (res: Response) => res.url.includes('login_timeout') || res.status == 403;
+const noLogin = (res: Response) => res.url.includes('login_timeout') || res.status === 403;
 
 const YES = '是';
 
@@ -78,7 +78,7 @@ export class Learn2018Helper {
   readonly #rawFetch: Fetch;
   readonly #myFetch: Fetch;
   readonly #myFetchWithToken: Fetch = async (...args) => {
-    if (this.#csrfToken == '') {
+    if (this.#csrfToken === '') {
       await this.login();
     }
     const [url, ...remaining] = args;
@@ -187,7 +187,7 @@ export class Learn2018Helper {
     const courseListPageSource: string = await (await this.#rawFetch(URLS.LEARN_STUDENT_COURSE_LIST_PAGE())).text();
     const tokenRegex = /^.*&_csrf=(\S*)".*$/gm;
     const tokenMatches = [...courseListPageSource.matchAll(tokenRegex)];
-    if (tokenMatches.length == 0) {
+    if (tokenMatches.length === 0) {
       return Promise.reject({
         reason: FailReason.INVALID_RESPONSE,
         extra: 'cannot fetch CSRF token from source',
@@ -370,7 +370,7 @@ export class Learn2018Helper {
 
     if (!allowFailure) {
       for (const r of results) {
-        if (r.status == 'rejected') {
+        if (r.status === 'rejected') {
           return Promise.reject({
             reason: FailReason.INVALID_RESPONSE,
             extra: {
@@ -783,7 +783,7 @@ export class Learn2018Helper {
           id: e.wtid,
           index: Number(e.wtbh),
           type: e.type,
-          required: e.require == YES,
+          required: e.require === YES,
           title: decodeHTML(e.wtbt),
           score: e.wtfz ? Number(e.wtfz) : undefined, // unsure about original type
           options: (e.list as any[])?.map((o) => ({

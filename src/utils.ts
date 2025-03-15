@@ -24,7 +24,7 @@ const CONTENT_TYPE_MK_MAP = {
 };
 
 export function getMkFromType(type: ContentType): string {
-  return 'mk_' + (CONTENT_TYPE_MK_MAP[type] ?? 'UNKNOWN');
+  return `mk_${CONTENT_TYPE_MK_MAP[type] ?? 'UNKNOWN'}`;
 }
 
 export function decodeHTML(html: string | undefined | null): string {
@@ -93,10 +93,10 @@ export function extractJSONPResult(jsonp: string): any {
 
 export function formatFileSize(size: number): string {
   // this logic is extracted from `judgeSize` function from Web Learning
-  if (size < 1024) return size + 'B';
-  if (size < 1024 * 1024) return (size / 1024).toFixed(2) + 'K';
-  if (size < 1024 * 1024 * 1024) return (size / 1024 / 1024).toFixed(2) + 'M';
-  return (size / 1024 / 1024 / 1024).toFixed(2) + 'G';
+  if (size < 1024) return `${size}B`;
+  if (size < 1024 * 1024) return `${(size / 1024).toFixed(2)}K`;
+  if (size < 1024 * 1024 * 1024) return `${(size / 1024 / 1024).toFixed(2)}M`;
+  return `${(size / 1024 / 1024 / 1024).toFixed(2)}G`;
 }
 
 export const CONTENT_TYPE_MAP = new Map([

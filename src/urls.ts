@@ -1,5 +1,11 @@
 import { FormData } from 'node-fetch-native';
-import { ContentType, CourseType, IHomeworkSubmitAttachment, Language, QuestionnaireType } from './types';
+import {
+  type ContentType,
+  CourseType,
+  type IHomeworkSubmitAttachment,
+  Language,
+  type QuestionnaireType,
+} from './types';
 import { CONTENT_TYPE_MAP, getMkFromType } from './utils';
 
 export const LEARN_PREFIX = 'https://learn.tsinghua.edu.cn';
@@ -82,9 +88,7 @@ export const LEARN_FILE_PREVIEW = (type: ContentType, fileID: string, courseType
   )}&browser=-1&sfgk=0&pageType=${firstPageOnly ? 'first' : 'all'}`;
 
 export const LEARN_NOTIFICATION_LIST = (courseType: CourseType, expired: boolean) =>
-  `${LEARN_PREFIX}/b/wlxt/kcgg/wlkc_ggb/` +
-  (courseType === CourseType.STUDENT ? 'student/pageListXsby' : 'teacher/pageListby') +
-  (expired ? 'Ygq' : 'Wgq');
+  `${LEARN_PREFIX}/b/wlxt/kcgg/wlkc_ggb/${courseType === CourseType.STUDENT ? 'student/pageListXsby' : 'teacher/pageListby'}${expired ? 'Ygq' : 'Wgq'}`;
 
 export const LEARN_NOTIFICATION_DETAIL = (courseID: string, notificationID: string, courseType: CourseType) =>
   courseType === CourseType.STUDENT

@@ -162,6 +162,15 @@ It's ok if you meet `Timeout * Async callback was not invoked within the 5000ms 
 
 ## Changelog
 
+- v4.1.0
+  - Add late submission deadline, missing completion and submission types for student homework ([#66](https://github.com/Harry-Chen/thu-learn-lib/pull/66) by @robertying)
+  - **(BREAKING)** Correct spelling of members of `HomeworkCompletionType`
+  - Add notification expiration time ([#67](https://github.com/Harry-Chen/thu-learn-lib/pull/67) by @robertying)
+  - Use the new API to get notification list and homework list
+  - Lock `entities` to 4.5.0 to reduce binary size
+  - Add excellent homework listing ([#69](https://github.com/Harry-Chen/thu-learn-lib/pull/69) by @robertying)
+  - Add support for parsing excellent homework page
+  - Fix HTML entities decoding for parsing homework pages (see [Learn-Helper#167](https://github.com/Harry-Chen/Learn-Helper/issues/167))
 - v4.0.0
   - Upgrade cheerio to 1.0
   - Add support for questionnaire (add `getQuestionnaireList` API and some public types)

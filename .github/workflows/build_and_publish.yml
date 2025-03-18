@@ -7,35 +7,27 @@ on:
       - 'v*'
   pull_request:
 
-env:
-  YARN_ENABLE_GLOBAL_CACHE: false
-
 jobs:
 
   build:
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-latest
     if: ${{ !contains(github.event.head_commit.message, 'ci skip') }}
     steps:
       - uses: actions/checkout@v4
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 10
       - uses: actions/setup-node@v4
         with:
           node-version: 'lts/*'
-      - name: Get the Yarn cache directory path
-        id: yarn-cache-dir-path
-        run: echo "dir=$(corepack yarn config get cacheFolder)" >> $GITHUB_OUTPUT
-        shell: bash
-      - uses: actions/cache@v4
-        with:
-          path: ${{steps.yarn-cache-dir-path.outputs.dir}}
-          key: ${{runner.os}}-yarn-${{hashFiles('**/yarn.lock')}}
-          restore-keys: |
-            ${{runner.os}}-yarn-
+          cache: 'pnpm'
       - name: Install dependencies
-        run: corepack yarn install --immutable
+        run: pnpm install
       - name: Lint
-        run: corepack yarn lint
+        run: pnpm lint
       - name: Build library
-        run: corepack yarn build
+        run: pnpm build
       - name: Show files to publish
         run: npm publish --dry-run
       - name: Upload built library
@@ -46,7 +38,7 @@ jobs:
 
   publish-to-npm:
     needs: build
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-latest
     permissions:
       contents: read
       packages: write

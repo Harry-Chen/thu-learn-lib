@@ -13,16 +13,9 @@ export const REGISTRAR_PREFIX = 'https://zhjw.cic.tsinghua.edu.cn';
 
 const MAX_SIZE = 200;
 
-export const ID_LOGIN = () =>
-  'https://id.tsinghua.edu.cn/do/off/ui/auth/login/post/bb5df85216504820be7bba2b0ae1535b/0?/login.do';
+export const ID_LOGIN = () => 'https://id.tsinghua.edu.cn/do/off/ui/auth/login/form/bb5df85216504820be7bba2b0ae1535b/0';
 
-export const ID_LOGIN_FORM_DATA = (username: string, password: string) => {
-  const credential = new FormData();
-  credential.append('i_user', username);
-  credential.append('i_pass', password);
-  credential.append('atOnce', String(true));
-  return credential;
-};
+export const ID_LOGIN_CHECK = () => 'https://id.tsinghua.edu.cn/do/off/ui/auth/login/check';
 
 export const LEARN_AUTH_ROAM = (ticket: string) =>
   `${LEARN_PREFIX}/b/j_spring_security_thauth_roaming_entry?ticket=${ticket}`;

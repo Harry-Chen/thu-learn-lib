@@ -2,6 +2,8 @@ import * as cheerio from 'cheerio';
 import type * as DOM from 'domhandler';
 import { Base64 } from 'js-base64';
 import makeFetch from 'node-fetch-cookie-native';
+import { CookieJar } from 'tough-cookie';
+import { sm2 } from 'sm-crypto';
 
 import {
   type ApiError,
@@ -75,6 +77,7 @@ export const addCSRFTokenToUrl = (url: string, token: string): string => {
 /** the main helper class */
 export class Learn2018Helper {
   readonly #provider?: CredentialProvider;
+  readonly #cookieJar;
   readonly #rawFetch: Fetch;
   readonly #myFetch: Fetch;
   readonly #myFetchWithToken: Fetch = async (...args) => {
@@ -120,7 +123,8 @@ export class Learn2018Helper {
   constructor(config?: HelperConfig) {
     this.previewFirstPage = config?.generatePreviewUrlForFirstPage ?? true;
     this.#provider = config?.provider;
-    this.#rawFetch = config?.fetch ?? makeFetch(config?.cookieJar);
+    this.#cookieJar = config?.cookieJar ?? new CookieJar();
+    this.#rawFetch = config?.fetch ?? makeFetch(this.#cookieJar);
     this.#myFetch = this.#provider
       ? this.#withReAuth(this.#rawFetch)
       : async (...args) => {
@@ -143,9 +147,53 @@ export class Learn2018Helper {
     this.#csrfToken = csrfToken;
   }
 
+  public async getRoamingTicket(
+    username: string,
+    password: string,
+    fingerPrint: string,
+    fingerGenPrint?: string,
+    fingerGenPrint3?: string,
+  ) {
+    return new Promise<string>((resolve, reject) => {
+      this.#cookieJar.removeAllCookies(async (err) => {
+        if (err) {
+          reject(err);
+          return;
+        }
+
+        const loginForm = await this.#rawFetch(URLS.ID_LOGIN());
+        const body = $(await loginForm.text());
+        const sm2publicKey = body('#sm2publicKey').text().trim();
+
+        const formData = new FormData();
+        formData.append('i_user', username);
+        formData.append('i_pass', '04' + sm2.doEncrypt(password, sm2publicKey));
+        formData.append('singleLogin', 'on');
+        formData.append('fingerPrint', fingerPrint);
+        formData.append('fingerGenPrint', fingerGenPrint ?? '');
+        formData.append('fingerGenPrint3', fingerGenPrint3 ?? '');
+        formData.append('i_captcha', '');
+        const checkResponse = await this.#rawFetch(URLS.ID_LOGIN_CHECK(), {
+          method: 'POST',
+          body: formData,
+        });
+        const anchor = $(await checkResponse.text())('a');
+        const redirectUrl = anchor.attr('href') as string;
+        const ticket = redirectUrl.split('=').slice(-1)[0];
+        resolve(ticket);
+      });
+    });
+  }
+
   /** login is necessary if you do not provide a `CredentialProvider` */
-  public async login(username?: string, password?: string): Promise<void> {
-    if (!username || !password) {
+  public async login(
+    username?: string,
+    password?: string,
+    fingerPrint?: string,
+    fingerGenPrint?: string,
+    fingerGenPrint3?: string,
+  ): Promise<void> {
+    if (!username || !password || !fingerPrint) {
       if (!this.#provider)
         return Promise.reject({
           reason: FailReason.NO_CREDENTIAL,
@@ -153,26 +201,17 @@ export class Learn2018Helper {
       const credential = await this.#provider();
       username = credential.username;
       password = credential.password;
-      if (!username || !password) {
+      fingerPrint = credential.fingerPrint;
+      fingerGenPrint = credential.fingerGenPrint;
+      fingerGenPrint3 = credential.fingerGenPrint3;
+      if (!username || !password || !fingerPrint) {
         return Promise.reject({
           reason: FailReason.NO_CREDENTIAL,
         } as ApiError);
       }
     }
-    const ticketResponse = await this.#rawFetch(URLS.ID_LOGIN(), {
-      body: URLS.ID_LOGIN_FORM_DATA(username, password),
-      method: 'POST',
-    });
-    if (!ticketResponse.ok) {
-      return Promise.reject({
-        reason: FailReason.ERROR_FETCH_FROM_ID,
-      } as ApiError);
-    }
     // check response from id.tsinghua.edu.cn
-    const ticketResult = await ticketResponse.text();
-    const body = $(ticketResult);
-    const targetURL = body('a').attr('href') as string;
-    const ticket = targetURL.split('=').slice(-1)[0];
+    const ticket = await this.getRoamingTicket(username, password, fingerPrint, fingerGenPrint, fingerGenPrint3);
     if (ticket === 'BAD_CREDENTIALS') {
       return Promise.reject({
         reason: FailReason.BAD_CREDENTIAL,

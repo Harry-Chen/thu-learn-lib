@@ -147,12 +147,16 @@ export class Learn2018Helper {
     this.#csrfToken = csrfToken;
   }
 
+  /**
+   * If using alternative cookie management systems,
+   * be sure to clear id.tsinghua.edu.cn cookies before calling this function
+   */
   public async getRoamingTicket(
     username: string,
     password: string,
     fingerPrint: string,
-    fingerGenPrint?: string,
-    fingerGenPrint3?: string,
+    fingerGenPrint: string = '',
+    fingerGenPrint3: string = '',
   ) {
     return new Promise<string>((resolve, reject) => {
       this.#cookieJar.removeAllCookies(async (err) => {
@@ -161,26 +165,33 @@ export class Learn2018Helper {
           return;
         }
 
-        const loginForm = await this.#rawFetch(URLS.ID_LOGIN());
-        const body = $(await loginForm.text());
-        const sm2publicKey = body('#sm2publicKey').text().trim();
+        try {
+          const loginForm = await this.#rawFetch(URLS.ID_LOGIN());
+          const body = $(await loginForm.text());
+          const sm2publicKey = body('#sm2publicKey').text().trim();
 
-        const formData = new FormData();
-        formData.append('i_user', username);
-        formData.append('i_pass', '04' + sm2.doEncrypt(password, sm2publicKey));
-        formData.append('singleLogin', 'on');
-        formData.append('fingerPrint', fingerPrint);
-        formData.append('fingerGenPrint', fingerGenPrint ?? '');
-        formData.append('fingerGenPrint3', fingerGenPrint3 ?? '');
-        formData.append('i_captcha', '');
-        const checkResponse = await this.#rawFetch(URLS.ID_LOGIN_CHECK(), {
-          method: 'POST',
-          body: formData,
-        });
-        const anchor = $(await checkResponse.text())('a');
-        const redirectUrl = anchor.attr('href') as string;
-        const ticket = redirectUrl.split('=').slice(-1)[0];
-        resolve(ticket);
+          const formData = new FormData();
+          formData.append('i_user', username);
+          formData.append('i_pass', '04' + sm2.doEncrypt(password, sm2publicKey));
+          formData.append('singleLogin', 'on');
+          formData.append('fingerPrint', fingerPrint);
+          formData.append('fingerGenPrint', fingerGenPrint ?? '');
+          formData.append('fingerGenPrint3', fingerGenPrint3 ?? '');
+          formData.append('i_captcha', '');
+          const checkResponse = await this.#rawFetch(URLS.ID_LOGIN_CHECK(), {
+            method: 'POST',
+            body: formData,
+          });
+          const anchor = $(await checkResponse.text())('a');
+          const redirectUrl = anchor.attr('href') as string;
+          const ticket = redirectUrl.split('=').slice(-1)[0];
+          resolve(ticket);
+        } catch (err) {
+          reject({
+            reason: FailReason.ERROR_FETCH_FROM_ID,
+            extra: err,
+          });
+        }
       });
     });
   }

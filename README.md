@@ -73,7 +73,7 @@ Use `yarn run dev:build` to build the extension that can be installed to your ch
 
 With the new authentication method adopted by Web Learning, you must provide a **fingerPrint** to log in at the moment. You can get it by going through the authentication process either in a browser (or a WebView) or programmatically (see [thu-info-lib](https://github.com/thu-info-community/thu-info-app/blob/master/packages/thu-info-lib/src/lib/core.ts)).
 
-Using a web context is recommended, so you do not need to deal with the two-factor authentication manually. Currently, you can get the `fingerPrint` by running `fingerprintUtil.getFingers()` in the page context, or by intercepting the request to `https://id.tsinghua.edu.cn/do/off/ui/auth/login/check` and extracting it from the request body. Note that the `fingerPrint` is only valid after the authentication process completes.
+Using a web context is recommended, so you do not need to deal with the two-factor authentication manually. Currently, you can get the `fingerPrint` by running `fingerprintUtil.getFingers()` in the ID page, or by intercepting the request to `https://id.tsinghua.edu.cn/do/off/ui/auth/login/check` and extracting it from the request body. Note that the `fingerPrint` is valid and can be used for future login only after the authentication process fully completes.
 
 > Caveat:
 >

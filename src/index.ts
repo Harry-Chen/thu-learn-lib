@@ -183,6 +183,7 @@ export class Learn2018Helper {
             method: 'POST',
             body: formData,
           });
+
           const anchor = $(await checkResponse.text())('a');
           const redirectUrl = anchor.attr('href') as string;
           const ticket = redirectUrl.split('=').slice(-1)[0];
@@ -222,13 +223,10 @@ export class Learn2018Helper {
         } as ApiError);
       }
     }
+
     // check response from id.tsinghua.edu.cn
     const ticket = await this.getRoamingTicket(username, password, fingerPrint, fingerGenPrint, fingerGenPrint3);
-    if (ticket === 'BAD_CREDENTIALS') {
-      return Promise.reject({
-        reason: FailReason.BAD_CREDENTIAL,
-      } as ApiError);
-    }
+
     const loginResponse = await this.#rawFetch(URLS.LEARN_AUTH_ROAM(ticket));
     if (loginResponse.ok !== true) {
       return Promise.reject({

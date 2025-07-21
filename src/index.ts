@@ -159,7 +159,11 @@ export class Learn2018Helper {
     fingerGenPrint3: string = '',
   ) {
     return new Promise<string>((resolve, reject) => {
-      // Clear cookies first to make sure we get the login form
+      // Make sure we always start with the form page
+      // More code is needed to handle the case where the user is already logged in (i.e. cookies are set)
+      // It won't be a problem if it is always the same user,
+      // but if the current cookies are from a different user than the one trying to log in,
+      // it will cause problems.
       this.#cookieJar.setCookie('JSESSIONID=; path=/; HttpOnly', URLS.ID_PREFIX, async (err) => {
         if (err) {
           reject(err);

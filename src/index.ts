@@ -158,48 +158,48 @@ export class Learn2018Helper {
     fingerGenPrint: string = '',
     fingerGenPrint3: string = '',
   ) {
-    return new Promise<string>((resolve, reject) => {
-      // Make sure we always start with the form page
-      // More code is needed to handle the case where the user is already logged in (i.e. cookies are set)
-      // It won't be a problem if it is always the same user,
-      // but if the current cookies are from a different user than the one trying to log in,
-      // it will cause problems.
-      this.#cookieJar.setCookie('JSESSIONID=; path=/; HttpOnly', URLS.ID_PREFIX, async (err) => {
-        if (err) {
-          reject(err);
-          return;
-        }
+    // Make sure we always start with the form page
+    // More code is needed to handle the case where the user is already logged in (i.e. cookies are set)
+    // It won't be a problem if it is always the same user,
+    // but if the current cookies are from a different user than the one trying to log in,
+    // it will cause problems.
+    try {
+      await this.#cookieJar.setCookie('JSESSIONID=; path=/; HttpOnly', URLS.ID_PREFIX);
+    } catch (err) {
+      throw {
+        reason: FailReason.ERROR_SETTING_COOKIES,
+        extra: err,
+      } as ApiError;
+    }
 
-        try {
-          const loginForm = await this.#rawFetch(URLS.ID_LOGIN());
-          const body = $(await loginForm.text());
-          const sm2publicKey = body('#sm2publicKey').text().trim();
+    try {
+      const loginForm = await this.#rawFetch(URLS.ID_LOGIN());
+      const body = $(await loginForm.text());
+      const sm2publicKey = body('#sm2publicKey').text().trim();
 
-          const formData = new FormData();
-          formData.append('i_user', username);
-          formData.append('i_pass', '04' + sm2.doEncrypt(password, sm2publicKey));
-          formData.append('singleLogin', 'on');
-          formData.append('fingerPrint', fingerPrint);
-          formData.append('fingerGenPrint', fingerGenPrint ?? '');
-          formData.append('fingerGenPrint3', fingerGenPrint3 ?? '');
-          formData.append('i_captcha', '');
-          const checkResponse = await this.#rawFetch(URLS.ID_LOGIN_CHECK(), {
-            method: 'POST',
-            body: formData,
-          });
-
-          const anchor = $(await checkResponse.text())('a');
-          const redirectUrl = anchor.attr('href') as string;
-          const ticket = redirectUrl.split('=').slice(-1)[0];
-          resolve(ticket);
-        } catch (err) {
-          reject({
-            reason: FailReason.ERROR_FETCH_FROM_ID,
-            extra: err,
-          } as ApiError);
-        }
+      const formData = new FormData();
+      formData.append('i_user', username);
+      formData.append('i_pass', '04' + sm2.doEncrypt(password, sm2publicKey));
+      formData.append('singleLogin', 'on');
+      formData.append('fingerPrint', fingerPrint);
+      formData.append('fingerGenPrint', fingerGenPrint ?? '');
+      formData.append('fingerGenPrint3', fingerGenPrint3 ?? '');
+      formData.append('i_captcha', '');
+      const checkResponse = await this.#rawFetch(URLS.ID_LOGIN_CHECK(), {
+        method: 'POST',
+        body: formData,
       });
-    });
+
+      const anchor = $(await checkResponse.text())('a');
+      const redirectUrl = anchor.attr('href') as string;
+      const ticket = redirectUrl.split('=').slice(-1)[0];
+      return ticket;
+    } catch (err) {
+      throw {
+        reason: FailReason.ERROR_FETCH_FROM_ID,
+        extra: err,
+      } as ApiError;
+    }
   }
 
   /** login is necessary if you do not provide a `CredentialProvider` */

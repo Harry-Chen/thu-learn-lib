@@ -54,4 +54,16 @@ describe('helper authentication', () => {
     const semesters2 = await helper.getSemesterIdList();
     expect(Array.isArray(semesters2)).toEqual(true);
   });
+
+  it('should support multiple attempts to login without logout', async () => {
+    const helper = new Learn2018Helper();
+    await helper.login(U, P, F);
+    const semesters1 = await helper.getSemesterIdList();
+    expect(Array.isArray(semesters1)).toEqual(true);
+
+    // Attempt to login again without logout
+    await helper.login(U, P, F);
+    const semesters2 = await helper.getSemesterIdList();
+    expect(Array.isArray(semesters2)).toEqual(true);
+  });
 });

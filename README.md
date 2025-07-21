@@ -69,6 +69,16 @@ Use `yarn run dev:build` to build the extension that can be installed to your ch
 
 ### Authentication related (important changes since v1.2.0)
 
+#### Prerequisites
+
+With the new authentication method adopted by Web Learning, you must provide a **fingerPrint** to log in at the moment. You can get it by going through the authentication process either in a browser (or a WebView) or programmatically (see [thu-info-lib](https://github.com/thu-info-community/thu-info-app/blob/master/packages/thu-info-lib/src/lib/core.ts)).
+
+Using a web context is recommended, so you do not need to deal with the two-factor authentication manually. Currently, you can get the `fingerPrint` by running `fingerprintUtil.getFingers()` in the page context, or by intercepting the request to `https://id.tsinghua.edu.cn/do/off/ui/auth/login/check` and extracting it from the request body. Note that the `fingerPrint` is only valid after the authentication process completes.
+
+> Caveat:
+>
+> Currently, thu-learn-lib does not handle the case where the two-factor authentication session is already saved and the authentication goes straight to `https://id.tsinghua.edu.cn/do/off/ui/auth/login/checkSingle`. This means that you must clear the cookies of `https://id.tsinghua.edu.cn` properly before each login to make sure the login form is present on login. The library has tried to clear the cookies for you, but if you are using alternative cookie management libraries, you may need to clear these cookies manually.
+
 ```typescript
 import { Learn2018Helper } from 'thu-learn-lib';
 
@@ -76,11 +86,11 @@ import { Learn2018Helper } from 'thu-learn-lib';
 
 // 1. provide a cookie jar with existing cookies (see `tough-cookie`)
 const helper = new Learn2018Helper({ cookieJar });
-// 2. provide nothing, but invoking login with username and password
+// 2. provide nothing, but invoking login manually with username, password and fingerPrint
 const helper = new Learn2018Helper();
 // 3. provide a CredentialProvider function, which can be async
 const helper = new Learn2018Helper({
-  provider: () => ({ username, password }),
+  provider: () => ({ username, password, fingerPrint }),
 });
 
 // Note that by using the following two methods you may encounter problems like login time out.
@@ -89,7 +99,7 @@ const helper = new Learn2018Helper({
 
 // If you do not provide a cookie jar or CredentialProvider, you must log in manually. Otherwise you do not need to call login explicitly.
 try {
-  await helper.login(username, password);
+  await helper.login(username, password, fingerPrint);
 } catch (e) {
   // e is a FailReason
 }
@@ -177,13 +187,13 @@ It's ok if you meet `Timeout * Async callback was not invoked within the 5000ms 
   - Add support for managing favorite items
   - Add support for sorting courses (i.e. manage the order on web learning)
   - Add support for managing comments on content (e.g. files, notifications)
-  - (*BREAKING CHANGE*) Deprecate usage of `studentHomeworkId` 
+  - (_BREAKING CHANGE_) Deprecate usage of `studentHomeworkId`
 - v3.2.1
   - Upgrade to eslint v9
-  - Add `setCSRFToken` function to manually reuse previous (maybe valid) token and prevent unnecessary re-login (see [#49](https://github.com/Harry-Chen/thu-learn-lib/issues/49))  
-    *Note:* To use this feature in Node.js, `cookieJar` should also be reused, otherwise it will not work. (not the case in browser env)
+  - Add `setCSRFToken` function to manually reuse previous (maybe valid) token and prevent unnecessary re-login (see [#49](https://github.com/Harry-Chen/thu-learn-lib/issues/49))
+    _Note:_ To use this feature in Node.js, `cookieJar` should also be reused, otherwise it will not work. (not the case in browser env)
   - Fix `CourseContent` type: default value for type param `T` (breaking change introduced in [#53](https://github.com/Harry-Chen/thu-learn-lib/issues/53))
-  - *(Breaking...?)* Rename `File.id2` added in previous version to actual `id` and previously used `id` to  `fileId` (see [#60](https://github.com/Harry-Chen/thu-learn-lib/issues/60))
+  - _(Breaking...?)_ Rename `File.id2` added in previous version to actual `id` and previously used `id` to `fileId` (see [#60](https://github.com/Harry-Chen/thu-learn-lib/issues/60))
   - Upgrade dependencies
 - v3.2.0
   - Support file categories (see [#57](https://github.com/Harry-Chen/thu-learn-lib/issues/57)):

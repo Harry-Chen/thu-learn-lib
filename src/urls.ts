@@ -8,6 +8,7 @@ import {
 } from './types';
 import { CONTENT_TYPE_MAP, getMkFromType } from './utils';
 
+export const ID_PREFIX = 'https://id.tsinghua.edu.cn';
 export const LEARN_PREFIX = 'https://learn.tsinghua.edu.cn';
 export const REGISTRAR_PREFIX = 'https://zhjw.cic.tsinghua.edu.cn';
 

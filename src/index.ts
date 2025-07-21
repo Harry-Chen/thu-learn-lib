@@ -159,7 +159,8 @@ export class Learn2018Helper {
     fingerGenPrint3: string = '',
   ) {
     return new Promise<string>((resolve, reject) => {
-      this.#cookieJar.removeAllCookies(async (err) => {
+      // Clear cookies first to make sure we get the login form
+      this.#cookieJar.setCookie('JSESSIONID=; path=/; HttpOnly', URLS.ID_PREFIX, async (err) => {
         if (err) {
           reject(err);
           return;
@@ -190,7 +191,7 @@ export class Learn2018Helper {
           reject({
             reason: FailReason.ERROR_FETCH_FROM_ID,
             extra: err,
-          });
+          } as ApiError);
         }
       });
     });

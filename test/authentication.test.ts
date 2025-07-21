@@ -1,17 +1,25 @@
 import { describe, it, expect } from 'vitest';
 import { Learn2018Helper, FailReason } from '../src';
-import { U, P } from './config';
+import { U, P, F } from './config';
 
 describe('helper authentication', () => {
   it('should login & logout correctly if account is right', async () => {
     const helper = new Learn2018Helper();
-    await helper.login(U, P);
+    await helper.login(U, P, F);
     await helper.logout();
   });
 
   it('should failed to login if account is incorrect', async () => {
     const helper = new Learn2018Helper();
-    await expect(helper.login('nouser', 'nopass')).rejects.toHaveProperty('reason', FailReason.BAD_CREDENTIAL);
+    await expect(helper.login('nouser', 'nopass', 'incorrect')).rejects.toHaveProperty(
+      'reason',
+      FailReason.ERROR_FETCH_FROM_ID,
+    );
+  });
+
+  it('should failed to login if fingerPrint is incorrect', async () => {
+    const helper = new Learn2018Helper();
+    await expect(helper.login(U, P, 'incorrect')).rejects.toHaveProperty('reason', FailReason.ERROR_FETCH_FROM_ID);
   });
 
   it("should throw error if hasn't login and not provide up config", async () => {
@@ -22,20 +30,20 @@ describe('helper authentication', () => {
 
   it('should not throw error if manually invoke login()', async () => {
     const helper = new Learn2018Helper();
-    await helper.login(U, P);
+    await helper.login(U, P, F);
     const semesters = await helper.getSemesterIdList();
     expect(Array.isArray(semesters)).toEqual(true);
   });
 
   it('should not throw error if provide CredentialProvider', async () => {
-    const configs = { provider: () => ({ username: U, password: P }) };
+    const configs = { provider: () => ({ username: U, password: P, fingerPrint: F }) };
     const helper = new Learn2018Helper(configs);
     const semesters = await helper.getSemesterIdList();
     expect(Array.isArray(semesters)).toEqual(true);
   });
 
   it('should not throw error if invoke logout() but provide CredentialProvider', async () => {
-    const configs = { provider: () => ({ username: U, password: P }) };
+    const configs = { provider: () => ({ username: U, password: P, fingerPrint: F }) };
     const helper = new Learn2018Helper(configs);
     // First get
     const semesters = await helper.getSemesterIdList();

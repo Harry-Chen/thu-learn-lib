@@ -4,5 +4,6 @@ dotenv.config({ path: 'test/.env' });
 
 export const U = process.env.U!; // username
 export const P = process.env.P!; // password
+export const F = process.env.F!; // fingerPrint
 
-export const config = { provider: () => ({ username: U, password: P }) };
+export const config = { provider: () => ({ username: U, password: P, fingerPrint: F }) };

@@ -146,6 +146,10 @@ It's ok if you meet `Timeout * Async callback was not invoked within the 5000ms 
 
 ## Changelog
 
+- v4.2.1
+  - Support single login
+  - Fix body being discarded on Firefox
+  - Refine ApiError type
 - v4.2.0
   - Switch to [pnpm](https://pnpm.io/)
   - Support login with fingerprint ([#74](https://github.com/Harry-Chen/thu-learn-lib/pull/74) by @robertying)

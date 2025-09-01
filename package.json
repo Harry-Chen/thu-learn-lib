@@ -1,6 +1,6 @@
 {
   "name": "thu-learn-lib",
-  "version": "4.2.0",
+  "version": "4.2.1",
   "description": "a JavaScript library to provide a program-friendly interface to Web Learning (2018) of Tsinghua University",
   "type": "module",
   "module": "lib/index.js",

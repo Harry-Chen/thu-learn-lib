@@ -86,9 +86,9 @@ export class Learn2018Helper {
     if (this.#csrfToken === '') {
       await this.login();
     }
-    const raw = new Request(input, init);
+    const url = typeof input === 'string' ? input : input instanceof URL ? input.href : input.url;
 
-    const resp = await this.#fetch(new Request(addCSRFTokenToUrl(raw.url, this.#csrfToken), raw));
+    const resp = await this.#fetch(addCSRFTokenToUrl(url, this.#csrfToken), init);
     if (!noLogin(resp)) {
       return resp;
     }
@@ -99,7 +99,7 @@ export class Learn2018Helper {
       } as ApiError;
     } else {
       await this.login();
-      const resp = await this.#fetch(new Request(addCSRFTokenToUrl(raw.url, this.#csrfToken), raw));
+      const resp = await this.#fetch(addCSRFTokenToUrl(url, this.#csrfToken), init);
       if (noLogin(resp)) {
         throw {
           reason: FailReason.NOT_LOGGED_IN,
@@ -1236,7 +1236,7 @@ export class Learn2018Helper {
     removeAttachment = false,
   ) {
     const json = await (
-      await this.#fetchWithToken(URLS.LEARN_HOMEWORK_SUBMIT(), {
+      await this.#fetchWithToken(URLS.LEARN_HOMEWORK_SUBMIT, {
         method: 'POST',
         body: URLS.LEARN_HOMEWORK_SUBMIT_FORM_DATA(id, content, attachment, removeAttachment),
       })

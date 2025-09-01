@@ -20,7 +20,7 @@ export function makeFetch(): Fetch {
   if (typeof window === 'undefined') {
     const jar: CookieJar = {};
 
-    async function handleRedirect(req: Request, resp: Response): Promise<Response> {
+    async function handleRedirect(init: RequestInit, resp: Response): Promise<Response> {
       if (!redirectStatus.has(resp.status)) {
         return resp;
       }
@@ -33,47 +33,44 @@ export function makeFetch(): Fetch {
       const requestUrl = resp.url;
       const redirectUrl = new URL(locationUrl, requestUrl).toString();
 
-      const headers = new Headers(req.headers);
+      const headers = new Headers(init.headers);
       headers.delete('host');
 
-      const removeBody = resp.status === 303 || ((resp.status === 301 || resp.status === 302) && req.method === 'POST');
+      const removeBody =
+        resp.status === 303 || ((resp.status === 301 || resp.status === 302) && init.method === 'POST');
       if (removeBody) headers.delete('content-length');
 
-      return await fetchCookie(
-        new Request(redirectUrl, {
-          ...req,
-          headers,
-          ...(removeBody && {
-            method: 'GET',
-            body: undefined,
-          }),
+      return await fetchCookie(redirectUrl, {
+        ...init,
+        headers,
+        ...(removeBody && {
+          method: 'GET',
+          body: undefined,
         }),
-      );
+      });
     }
 
     async function fetchCookie(input: RequestInfo | URL, init?: RequestInit): Promise<Response> {
-      const raw = new Request(input, init);
-
-      const domain = new URL(raw.url).hostname;
-      const cookie = Object.entries(jar[domain] ?? {})
+      const url = input instanceof URL ? input : new URL(typeof input === 'string' ? input : input.url);
+      const cookie = Object.entries(jar[url.hostname] ?? {})
         .map(([k, v]) => `${k}=${v}`)
         .join('; ');
 
-      const headers = new Headers(raw.headers);
+      const headers = new Headers(init?.headers);
       headers.set('cookie', cookie);
 
-      const req = new Request(raw, { redirect: 'manual', headers });
-      const resp = await fetch(req);
+      init = { ...init, redirect: 'manual', headers };
+      const resp = await fetch(input, init);
 
       resp.headers.getSetCookie().forEach((cookie) => {
         // extract cookie name and value, ignoring path and other attributes
         const [nameValue] = cookie.split(';');
         const [name, value] = nameValue.split('=');
-        jar[domain] = jar[domain] || {};
-        jar[domain][name] = value;
+        jar[url.hostname] = jar[url.hostname] || {};
+        jar[url.hostname][name] = value;
       });
 
-      return await handleRedirect(req, resp);
+      return await handleRedirect(init, resp);
     }
 
     return fetchCookie;

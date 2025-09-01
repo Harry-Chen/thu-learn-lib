@@ -13,13 +13,13 @@ describe('helper authentication', () => {
     const helper = new Learn2018Helper();
     await expect(helper.login('nouser', 'nopass', 'incorrect')).rejects.toHaveProperty(
       'reason',
-      FailReason.ERROR_FETCH_FROM_ID,
+      FailReason.BAD_CREDENTIAL,
     );
   });
 
-  it('should failed to login if fingerPrint is incorrect', async () => {
+  it('should failed to login if double authentication is required', async () => {
     const helper = new Learn2018Helper();
-    await expect(helper.login(U, P, 'incorrect')).rejects.toHaveProperty('reason', FailReason.ERROR_FETCH_FROM_ID);
+    await expect(helper.login(U, P, 'unknown')).rejects.toHaveProperty('reason', FailReason.DOUBLE_AUTH);
   });
 
   it("should throw error if hasn't login and not provide up config", async () => {

@@ -75,9 +75,10 @@ export const addCSRFTokenToUrl = (url: string, token: string): string => {
 
 /** the main helper class */
 export class Learn2018Helper {
+  public previewFirstPage: boolean;
   readonly #provider?: CredentialProvider;
 
-  #fetch: Fetch;
+  #fetch = makeFetch();
   #csrfToken = '';
   #lang = Language.ZH;
 
@@ -117,13 +118,10 @@ export class Learn2018Helper {
     }
   };
 
-  public previewFirstPage: boolean;
-
   /** you can provide a CookieJar and / or CredentialProvider in the configuration */
   constructor(config?: HelperConfig) {
     this.previewFirstPage = config?.generatePreviewUrlForFirstPage ?? true;
     this.#provider = config?.provider;
-    this.#fetch = makeFetch();
   }
 
   /** fetch CSRF token from helper (invalid after login / re-login), might be '' if not logged in */

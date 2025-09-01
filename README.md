@@ -153,10 +153,12 @@ It's ok if you meet `Timeout * Async callback was not invoked within the 5000ms 
 
 ## Changelog
 
-- TBD
+- v4.2.0
   - Switch to [pnpm](https://pnpm.io/)
   - Support login with fingerprint ([#74](https://github.com/Harry-Chen/thu-learn-lib/pull/74) by @robertying)
   - Abandon fetch-cookie and tough-cookie in favor of our handwritten tiny implementation
+  - **(BREAKING)** Due to the above change, custom `fetch` option is no longer supported
+  - Fix auto re-login does not refresh csrf token
 - v4.1.0
   - Add late submission deadline, missing completion and submission types for student homework ([#66](https://github.com/Harry-Chen/thu-learn-lib/pull/66) by @robertying)
   - **(BREAKING)** Correct spelling of members of `HomeworkCompletionType`

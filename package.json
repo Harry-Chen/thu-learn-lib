@@ -50,6 +50,7 @@
   "dependencies": {
     "cheerio": "^1.1.2",
     "entities": "^6.0.1",
+    "fake-parse5": "^0.0.2",
     "js-base64": "^3.7.8",
     "node-fetch-native": "^1.6.7",
     "sm-crypto": "^0.3.13"
@@ -61,8 +62,8 @@
     ],
     "overrides": {
       "entities": "^6.0.1",
-      "parse5": "npm:fake-parse5",
-      "parse5-htmlparser2-tree-adapter": "npm:fake-parse5"
+      "parse5": "$fake-parse5",
+      "parse5-htmlparser2-tree-adapter": "$fake-parse5"
     }
   }
 }

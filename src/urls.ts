@@ -14,14 +14,18 @@ export const REGISTRAR_PREFIX = 'https://zhjw.cic.tsinghua.edu.cn';
 
 const MAX_SIZE = 200;
 
-export const ID_LOGIN = () => 'https://id.tsinghua.edu.cn/do/off/ui/auth/login/form/bb5df85216504820be7bba2b0ae1535b/0';
+export const ID_LOGIN = `${ID_PREFIX}/do/off/ui/auth/login/form/bb5df85216504820be7bba2b0ae1535b/0`;
 
-export const ID_LOGIN_CHECK = () => 'https://id.tsinghua.edu.cn/do/off/ui/auth/login/check';
+export const ID_LOGOUT = `${ID_PREFIX}/logout`;
+
+export const ID_LOGIN_CHECK = `${ID_PREFIX}/do/off/ui/auth/login/check`;
+
+export const ID_LOGIN_CHECK_SINGLE = `${ID_PREFIX}/do/off/ui/auth/login/checkSingle`;
 
 export const LEARN_AUTH_ROAM = (ticket: string) =>
   `${LEARN_PREFIX}/b/j_spring_security_thauth_roaming_entry?ticket=${ticket}`;
 
-export const LEARN_LOGOUT = () => `${LEARN_PREFIX}/f/j_spring_security_logout`;
+export const LEARN_LOGOUT = `${LEARN_PREFIX}/f/j_spring_security_logout`;
 
 export const LEARN_HOMEPAGE = (courseType: CourseType) => {
   if (courseType === CourseType.STUDENT) {
@@ -31,11 +35,11 @@ export const LEARN_HOMEPAGE = (courseType: CourseType) => {
   }
 };
 
-export const LEARN_STUDENT_COURSE_LIST_PAGE = () => `${LEARN_PREFIX}/f/wlxt/index/course/student/`;
+export const LEARN_STUDENT_COURSE_LIST_PAGE = `${LEARN_PREFIX}/f/wlxt/index/course/student/`;
 
-export const LEARN_SEMESTER_LIST = () => `${LEARN_PREFIX}/b/wlxt/kc/v_wlkc_xs_xktjb_coassb/queryxnxq`;
+export const LEARN_SEMESTER_LIST = `${LEARN_PREFIX}/b/wlxt/kc/v_wlkc_xs_xktjb_coassb/queryxnxq`;
 
-export const LEARN_CURRENT_SEMESTER = () => `${LEARN_PREFIX}/b/kc/zhjw_v_code_xnxq/getCurrentAndNextSemester`;
+export const LEARN_CURRENT_SEMESTER = `${LEARN_PREFIX}/b/kc/zhjw_v_code_xnxq/getCurrentAndNextSemester`;
 
 export const LEARN_COURSE_LIST = (semester: string, courseType: CourseType, lang: Language) =>
   courseType === CourseType.STUDENT
@@ -132,7 +136,7 @@ export const LEARN_HOMEWORK_DOWNLOAD = (courseID: string, attachmentID: string) 
 export const LEARN_HOMEWORK_SUBMIT_PAGE = (courseID: string, id: string) =>
   `${LEARN_PREFIX}/f/wlxt/kczy/zy/student/tijiao?wlkcid=${courseID}&xszyid=${id}`;
 
-export const LEARN_HOMEWORK_SUBMIT = () => `${LEARN_PREFIX}/b/wlxt/kczy/zy/student/tjzy`;
+export const LEARN_HOMEWORK_SUBMIT = `${LEARN_PREFIX}/b/wlxt/kczy/zy/student/tjzy`;
 
 export const LEARN_HOMEWORK_SUBMIT_FORM_DATA = (
   id: string,
@@ -242,7 +246,7 @@ export const REGISTRAR_TICKET_FORM_DATA = () => {
   return form;
 };
 
-export const REGISTRAR_TICKET = () => `${LEARN_PREFIX}/b/wlxt/common/auth/gnt`;
+export const REGISTRAR_TICKET = `${LEARN_PREFIX}/b/wlxt/common/auth/gnt`;
 
 export const REGISTRAR_AUTH = (ticket: string) => `${REGISTRAR_PREFIX}/j_acegi_login.do?url=/&ticket=${ticket}`;
 

@@ -15,6 +15,7 @@ export type HelperConfig = {
 export enum FailReason {
   NO_CREDENTIAL = 'no credential provided',
   ERROR_FETCH_FROM_ID = 'could not fetch ticket from id.tsinghua.edu.cn',
+  DOUBLE_AUTH = 'double authentication required',
   BAD_CREDENTIAL = 'bad credential',
   ERROR_ROAMING = 'could not roam to learn.tsinghua.edu.cn',
   NOT_LOGGED_IN = 'not logged in or login timeout',
@@ -22,7 +23,6 @@ export enum FailReason {
   INVALID_RESPONSE = 'invalid response',
   UNEXPECTED_STATUS = 'unexpected status',
   OPERATION_FAILED = 'operation failed',
-  ERROR_SETTING_COOKIES = 'could not set cookies',
 }
 
 export interface ApiError {

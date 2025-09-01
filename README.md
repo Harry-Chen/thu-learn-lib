@@ -58,18 +58,14 @@ With the new authentication method adopted by Web Learning, you must provide a *
 
 Using a web context is recommended, so you do not need to deal with the two-factor authentication manually. Currently, you can get the `fingerPrint` by running `fingerprintUtil.getFingers()` in the ID page, or by intercepting the request to `https://id.tsinghua.edu.cn/do/off/ui/auth/login/check` and extracting it from the request body. Note that the `fingerPrint` is valid and can be used for future login only after the authentication process fully completes.
 
-Currently, thu-learn-lib does not handle the case where the two-factor authentication session is already saved and the authentication goes straight to `https://id.tsinghua.edu.cn/do/off/ui/auth/login/checkSingle`.
-
 ```typescript
 import { Learn2018Helper } from 'thu-learn-lib';
 
 // There are three ways of logging in:
 
-// 1. provide a cookie jar with existing cookies (see `tough-cookie`)
-const helper = new Learn2018Helper({ cookieJar });
-// 2. provide nothing, but invoking login manually with username, password and fingerPrint
+// 1. provide nothing, but invoking login manually with username, password and fingerPrint
 const helper = new Learn2018Helper();
-// 3. provide a CredentialProvider function, which can be async
+// 2. provide a CredentialProvider function, which can be async
 const helper = new Learn2018Helper({
   provider: () => ({ username, password, fingerPrint }),
 });
@@ -84,9 +80,6 @@ try {
 } catch (e) {
   // e is a FailReason
 }
-
-// You can also take out cookies (e.g. for file download), which will not work in browsers.
-console.log(helper.cookieJar);
 
 // Logout if you want, but the cookie jar will not be cleared.
 await helper.logout();

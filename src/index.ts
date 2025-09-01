@@ -134,37 +134,54 @@ export class Learn2018Helper {
     this.#csrfToken = csrfToken;
   }
 
-  /**
-   * If using alternative cookie management systems,
-   * be sure to clear id.tsinghua.edu.cn cookies before calling this function
-   */
-  public async getRoamingTicket(
+  private async getRoamingTicket(
     username: string,
     password: string,
     fingerPrint: string,
     fingerGenPrint: string = '',
     fingerGenPrint3: string = '',
   ) {
-    this.#fetch = makeFetch();
-    try {
-      const loginForm = await this.#fetch(URLS.ID_LOGIN());
-      const body = $(await loginForm.text());
-      const sm2publicKey = body('#sm2publicKey').text().trim();
+    const loginForm = await this.#fetch(URLS.ID_LOGIN);
+    const body = await loginForm.text();
 
-      const formData = new FormData();
-      formData.append('i_user', username);
-      formData.append('i_pass', '04' + sm2.doEncrypt(password, sm2publicKey));
-      formData.append('singleLogin', 'on');
-      formData.append('fingerPrint', fingerPrint);
-      formData.append('fingerGenPrint', fingerGenPrint ?? '');
-      formData.append('fingerGenPrint3', fingerGenPrint3 ?? '');
-      formData.append('i_captcha', '');
-      const checkResponse = await this.#fetch(URLS.ID_LOGIN_CHECK(), {
+    let resp;
+    if (body.includes('checkSingle')) {
+      const form = new FormData();
+      form.append('i_rememberme', 'on');
+      form.append('fingerPrint', fingerPrint);
+      form.append('fingerGenPrint', fingerGenPrint ?? '');
+
+      resp = await this.#fetch(URLS.ID_LOGIN_CHECK_SINGLE, {
         method: 'POST',
-        body: formData,
+        body: form,
       });
+    } else {
+      const sm2publicKey = $(body)('#sm2publicKey').text().trim();
 
-      const anchor = $(await checkResponse.text())('a');
+      const form = new FormData();
+      form.append('i_user', username);
+      form.append('i_pass', '04' + sm2.doEncrypt(password, sm2publicKey));
+      form.append('singleLogin', 'on');
+      form.append('fingerPrint', fingerPrint);
+      form.append('fingerGenPrint', fingerGenPrint ?? '');
+      form.append('fingerGenPrint3', fingerGenPrint3 ?? '');
+      form.append('i_captcha', '');
+
+      resp = await this.#fetch(URLS.ID_LOGIN_CHECK, {
+        method: 'POST',
+        body: form,
+      });
+    }
+
+    const html = await resp.text();
+    if (html.includes('doubleAuth')) {
+      throw {
+        reason: FailReason.DOUBLE_AUTH,
+      } as ApiError;
+    }
+
+    try {
+      const anchor = $(html)('a');
       const redirectUrl = anchor.attr('href') as string;
       const ticket = redirectUrl.split('=').slice(-1)[0];
       return ticket;
@@ -211,7 +228,7 @@ export class Learn2018Helper {
         reason: FailReason.ERROR_ROAMING,
       } as ApiError);
     }
-    const courseListPageSource: string = await (await this.#fetch(URLS.LEARN_STUDENT_COURSE_LIST_PAGE())).text();
+    const courseListPageSource: string = await (await this.#fetch(URLS.LEARN_STUDENT_COURSE_LIST_PAGE)).text();
     const tokenRegex = /^.*&_csrf=(\S*)".*$/gm;
     const tokenMatches = [...courseListPageSource.matchAll(tokenRegex)];
     if (tokenMatches.length === 0) {
@@ -228,7 +245,8 @@ export class Learn2018Helper {
 
   /** logout (to make everyone happy) */
   public async logout(): Promise<void> {
-    await this.#fetch(URLS.LEARN_LOGOUT(), { method: 'POST' });
+    await this.#fetch(URLS.LEARN_LOGOUT, { method: 'POST' });
+    await this.#fetch(URLS.ID_LOGOUT);
   }
 
   /** get user's name and department */
@@ -254,7 +272,7 @@ export class Learn2018Helper {
    * Otherwise it will return the parsed data (might be empty if the period is too far away from now)
    */
   public async getCalendar(startDate: string, endDate: string, graduate = false): Promise<CalendarEvent[]> {
-    const ticketResponse = await this.#fetchWithToken(URLS.REGISTRAR_TICKET(), {
+    const ticketResponse = await this.#fetchWithToken(URLS.REGISTRAR_TICKET, {
       method: 'POST',
       body: URLS.REGISTRAR_TICKET_FORM_DATA(),
     });
@@ -287,7 +305,7 @@ export class Learn2018Helper {
   }
 
   public async getSemesterIdList(): Promise<string[]> {
-    const json = await (await this.#fetchWithToken(URLS.LEARN_SEMESTER_LIST())).json();
+    const json = await (await this.#fetchWithToken(URLS.LEARN_SEMESTER_LIST)).json();
     if (!Array.isArray(json)) {
       return Promise.reject({
         reason: FailReason.INVALID_RESPONSE,
@@ -300,7 +318,7 @@ export class Learn2018Helper {
   }
 
   public async getCurrentSemester(): Promise<SemesterInfo> {
-    const json = await (await this.#fetchWithToken(URLS.LEARN_CURRENT_SEMESTER())).json();
+    const json = await (await this.#fetchWithToken(URLS.LEARN_CURRENT_SEMESTER)).json();
     if (json.message !== 'success') {
       return Promise.reject({
         reason: FailReason.INVALID_RESPONSE,

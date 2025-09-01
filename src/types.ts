@@ -25,9 +25,13 @@ export enum FailReason {
   OPERATION_FAILED = 'operation failed',
 }
 
-export interface ApiError {
-  reason: FailReason;
-  extra?: unknown;
+export class ApiError extends Error {
+  constructor(
+    public reason: FailReason,
+    public extra?: unknown,
+  ) {
+    super(reason);
+  }
 }
 
 export enum SemesterType {

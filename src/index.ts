@@ -4,7 +4,7 @@ import { Base64 } from 'js-base64';
 import { sm2 } from 'sm-crypto';
 
 import {
-  type ApiError,
+  ApiError,
   type CalendarEvent,
   type CommentItem,
   ContentType,
@@ -94,24 +94,17 @@ export class Learn2018Helper {
     }
 
     if (!this.#provider) {
-      throw {
-        reason: FailReason.NOT_LOGGED_IN,
-      } as ApiError;
+      throw new ApiError(FailReason.NOT_LOGGED_IN);
     } else {
       await this.login();
       const resp = await this.#fetch(addCSRFTokenToUrl(url, this.#csrfToken), init);
       if (noLogin(resp)) {
-        throw {
-          reason: FailReason.NOT_LOGGED_IN,
-        } as ApiError;
+        throw new ApiError(FailReason.NOT_LOGGED_IN);
       } else if (resp.status != 200) {
-        throw {
-          reason: FailReason.UNEXPECTED_STATUS,
-          extra: {
-            code: resp.status,
-            text: resp.statusText,
-          },
-        } as ApiError;
+        throw new ApiError(FailReason.UNEXPECTED_STATUS, {
+          code: resp.status,
+          text: resp.statusText,
+        });
       } else {
         return resp;
       }
@@ -142,10 +135,10 @@ export class Learn2018Helper {
     fingerGenPrint3: string = '',
   ) {
     const loginForm = await this.#fetch(URLS.ID_LOGIN);
-    const body = await loginForm.text();
+    const loginHtml = await loginForm.text();
 
     let resp;
-    if (body.includes('checkSingle')) {
+    if (loginHtml.includes('checkSingle')) {
       const form = new FormData();
       form.append('i_rememberme', 'on');
       form.append('fingerPrint', fingerPrint);
@@ -156,7 +149,7 @@ export class Learn2018Helper {
         body: form,
       });
     } else {
-      const sm2publicKey = $(body)('#sm2publicKey').text().trim();
+      const sm2publicKey = $(loginHtml)('#sm2publicKey').text().trim();
 
       const form = new FormData();
       form.append('i_user', username);
@@ -174,23 +167,19 @@ export class Learn2018Helper {
     }
 
     const html = await resp.text();
-    if (html.includes('doubleAuth')) {
-      throw {
-        reason: FailReason.DOUBLE_AUTH,
-      } as ApiError;
+    if (html.includes('二次认证')) {
+      throw new ApiError(FailReason.DOUBLE_AUTH);
+    }
+    if (html.includes('您的用户名或密码不正确，请重试！')) {
+      throw new ApiError(FailReason.BAD_CREDENTIAL);
     }
 
-    try {
-      const anchor = $(html)('a');
-      const redirectUrl = anchor.attr('href') as string;
-      const ticket = redirectUrl.split('=').slice(-1)[0];
-      return ticket;
-    } catch (err) {
-      throw {
-        reason: FailReason.ERROR_FETCH_FROM_ID,
-        extra: err,
-      } as ApiError;
-    }
+    const anchor = $(html)('a');
+    const redirectUrl = anchor.attr('href');
+    if (!redirectUrl) throw new ApiError(FailReason.ERROR_FETCH_FROM_ID);
+
+    const ticket = redirectUrl.split('=').slice(-1)[0];
+    return ticket;
   }
 
   /** login is necessary if you do not provide a `CredentialProvider` */
@@ -202,10 +191,8 @@ export class Learn2018Helper {
     fingerGenPrint3?: string,
   ): Promise<void> {
     if (!username || !password || !fingerPrint) {
-      if (!this.#provider)
-        return Promise.reject({
-          reason: FailReason.NO_CREDENTIAL,
-        } as ApiError);
+      if (!this.#provider) throw new ApiError(FailReason.NO_CREDENTIAL);
+
       const credential = await this.#provider();
       username = credential.username;
       password = credential.password;
@@ -213,9 +200,7 @@ export class Learn2018Helper {
       fingerGenPrint = credential.fingerGenPrint;
       fingerGenPrint3 = credential.fingerGenPrint3;
       if (!username || !password || !fingerPrint) {
-        return Promise.reject({
-          reason: FailReason.NO_CREDENTIAL,
-        } as ApiError);
+        throw new ApiError(FailReason.NO_CREDENTIAL);
       }
     }
 
@@ -223,20 +208,14 @@ export class Learn2018Helper {
     const ticket = await this.getRoamingTicket(username, password, fingerPrint, fingerGenPrint, fingerGenPrint3);
 
     const loginResponse = await this.#fetch(URLS.LEARN_AUTH_ROAM(ticket));
-    if (loginResponse.ok !== true) {
-      return Promise.reject({
-        reason: FailReason.ERROR_ROAMING,
-      } as ApiError);
-    }
+    if (loginResponse.ok !== true) throw new ApiError(FailReason.ERROR_ROAMING);
+
     const courseListPageSource: string = await (await this.#fetch(URLS.LEARN_STUDENT_COURSE_LIST_PAGE)).text();
     const tokenRegex = /^.*&_csrf=(\S*)".*$/gm;
     const tokenMatches = [...courseListPageSource.matchAll(tokenRegex)];
-    if (tokenMatches.length === 0) {
-      return Promise.reject({
-        reason: FailReason.INVALID_RESPONSE,
-        extra: 'cannot fetch CSRF token from source',
-      } as ApiError);
-    }
+    if (tokenMatches.length === 0)
+      throw new ApiError(FailReason.INVALID_RESPONSE, 'cannot fetch CSRF token from source');
+
     this.#csrfToken = tokenMatches[0][1];
     const langRegex = /<script src="\/f\/wlxt\/common\/languagejs\?lang=(zh|en)"><\/script>/g;
     const langMatches = [...courseListPageSource.matchAll(langRegex)];
@@ -287,9 +266,7 @@ export class Learn2018Helper {
     );
 
     if (!response.ok) {
-      return Promise.reject({
-        reason: FailReason.INVALID_RESPONSE,
-      } as ApiError);
+      throw new ApiError(FailReason.INVALID_RESPONSE);
     }
 
     const result = extractJSONPResult(await response.text()) as any[];
@@ -307,10 +284,7 @@ export class Learn2018Helper {
   public async getSemesterIdList(): Promise<string[]> {
     const json = await (await this.#fetchWithToken(URLS.LEARN_SEMESTER_LIST)).json();
     if (!Array.isArray(json)) {
-      return Promise.reject({
-        reason: FailReason.INVALID_RESPONSE,
-        extra: json,
-      } as ApiError);
+      throw new ApiError(FailReason.INVALID_RESPONSE, json);
     }
     const semesters = json as string[];
     // sometimes web learning returns null, so confusing...
@@ -320,10 +294,7 @@ export class Learn2018Helper {
   public async getCurrentSemester(): Promise<SemesterInfo> {
     const json = await (await this.#fetchWithToken(URLS.LEARN_CURRENT_SEMESTER)).json();
     if (json.message !== 'success') {
-      return Promise.reject({
-        reason: FailReason.INVALID_RESPONSE,
-        extra: json,
-      } as ApiError);
+      throw new ApiError(FailReason.INVALID_RESPONSE, json);
     }
     const result = json.result;
     return {
@@ -340,10 +311,7 @@ export class Learn2018Helper {
   public async getCourseList(semesterID: string, courseType: CourseType = CourseType.STUDENT): Promise<CourseInfo[]> {
     const json = await (await this.#fetchWithToken(URLS.LEARN_COURSE_LIST(semesterID, courseType, this.#lang))).json();
     if (json.message !== 'success' || !Array.isArray(json.resultList)) {
-      return Promise.reject({
-        reason: FailReason.INVALID_RESPONSE,
-        extra: json,
-      } as ApiError);
+      throw new ApiError(FailReason.INVALID_RESPONSE, json);
     }
     const result = (json.resultList ?? []) as any[];
 
@@ -396,10 +364,7 @@ export class Learn2018Helper {
         case ContentType.QUESTIONNAIRE:
           return this.getQuestionnaireList(id) as Promise<ContentTypeMap[T][]>;
         default:
-          return Promise.reject({
-            reason: FailReason.NOT_IMPLEMENTED,
-            extra: 'Unknown content type',
-          } as ApiError);
+          throw new ApiError(FailReason.NOT_IMPLEMENTED, 'Unknown content type');
       }
     };
 
@@ -414,12 +379,9 @@ export class Learn2018Helper {
     if (!allowFailure) {
       for (const r of results) {
         if (r.status === 'rejected') {
-          return Promise.reject({
-            reason: FailReason.INVALID_RESPONSE,
-            extra: {
-              reason: r.reason,
-            },
-          } as ApiError);
+          throw new ApiError(FailReason.INVALID_RESPONSE, {
+            reason: r.reason,
+          });
         }
       }
     }
@@ -450,10 +412,7 @@ export class Learn2018Helper {
       })
     ).json();
     if (json.result !== 'success') {
-      return Promise.reject({
-        reason: FailReason.INVALID_RESPONSE,
-        extra: json,
-      } as ApiError);
+      throw new ApiError(FailReason.INVALID_RESPONSE, json);
     }
 
     const result = (json.object?.aaData ?? json.object?.resultsList ?? []) as any[];
@@ -487,10 +446,7 @@ export class Learn2018Helper {
   public async getFileList(courseID: string, courseType: CourseType = CourseType.STUDENT): Promise<File[]> {
     const json = await (await this.#fetchWithToken(URLS.LEARN_FILE_LIST(courseID, courseType))).json();
     if (json.result !== 'success') {
-      return Promise.reject({
-        reason: FailReason.INVALID_RESPONSE,
-        extra: json,
-      } as ApiError);
+      throw new ApiError(FailReason.INVALID_RESPONSE, json);
     }
 
     let result: any[] = [];
@@ -545,10 +501,7 @@ export class Learn2018Helper {
   ): Promise<FileCategory[]> {
     const json = await (await this.#fetchWithToken(URLS.LEARN_FILE_CATEGORY_LIST(courseID, courseType))).json();
     if (json.result !== 'success') {
-      return Promise.reject({
-        reason: FailReason.INVALID_RESPONSE,
-        extra: json,
-      } as ApiError);
+      throw new ApiError(FailReason.INVALID_RESPONSE, json);
     }
 
     const result = (json.object?.rows ?? []) as any[];
@@ -577,10 +530,7 @@ export class Learn2018Helper {
         await this.#fetchWithToken(URLS.LEARN_FILE_LIST_BY_CATEGORY_STUDENT(courseID, categoryId))
       ).json();
       if (json.result !== 'success') {
-        return Promise.reject({
-          reason: FailReason.INVALID_RESPONSE,
-          extra: json,
-        } as ApiError);
+        throw new ApiError(FailReason.INVALID_RESPONSE, json);
       }
 
       const result = (json.object ?? []) as any[];
@@ -627,10 +577,7 @@ export class Learn2018Helper {
         })
       ).json();
       if (json.result !== 'success') {
-        return Promise.reject({
-          reason: FailReason.INVALID_RESPONSE,
-          extra: json,
-        } as ApiError);
+        throw new ApiError(FailReason.INVALID_RESPONSE, json);
       }
 
       const result = (json.object.aaData ?? []) as any[];
@@ -685,10 +632,7 @@ export class Learn2018Helper {
         })
       ).json();
       if (json.result !== 'success') {
-        return Promise.reject({
-          reason: FailReason.INVALID_RESPONSE,
-          extra: json,
-        } as ApiError);
+        throw new ApiError(FailReason.INVALID_RESPONSE, json);
       }
 
       const result = (json.object?.aaData ?? []) as any[];
@@ -724,10 +668,7 @@ export class Learn2018Helper {
   public async getDiscussionList(courseID: string, courseType: CourseType = CourseType.STUDENT): Promise<Discussion[]> {
     const json = await (await this.#fetchWithToken(URLS.LEARN_DISCUSSION_LIST(courseID, courseType))).json();
     if (json.result !== 'success') {
-      return Promise.reject({
-        reason: FailReason.INVALID_RESPONSE,
-        extra: json,
-      } as ApiError);
+      throw new ApiError(FailReason.INVALID_RESPONSE, json);
     }
 
     const result = (json.object?.resultsList ?? []) as any[];
@@ -752,10 +693,7 @@ export class Learn2018Helper {
   ): Promise<Question[]> {
     const json = await (await this.#fetchWithToken(URLS.LEARN_QUESTION_LIST_ANSWERED(courseID, courseType))).json();
     if (json.result !== 'success') {
-      return Promise.reject({
-        reason: FailReason.INVALID_RESPONSE,
-        extra: json,
-      } as ApiError);
+      throw new ApiError(FailReason.INVALID_RESPONSE, json);
     }
 
     const result = (json.object?.resultsList ?? []) as any[];
@@ -785,10 +723,7 @@ export class Learn2018Helper {
       await this.#fetchWithToken(url, { method: 'POST', body: URLS.LEARN_PAGE_LIST_FORM_DATA(courseID) })
     ).json();
     if (json.result !== 'success') {
-      return Promise.reject({
-        reason: FailReason.INVALID_RESPONSE,
-        extra: json,
-      } as ApiError);
+      throw new ApiError(FailReason.INVALID_RESPONSE, json);
     }
     const result = (json.object?.aaData ?? []) as any[];
     return Promise.all(
@@ -844,10 +779,7 @@ export class Learn2018Helper {
   public async addToFavorites(type: ContentType, id: string): Promise<void> {
     const json = await (await this.#fetchWithToken(URLS.LEARN_FAVORITE_ADD(type, id))).json();
     if (json.result !== 'success' || !json.msg?.endsWith?.('成功')) {
-      return Promise.reject({
-        reason: FailReason.OPERATION_FAILED,
-        extra: json,
-      } as ApiError);
+      throw new ApiError(FailReason.OPERATION_FAILED, json);
     }
   }
 
@@ -857,10 +789,7 @@ export class Learn2018Helper {
   public async removeFromFavorites(id: string): Promise<void> {
     const json = await (await this.#fetchWithToken(URLS.LEARN_FAVORITE_REMOVE(id))).json();
     if (json.result !== 'success' || !json.msg?.endsWith?.('成功')) {
-      return Promise.reject({
-        reason: FailReason.OPERATION_FAILED,
-        extra: json,
-      } as ApiError);
+      throw new ApiError(FailReason.OPERATION_FAILED, json);
     }
   }
 
@@ -876,10 +805,7 @@ export class Learn2018Helper {
       })
     ).json();
     if (json.result !== 'success') {
-      return Promise.reject({
-        reason: FailReason.INVALID_RESPONSE,
-        extra: json,
-      } as ApiError);
+      throw new ApiError(FailReason.INVALID_RESPONSE, json);
     }
     const result = (json.object?.aaData ?? []) as any[];
     return result
@@ -916,10 +842,7 @@ export class Learn2018Helper {
       })
     ).json();
     if (json.result !== 'success') {
-      return Promise.reject({
-        reason: FailReason.OPERATION_FAILED,
-        extra: json,
-      } as ApiError);
+      throw new ApiError(FailReason.OPERATION_FAILED, json);
     }
   }
 
@@ -934,10 +857,7 @@ export class Learn2018Helper {
       })
     ).json();
     if (json.result !== 'success') {
-      return Promise.reject({
-        reason: FailReason.OPERATION_FAILED,
-        extra: json,
-      } as ApiError);
+      throw new ApiError(FailReason.OPERATION_FAILED, json);
     }
   }
 
@@ -953,10 +873,7 @@ export class Learn2018Helper {
       })
     ).json();
     if (json.result !== 'success' || !json.msg?.endsWith?.('成功')) {
-      return Promise.reject({
-        reason: FailReason.OPERATION_FAILED,
-        extra: json,
-      } as ApiError);
+      throw new ApiError(FailReason.OPERATION_FAILED, json);
     }
   }
 
@@ -972,10 +889,7 @@ export class Learn2018Helper {
       })
     ).json();
     if (json.result !== 'success') {
-      return Promise.reject({
-        reason: FailReason.INVALID_RESPONSE,
-        extra: json,
-      } as ApiError);
+      throw new ApiError(FailReason.INVALID_RESPONSE, json);
     }
     const result = (json.object?.aaData ?? []) as any[];
     return result
@@ -1008,10 +922,7 @@ export class Learn2018Helper {
       })
     ).json();
     if (json.result !== 'success') {
-      return Promise.reject({
-        reason: FailReason.OPERATION_FAILED,
-        extra: json,
-      } as ApiError);
+      throw new ApiError(FailReason.OPERATION_FAILED, json);
     }
   }
 
@@ -1023,10 +934,7 @@ export class Learn2018Helper {
       })
     ).json();
     if (json.result !== 'success') {
-      return Promise.reject({
-        reason: FailReason.INVALID_RESPONSE,
-        extra: json,
-      } as ApiError);
+      throw new ApiError(FailReason.INVALID_RESPONSE, json);
     }
 
     const result = (json.object?.aaData ?? []) as any[];
@@ -1085,10 +993,7 @@ export class Learn2018Helper {
       })
     ).json();
     if (json.result !== 'success') {
-      return Promise.reject({
-        reason: FailReason.INVALID_RESPONSE,
-        extra: json,
-      } as ApiError);
+      throw new ApiError(FailReason.INVALID_RESPONSE, json);
     }
 
     const result = (json.object?.aaData ?? []) as any[];
@@ -1242,10 +1147,7 @@ export class Learn2018Helper {
       })
     ).json();
     if (json.result !== 'success') {
-      return Promise.reject({
-        reason: FailReason.OPERATION_FAILED,
-        extra: json,
-      } as ApiError);
+      throw new ApiError(FailReason.OPERATION_FAILED, json);
     }
   }
 

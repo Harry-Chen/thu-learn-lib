@@ -34,34 +34,37 @@
     "url": "https://github.com/Harry-Chen/thu-learn-lib.git"
   },
   "devDependencies": {
-    "@eslint/js": "^9.22.0",
-    "@types/node": "22.13.10",
+    "@eslint/js": "^9.34.0",
+    "@types/node": "*",
     "@types/sm-crypto": "^0.3.4",
     "domhandler": "^5.0.3",
-    "dotenv": "^16.4.7",
-    "eslint": "^9.22.0",
+    "dotenv": "^17.2.1",
+    "eslint": "^9.34.0",
     "fake-parse5": "^0.0.1",
-    "prettier": "^3.5.3",
-    "terser": "^5.39.0",
-    "tsup": "^8.4.0",
-    "typescript": "^5.8.2",
-    "typescript-eslint": "^8.26.1",
-    "vitest": "^3.0.8"
+    "prettier": "^3.6.2",
+    "terser": "^5.43.1",
+    "tsup": "^8.5.0",
+    "typescript": "^5.9.2",
+    "typescript-eslint": "^8.41.0",
+    "vitest": "^3.2.4"
   },
   "dependencies": {
-    "cheerio": "^1.0.0",
-    "entities": "4.5.0",
+    "cheerio": "^1.1.2",
+    "entities": "^6.0.1",
     "fetch-cookie": "^3.1.0",
-    "js-base64": "^3.7.7",
+    "js-base64": "^3.7.8",
     "node-fetch-cookie-native": "^0.0.2",
-    "node-fetch-native": "^1.6.6",
+    "node-fetch-native": "^1.6.7",
     "sm-crypto": "^0.3.13",
-    "tough-cookie": "^5.1.2"
+    "tough-cookie": "^6.0.0"
   },
-  "packageManager": "pnpm@10.6.4+sha512.da3d715bfd22a9a105e6e8088cfc7826699332ded60c423b14ec613a185f1602206702ff0fe4c438cb15c979081ce4cb02568e364b15174503a63c7a8e2a5f6c",
+  "packageManager": "pnpm@10.15.0",
   "pnpm": {
     "onlyBuiltDependencies": [
       "esbuild"
-    ]
+    ],
+    "overrides": {
+      "entities": "^6.0.1"
+    }
   }
 }

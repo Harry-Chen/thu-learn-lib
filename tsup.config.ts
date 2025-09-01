@@ -25,6 +25,5 @@ export default defineConfig([
     platform: 'browser',
     minify: 'terser',
     sourcemap: true,
-    metafile: true,
   },
 ]);

@@ -5,14 +5,6 @@ const COMMON_OPTIONS: Options = {
   entry: ['src/index.ts'],
   outDir: 'lib',
   clean: true,
-  esbuildOptions: (options, context) => {
-    if (context.format === 'iife') {
-      options.alias = {
-        parse5: 'fake-parse5',
-        'parse5-htmlparser2-tree-adapter': 'fake-parse5',
-      };
-    }
-  },
   terserOptions: {
     format: {
       comments: false,
@@ -33,5 +25,6 @@ export default defineConfig([
     platform: 'browser',
     minify: 'terser',
     sourcemap: true,
+    metafile: true,
   },
 ]);

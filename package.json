@@ -40,7 +40,6 @@
     "domhandler": "^5.0.3",
     "dotenv": "^17.2.1",
     "eslint": "^9.34.0",
-    "fake-parse5": "^0.0.1",
     "prettier": "^3.6.2",
     "terser": "^5.43.1",
     "tsup": "^8.5.0",
@@ -51,12 +50,9 @@
   "dependencies": {
     "cheerio": "^1.1.2",
     "entities": "^6.0.1",
-    "fetch-cookie": "^3.1.0",
     "js-base64": "^3.7.8",
-    "node-fetch-cookie-native": "^0.0.2",
     "node-fetch-native": "^1.6.7",
-    "sm-crypto": "^0.3.13",
-    "tough-cookie": "^6.0.0"
+    "sm-crypto": "^0.3.13"
   },
   "packageManager": "pnpm@10.15.0",
   "pnpm": {
@@ -64,7 +60,9 @@
       "esbuild"
     ],
     "overrides": {
-      "entities": "^6.0.1"
+      "entities": "^6.0.1",
+      "parse5": "npm:fake-parse5",
+      "parse5-htmlparser2-tree-adapter": "npm:fake-parse5"
     }
   }
 }

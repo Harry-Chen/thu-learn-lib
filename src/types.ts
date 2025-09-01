@@ -1,5 +1,3 @@
-import type { CookieJar } from 'tough-cookie';
-
 export type Fetch = typeof globalThis.fetch;
 export type Credential = {
   username?: string;
@@ -11,8 +9,6 @@ export type Credential = {
 export type CredentialProvider = () => Credential | Promise<Credential>;
 export type HelperConfig = {
   provider?: CredentialProvider;
-  fetch?: Fetch;
-  cookieJar?: CookieJar;
   generatePreviewUrlForFirstPage?: boolean;
 };
 

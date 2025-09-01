@@ -1,8 +1,6 @@
 import * as cheerio from 'cheerio';
 import type * as DOM from 'domhandler';
 import { Base64 } from 'js-base64';
-import makeFetch from 'node-fetch-cookie-native';
-import { CookieJar } from 'tough-cookie';
 import { sm2 } from 'sm-crypto';
 
 import {
@@ -56,6 +54,7 @@ import {
   trimAndDecode,
   trimAndDefine,
 } from './utils';
+import { makeFetch } from './cookie';
 
 const CHEERIO_CONFIG: cheerio.CheerioOptions = { xml: { decodeEntities: false } };
 
@@ -77,44 +76,45 @@ export const addCSRFTokenToUrl = (url: string, token: string): string => {
 /** the main helper class */
 export class Learn2018Helper {
   readonly #provider?: CredentialProvider;
-  readonly #cookieJar;
-  readonly #rawFetch: Fetch;
-  readonly #myFetch: Fetch;
-  readonly #myFetchWithToken: Fetch = async (...args) => {
-    if (this.#csrfToken === '') {
-      await this.login();
-    }
-    const [url, ...remaining] = args;
-    return this.#myFetch(addCSRFTokenToUrl(url as string, this.#csrfToken), ...remaining);
-  };
+
+  #fetch: Fetch;
   #csrfToken = '';
   #lang = Language.ZH;
 
-  readonly #withReAuth = (rawFetch: Fetch): Fetch => {
-    const login = this.login.bind(this);
-    return async function wrappedFetch(...args) {
-      const retryAfterLogin = async () => {
-        await login();
-        return await rawFetch(...args).then((res: Response) => {
-          if (noLogin(res)) {
-            return Promise.reject({
-              reason: FailReason.NOT_LOGGED_IN,
-            } as ApiError);
-          } else if (res.status != 200) {
-            return Promise.reject({
-              reason: FailReason.UNEXPECTED_STATUS,
-              extra: {
-                code: res.status,
-                text: res.statusText,
-              },
-            } as ApiError);
-          } else {
-            return res;
-          }
-        });
-      };
-      return await rawFetch(...args).then((res: Response) => (noLogin(res) ? retryAfterLogin() : res));
-    };
+  readonly #fetchWithToken: Fetch = async (input, init) => {
+    if (this.#csrfToken === '') {
+      await this.login();
+    }
+    const raw = new Request(input, init);
+
+    const resp = await this.#fetch(new Request(addCSRFTokenToUrl(raw.url, this.#csrfToken), raw));
+    if (!noLogin(resp)) {
+      return resp;
+    }
+
+    if (!this.#provider) {
+      throw {
+        reason: FailReason.NOT_LOGGED_IN,
+      } as ApiError;
+    } else {
+      await this.login();
+      const resp = await this.#fetch(new Request(addCSRFTokenToUrl(raw.url, this.#csrfToken), raw));
+      if (noLogin(resp)) {
+        throw {
+          reason: FailReason.NOT_LOGGED_IN,
+        } as ApiError;
+      } else if (resp.status != 200) {
+        throw {
+          reason: FailReason.UNEXPECTED_STATUS,
+          extra: {
+            code: resp.status,
+            text: resp.statusText,
+          },
+        } as ApiError;
+      } else {
+        return resp;
+      }
+    }
   };
 
   public previewFirstPage: boolean;
@@ -123,18 +123,7 @@ export class Learn2018Helper {
   constructor(config?: HelperConfig) {
     this.previewFirstPage = config?.generatePreviewUrlForFirstPage ?? true;
     this.#provider = config?.provider;
-    this.#cookieJar = config?.cookieJar ?? new CookieJar();
-    this.#rawFetch = config?.fetch ?? makeFetch(this.#cookieJar);
-    this.#myFetch = this.#provider
-      ? this.#withReAuth(this.#rawFetch)
-      : async (...args) => {
-          const result = await this.#rawFetch(...args);
-          if (noLogin(result))
-            return Promise.reject({
-              reason: FailReason.NOT_LOGGED_IN,
-            } as ApiError);
-          return result;
-        };
+    this.#fetch = makeFetch();
   }
 
   /** fetch CSRF token from helper (invalid after login / re-login), might be '' if not logged in */
@@ -158,22 +147,9 @@ export class Learn2018Helper {
     fingerGenPrint: string = '',
     fingerGenPrint3: string = '',
   ) {
-    // Make sure we always start with the form page
-    // More code is needed to handle the case where the user is already logged in (i.e. cookies are set)
-    // It won't be a problem if it is always the same user,
-    // but if the current cookies are from a different user than the one trying to log in,
-    // it will cause problems.
+    this.#fetch = makeFetch();
     try {
-      await this.#cookieJar.setCookie('JSESSIONID=; path=/; HttpOnly', URLS.ID_PREFIX);
-    } catch (err) {
-      throw {
-        reason: FailReason.ERROR_SETTING_COOKIES,
-        extra: err,
-      } as ApiError;
-    }
-
-    try {
-      const loginForm = await this.#rawFetch(URLS.ID_LOGIN());
+      const loginForm = await this.#fetch(URLS.ID_LOGIN());
       const body = $(await loginForm.text());
       const sm2publicKey = body('#sm2publicKey').text().trim();
 
@@ -185,7 +161,7 @@ export class Learn2018Helper {
       formData.append('fingerGenPrint', fingerGenPrint ?? '');
       formData.append('fingerGenPrint3', fingerGenPrint3 ?? '');
       formData.append('i_captcha', '');
-      const checkResponse = await this.#rawFetch(URLS.ID_LOGIN_CHECK(), {
+      const checkResponse = await this.#fetch(URLS.ID_LOGIN_CHECK(), {
         method: 'POST',
         body: formData,
       });
@@ -231,13 +207,13 @@ export class Learn2018Helper {
     // check response from id.tsinghua.edu.cn
     const ticket = await this.getRoamingTicket(username, password, fingerPrint, fingerGenPrint, fingerGenPrint3);
 
-    const loginResponse = await this.#rawFetch(URLS.LEARN_AUTH_ROAM(ticket));
+    const loginResponse = await this.#fetch(URLS.LEARN_AUTH_ROAM(ticket));
     if (loginResponse.ok !== true) {
       return Promise.reject({
         reason: FailReason.ERROR_ROAMING,
       } as ApiError);
     }
-    const courseListPageSource: string = await (await this.#rawFetch(URLS.LEARN_STUDENT_COURSE_LIST_PAGE())).text();
+    const courseListPageSource: string = await (await this.#fetch(URLS.LEARN_STUDENT_COURSE_LIST_PAGE())).text();
     const tokenRegex = /^.*&_csrf=(\S*)".*$/gm;
     const tokenMatches = [...courseListPageSource.matchAll(tokenRegex)];
     if (tokenMatches.length === 0) {
@@ -252,14 +228,14 @@ export class Learn2018Helper {
     if (langMatches.length !== 0) this.#lang = langMatches[0][1] as Language;
   }
 
-  /**  logout (to make everyone happy) */
+  /** logout (to make everyone happy) */
   public async logout(): Promise<void> {
-    await this.#rawFetch(URLS.LEARN_LOGOUT(), { method: 'POST' });
+    await this.#fetch(URLS.LEARN_LOGOUT(), { method: 'POST' });
   }
 
   /** get user's name and department */
   public async getUserInfo(courseType = CourseType.STUDENT): Promise<UserInfo> {
-    const content = await (await this.#myFetchWithToken(URLS.LEARN_HOMEPAGE(courseType))).text();
+    const content = await (await this.#fetchWithToken(URLS.LEARN_HOMEPAGE(courseType))).text();
 
     const dom = $(content);
     const name = dom('a.user-log').text().trim();
@@ -280,7 +256,7 @@ export class Learn2018Helper {
    * Otherwise it will return the parsed data (might be empty if the period is too far away from now)
    */
   public async getCalendar(startDate: string, endDate: string, graduate = false): Promise<CalendarEvent[]> {
-    const ticketResponse = await this.#myFetchWithToken(URLS.REGISTRAR_TICKET(), {
+    const ticketResponse = await this.#fetchWithToken(URLS.REGISTRAR_TICKET(), {
       method: 'POST',
       body: URLS.REGISTRAR_TICKET_FORM_DATA(),
     });
@@ -288,9 +264,9 @@ export class Learn2018Helper {
     let ticket = (await ticketResponse.text()) as string;
     ticket = ticket.substring(1, ticket.length - 1);
 
-    await this.#myFetch(URLS.REGISTRAR_AUTH(ticket));
+    await this.#fetch(URLS.REGISTRAR_AUTH(ticket));
 
-    const response = await this.#myFetchWithToken(
+    const response = await this.#fetchWithToken(
       URLS.REGISTRAR_CALENDAR(startDate, endDate, graduate, JSONP_EXTRACTOR_NAME),
     );
 
@@ -313,7 +289,7 @@ export class Learn2018Helper {
   }
 
   public async getSemesterIdList(): Promise<string[]> {
-    const json = await (await this.#myFetchWithToken(URLS.LEARN_SEMESTER_LIST())).json();
+    const json = await (await this.#fetchWithToken(URLS.LEARN_SEMESTER_LIST())).json();
     if (!Array.isArray(json)) {
       return Promise.reject({
         reason: FailReason.INVALID_RESPONSE,
@@ -326,7 +302,7 @@ export class Learn2018Helper {
   }
 
   public async getCurrentSemester(): Promise<SemesterInfo> {
-    const json = await (await this.#myFetchWithToken(URLS.LEARN_CURRENT_SEMESTER())).json();
+    const json = await (await this.#fetchWithToken(URLS.LEARN_CURRENT_SEMESTER())).json();
     if (json.message !== 'success') {
       return Promise.reject({
         reason: FailReason.INVALID_RESPONSE,
@@ -346,9 +322,7 @@ export class Learn2018Helper {
 
   /** get all courses in the specified semester */
   public async getCourseList(semesterID: string, courseType: CourseType = CourseType.STUDENT): Promise<CourseInfo[]> {
-    const json = await (
-      await this.#myFetchWithToken(URLS.LEARN_COURSE_LIST(semesterID, courseType, this.#lang))
-    ).json();
+    const json = await (await this.#fetchWithToken(URLS.LEARN_COURSE_LIST(semesterID, courseType, this.#lang))).json();
     if (json.message !== 'success' || !Array.isArray(json.resultList)) {
       return Promise.reject({
         reason: FailReason.INVALID_RESPONSE,
@@ -362,7 +336,7 @@ export class Learn2018Helper {
         let timeAndLocation: string[] = [];
         try {
           // see https://github.com/Harry-Chen/Learn-Helper/issues/145
-          timeAndLocation = await (await this.#myFetchWithToken(URLS.LEARN_COURSE_TIME_LOCATION(c.wlkcid))).json();
+          timeAndLocation = await (await this.#fetchWithToken(URLS.LEARN_COURSE_TIME_LOCATION(c.wlkcid))).json();
         } catch (e) {}
         return {
           id: c.wlkcid,
@@ -454,7 +428,7 @@ export class Learn2018Helper {
     expired: boolean,
   ): Promise<Notification[]> {
     const json = await (
-      await this.#myFetchWithToken(URLS.LEARN_NOTIFICATION_LIST(courseType, expired), {
+      await this.#fetchWithToken(URLS.LEARN_NOTIFICATION_LIST(courseType, expired), {
         method: 'POST',
         body: URLS.LEARN_PAGE_LIST_FORM_DATA(courseID),
       })
@@ -495,7 +469,7 @@ export class Learn2018Helper {
 
   /** Get all files （课程文件） of the specified course. */
   public async getFileList(courseID: string, courseType: CourseType = CourseType.STUDENT): Promise<File[]> {
-    const json = await (await this.#myFetchWithToken(URLS.LEARN_FILE_LIST(courseID, courseType))).json();
+    const json = await (await this.#fetchWithToken(URLS.LEARN_FILE_LIST(courseID, courseType))).json();
     if (json.result !== 'success') {
       return Promise.reject({
         reason: FailReason.INVALID_RESPONSE,
@@ -553,7 +527,7 @@ export class Learn2018Helper {
     courseID: string,
     courseType: CourseType = CourseType.STUDENT,
   ): Promise<FileCategory[]> {
-    const json = await (await this.#myFetchWithToken(URLS.LEARN_FILE_CATEGORY_LIST(courseID, courseType))).json();
+    const json = await (await this.#fetchWithToken(URLS.LEARN_FILE_CATEGORY_LIST(courseID, courseType))).json();
     if (json.result !== 'success') {
       return Promise.reject({
         reason: FailReason.INVALID_RESPONSE,
@@ -584,7 +558,7 @@ export class Learn2018Helper {
   ): Promise<File[]> {
     if (courseType === CourseType.STUDENT) {
       const json = await (
-        await this.#myFetchWithToken(URLS.LEARN_FILE_LIST_BY_CATEGORY_STUDENT(courseID, categoryId))
+        await this.#fetchWithToken(URLS.LEARN_FILE_LIST_BY_CATEGORY_STUDENT(courseID, categoryId))
       ).json();
       if (json.result !== 'success') {
         return Promise.reject({
@@ -631,7 +605,7 @@ export class Learn2018Helper {
       });
     } else {
       const json = await (
-        await this.#myFetchWithToken(URLS.LEARN_FILE_LIST_BY_CATEGORY_TEACHER, {
+        await this.#fetchWithToken(URLS.LEARN_FILE_LIST_BY_CATEGORY_TEACHER, {
           method: 'POST',
           body: URLS.LEARN_FILE_LIST_BY_CATEGORY_TEACHER_FORM_DATA(courseID, categoryId),
         })
@@ -689,7 +663,7 @@ export class Learn2018Helper {
   ): Promise<Homework[] | HomeworkTA[]> {
     if (courseType === CourseType.TEACHER) {
       const json = await (
-        await this.#myFetchWithToken(URLS.LEARN_HOMEWORK_LIST_TEACHER, {
+        await this.#fetchWithToken(URLS.LEARN_HOMEWORK_LIST_TEACHER, {
           method: 'POST',
           body: URLS.LEARN_PAGE_LIST_FORM_DATA(courseID),
         })
@@ -732,7 +706,7 @@ export class Learn2018Helper {
 
   /** Get all discussions （课程讨论） of the specified course. */
   public async getDiscussionList(courseID: string, courseType: CourseType = CourseType.STUDENT): Promise<Discussion[]> {
-    const json = await (await this.#myFetchWithToken(URLS.LEARN_DISCUSSION_LIST(courseID, courseType))).json();
+    const json = await (await this.#fetchWithToken(URLS.LEARN_DISCUSSION_LIST(courseID, courseType))).json();
     if (json.result !== 'success') {
       return Promise.reject({
         reason: FailReason.INVALID_RESPONSE,
@@ -760,7 +734,7 @@ export class Learn2018Helper {
     courseID: string,
     courseType: CourseType = CourseType.STUDENT,
   ): Promise<Question[]> {
-    const json = await (await this.#myFetchWithToken(URLS.LEARN_QUESTION_LIST_ANSWERED(courseID, courseType))).json();
+    const json = await (await this.#fetchWithToken(URLS.LEARN_QUESTION_LIST_ANSWERED(courseID, courseType))).json();
     if (json.result !== 'success') {
       return Promise.reject({
         reason: FailReason.INVALID_RESPONSE,
@@ -792,7 +766,7 @@ export class Learn2018Helper {
 
   private async getQuestionnaireListAtUrl(courseID: string, url: string): Promise<Questionnaire[]> {
     const json = await (
-      await this.#myFetchWithToken(url, { method: 'POST', body: URLS.LEARN_PAGE_LIST_FORM_DATA(courseID) })
+      await this.#fetchWithToken(url, { method: 'POST', body: URLS.LEARN_PAGE_LIST_FORM_DATA(courseID) })
     ).json();
     if (json.result !== 'success') {
       return Promise.reject({
@@ -825,7 +799,7 @@ export class Learn2018Helper {
 
   private async getQuestionnaireDetail(courseID: string, qnrID: string): Promise<QuestionnaireDetail[]> {
     const json = await (
-      await this.#myFetchWithToken(URLS.LEARN_QNR_DETAIL, {
+      await this.#fetchWithToken(URLS.LEARN_QNR_DETAIL, {
         method: 'POST',
         body: URLS.LEARN_QNR_DETAIL_FORM(courseID, qnrID),
       })
@@ -852,7 +826,7 @@ export class Learn2018Helper {
    * Add an item to favorites. (收藏)
    */
   public async addToFavorites(type: ContentType, id: string): Promise<void> {
-    const json = await (await this.#myFetchWithToken(URLS.LEARN_FAVORITE_ADD(type, id))).json();
+    const json = await (await this.#fetchWithToken(URLS.LEARN_FAVORITE_ADD(type, id))).json();
     if (json.result !== 'success' || !json.msg?.endsWith?.('成功')) {
       return Promise.reject({
         reason: FailReason.OPERATION_FAILED,
@@ -865,7 +839,7 @@ export class Learn2018Helper {
    * Remove an item from favorites. (取消收藏)
    */
   public async removeFromFavorites(id: string): Promise<void> {
-    const json = await (await this.#myFetchWithToken(URLS.LEARN_FAVORITE_REMOVE(id))).json();
+    const json = await (await this.#fetchWithToken(URLS.LEARN_FAVORITE_REMOVE(id))).json();
     if (json.result !== 'success' || !json.msg?.endsWith?.('成功')) {
       return Promise.reject({
         reason: FailReason.OPERATION_FAILED,
@@ -880,7 +854,7 @@ export class Learn2018Helper {
    */
   public async getFavorites(courseID?: string, type?: ContentType): Promise<FavoriteItem[]> {
     const json = await (
-      await this.#myFetchWithToken(URLS.LEARN_FAVORITE_LIST(type), {
+      await this.#fetchWithToken(URLS.LEARN_FAVORITE_LIST(type), {
         method: 'POST',
         body: URLS.LEARN_PAGE_LIST_FORM_DATA(courseID),
       })
@@ -920,7 +894,7 @@ export class Learn2018Helper {
    */
   public async pinFavoriteItem(id: string): Promise<void> {
     const json = await (
-      await this.#myFetchWithToken(URLS.LEARN_FAVORITE_PIN, {
+      await this.#fetchWithToken(URLS.LEARN_FAVORITE_PIN, {
         method: 'POST',
         body: URLS.LEARN_FAVORITE_PIN_UNPIN_FORM_DATA(id),
       })
@@ -938,7 +912,7 @@ export class Learn2018Helper {
    */
   public async unpinFavoriteItem(id: string): Promise<void> {
     const json = await (
-      await this.#myFetchWithToken(URLS.LEARN_FAVORITE_UNPIN, {
+      await this.#fetchWithToken(URLS.LEARN_FAVORITE_UNPIN, {
         method: 'POST',
         body: URLS.LEARN_FAVORITE_PIN_UNPIN_FORM_DATA(id),
       })
@@ -957,7 +931,7 @@ export class Learn2018Helper {
    */
   public async setComment(type: ContentType, id: string, content: string): Promise<void> {
     const json = await (
-      await this.#myFetchWithToken(URLS.LEARN_COMMENT_SET, {
+      await this.#fetchWithToken(URLS.LEARN_COMMENT_SET, {
         method: 'POST',
         body: URLS.LEARN_COMMENT_SET_FORM_DATA(type, id, content),
       })
@@ -976,7 +950,7 @@ export class Learn2018Helper {
    */
   public async getComments(courseID?: string, type?: ContentType): Promise<CommentItem[]> {
     const json = await (
-      await this.#myFetchWithToken(URLS.LEARN_COMMENT_LIST(type), {
+      await this.#fetchWithToken(URLS.LEARN_COMMENT_LIST(type), {
         method: 'POST',
         body: URLS.LEARN_PAGE_LIST_FORM_DATA(courseID),
       })
@@ -1009,7 +983,7 @@ export class Learn2018Helper {
 
   public async sortCourses(courseIDs: string[]): Promise<void> {
     const json = await (
-      await this.#myFetchWithToken(URLS.LEARN_SORT_COURSES, {
+      await this.#fetchWithToken(URLS.LEARN_SORT_COURSES, {
         method: 'POST',
         body: JSON.stringify(courseIDs.map((id, index) => ({ wlkcid: id, xh: index + 1 }))),
         headers: {
@@ -1027,7 +1001,7 @@ export class Learn2018Helper {
 
   private async getHomeworkListAtUrl(courseID: string, url: string, status: IHomeworkStatus): Promise<Homework[]> {
     const json = await (
-      await this.#myFetchWithToken(url, {
+      await this.#fetchWithToken(url, {
         method: 'POST',
         body: URLS.LEARN_PAGE_LIST_FORM_DATA(courseID),
       })
@@ -1089,7 +1063,7 @@ export class Learn2018Helper {
 
   private async getExcellentHomeworkListByHomework(courseID: string): Promise<{ [id: string]: ExcellentHomework[] }> {
     const json = await (
-      await this.#myFetchWithToken(URLS.LEARN_HOMEWORK_LIST_EXCELLENT, {
+      await this.#fetchWithToken(URLS.LEARN_HOMEWORK_LIST_EXCELLENT, {
         method: 'POST',
         body: URLS.LEARN_PAGE_LIST_FORM_DATA(courseID),
       })
@@ -1154,7 +1128,7 @@ export class Learn2018Helper {
     // })).json();
     // const attachmentId = metadata.ggfjid as string;
     /// parsed from HTML
-    const response = await this.#myFetchWithToken(URLS.LEARN_NOTIFICATION_DETAIL(courseID, id, courseType));
+    const response = await this.#fetchWithToken(URLS.LEARN_NOTIFICATION_DETAIL(courseID, id, courseType));
     const result = $(await response.text());
     let path = '';
     if (courseType === CourseType.STUDENT) {
@@ -1180,7 +1154,7 @@ export class Learn2018Helper {
   }
 
   private async parseHomeworkAtUrl(url: string): Promise<IHomeworkDetail> {
-    const response = await this.#myFetchWithToken(url);
+    const response = await this.#fetchWithToken(url);
     const result = $(await response.text());
 
     const fileDivs = result('div.list.fujian.clearfix');
@@ -1246,7 +1220,7 @@ export class Learn2018Helper {
     removeAttachment = false,
   ) {
     const json = await (
-      await this.#myFetchWithToken(URLS.LEARN_HOMEWORK_SUBMIT(), {
+      await this.#fetchWithToken(URLS.LEARN_HOMEWORK_SUBMIT(), {
         method: 'POST',
         body: URLS.LEARN_HOMEWORK_SUBMIT_FORM_DATA(id, content, attachment, removeAttachment),
       })
@@ -1260,7 +1234,7 @@ export class Learn2018Helper {
   }
 
   public async setLanguage(lang: Language): Promise<void> {
-    await this.#myFetchWithToken(URLS.LEARN_WEBSITE_LANGUAGE(lang), {
+    await this.#fetchWithToken(URLS.LEARN_WEBSITE_LANGUAGE(lang), {
       method: 'POST',
     });
     this.#lang = lang;

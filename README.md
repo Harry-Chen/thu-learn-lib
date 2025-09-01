@@ -10,18 +10,12 @@ This is a JavaScript library aimed to provide a program-friendly interface of [w
 
 This project is licensed under MIT License.
 
-## Compatibility
-
-The library uses [`node-fetch-cookie-native`](https://github.com/AsakuraMizu/node-fetch-cookie-native), which is a simple wrapper for [node-fetch-native](https://github.com/unjs/node-fetch-native) and [fetch-cookie](https://github.com/valeriangalliat/fetch-cookie), providing cookie and redirection support in both browsers and Node.
-
-In case of any syntax problems, just upgrade your browser / Node, or use any corresponding polyfills.
-
 ## Installation
 
 ### Node / Bundler
 
 ```bash
-yarn add thu-learn-lib
+pnpm add thu-learn-lib
 ```
 
 ### Browser (IIFE)
@@ -45,7 +39,7 @@ The library is exposed under `window.LearnLib`.
 ## Build
 
 ```
-yarn run build
+pnpm run build
 ```
 
 You can find the bundled library in `lib/`.
@@ -53,17 +47,6 @@ You can find the bundled library in `lib/`.
 - `index.js`: ES module entry
 - `index.d.ts`: definition file for TypeScript
 - `index.global.js{,.map}`: IIFE for use in browser (with source map for debugging)
-
-## Development in browser
-
-```
-yarn run dev
-```
-
-This will open a dev browser with a testing extension. Click the `t` icon in extension bar, then execute anything you want in the Console of Chrome Developer Tool.
-The library is exposed under `window.LearnLib`.
-
-Use `yarn run dev:build` to build the extension that can be installed to your chrome browser manually.
 
 ## Usage
 
@@ -75,9 +58,7 @@ With the new authentication method adopted by Web Learning, you must provide a *
 
 Using a web context is recommended, so you do not need to deal with the two-factor authentication manually. Currently, you can get the `fingerPrint` by running `fingerprintUtil.getFingers()` in the ID page, or by intercepting the request to `https://id.tsinghua.edu.cn/do/off/ui/auth/login/check` and extracting it from the request body. Note that the `fingerPrint` is valid and can be used for future login only after the authentication process fully completes.
 
-> Caveat:
->
-> Currently, thu-learn-lib does not handle the case where the two-factor authentication session is already saved and the authentication goes straight to `https://id.tsinghua.edu.cn/do/off/ui/auth/login/checkSingle`. This means that you must clear the cookies of `https://id.tsinghua.edu.cn` properly before each login to make sure the login form is present on login. The library has tried to clear the cookies for you, but if you are using alternative cookie management libraries, you may need to clear these cookies manually.
+Currently, thu-learn-lib does not handle the case where the two-factor authentication session is already saved and the authentication goes straight to `https://id.tsinghua.edu.cn/do/off/ui/auth/login/checkSingle`.
 
 ```typescript
 import { Learn2018Helper } from 'thu-learn-lib';
@@ -166,12 +147,16 @@ See `src/types.ts` for type definitions. Note that `ApiError` represents the typ
 
 ## Testing
 
-Run `yarn test` for testing. It requires your personal credential since we don't have mocks for these APIs. To do this, you must touch a `.env` similar to `template.env` under /test folder.
+Run `pnpm run test` for testing. It requires your personal credential since we don't have mocks for these APIs. To do this, you must touch a `.env` similar to `template.env` under /test folder.
 
 It's ok if you meet `Timeout * Async callback was not invoked within the 5000ms timeout...` error when running tests, rerun tests may resolve this problem. If you hate this, just add the third argument `timeout` to every testcase `it("should...", async () => void, timeout)` and make sure it's greater than 5000.
 
 ## Changelog
 
+- TBD
+  - Switch to [pnpm](https://pnpm.io/)
+  - Support login with fingerprint ([#74](https://github.com/Harry-Chen/thu-learn-lib/pull/74) by @robertying)
+  - Abandon fetch-cookie and tough-cookie in favor of our handwritten tiny implementation
 - v4.1.0
   - Add late submission deadline, missing completion and submission types for student homework ([#66](https://github.com/Harry-Chen/thu-learn-lib/pull/66) by @robertying)
   - **(BREAKING)** Correct spelling of members of `HomeworkCompletionType`

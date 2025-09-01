@@ -1,7 +1,13 @@
 import type { CookieJar } from 'tough-cookie';
 
 export type Fetch = typeof globalThis.fetch;
-export type Credential = { username?: string; password?: string };
+export type Credential = {
+  username?: string;
+  password?: string;
+  fingerPrint?: string;
+  fingerGenPrint?: string;
+  fingerGenPrint3?: string;
+};
 export type CredentialProvider = () => Credential | Promise<Credential>;
 export type HelperConfig = {
   provider?: CredentialProvider;
@@ -20,6 +26,7 @@ export enum FailReason {
   INVALID_RESPONSE = 'invalid response',
   UNEXPECTED_STATUS = 'unexpected status',
   OPERATION_FAILED = 'operation failed',
+  ERROR_SETTING_COOKIES = 'could not set cookies',
 }
 
 export interface ApiError {

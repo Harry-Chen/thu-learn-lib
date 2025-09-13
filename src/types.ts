@@ -17,6 +17,7 @@ export enum FailReason {
   ERROR_FETCH_FROM_ID = 'could not fetch ticket from id.tsinghua.edu.cn',
   DOUBLE_AUTH = 'double authentication required',
   BAD_CREDENTIAL = 'bad credential',
+  CAPTCHA_REQUIRED = 'captcha required',
   ERROR_ROAMING = 'could not roam to learn.tsinghua.edu.cn',
   NOT_LOGGED_IN = 'not logged in or login timeout',
   NOT_IMPLEMENTED = 'not implemented',

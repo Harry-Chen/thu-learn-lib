@@ -159,6 +159,9 @@ export class Learn2018Helper {
       if (!username || !password) {
         throw new ApiError(FailReason.NO_CREDENTIAL);
       }
+      if (loginHtml.includes(`$("#c_code").removeClass('hidden');`)) {
+        throw new ApiError(FailReason.CAPTCHA_REQUIRED);
+      }
       const sm2publicKey = $(loginHtml)('#sm2publicKey').text().trim();
 
       const form = new FormData();

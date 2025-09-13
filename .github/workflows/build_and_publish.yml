@@ -8,18 +8,17 @@ on:
   pull_request:
 
 jobs:
-
   build:
     runs-on: ubuntu-latest
     if: ${{ !contains(github.event.head_commit.message, 'ci skip') }}
     steps:
-      - uses: actions/checkout@v4
-      - name: Install pnpm
-        uses: pnpm/action-setup@v4
+      - uses: actions/checkout@v5
+      - uses: pnpm/action-setup@v4
       - uses: actions/setup-node@v4
         with:
           node-version: 'lts/*'
           cache: 'pnpm'
+
       - name: Install dependencies
         run: pnpm install
       - name: Lint
@@ -27,7 +26,8 @@ jobs:
       - name: Build library
         run: pnpm build
       - name: Show files to publish
-        run: npm publish --dry-run
+        run: pnpm publish --dry-run
+
       - name: Upload built library
         uses: actions/upload-artifact@v4
         with:
@@ -42,17 +42,19 @@ jobs:
       packages: write
     if: ${{ startsWith(github.ref, 'refs/tags/v') }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 'lts/*'
+          registry-url: 'https://registry.npmjs.org'
+
       - name: Download build result
         uses: actions/download-artifact@v4
         with:
           name: thu-learn-lib
           path: lib/
-      - uses: actions/setup-node@v4
-        with:
-          node-version: 'lts/*'
-          registry-url: 'https://registry.npmjs.org'
       - name: Publish to NPM
-        run: npm publish
+        run: pnpm publish
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_PUBLISH_TOKEN }}

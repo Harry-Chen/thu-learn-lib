@@ -1,29 +1,27 @@
-import { Options, defineConfig } from 'tsup';
+import { type Options, defineConfig } from 'tsdown';
 
 const COMMON_OPTIONS: Options = {
   globalName: 'LearnLib',
   entry: ['src/index.ts'],
   outDir: 'lib',
   clean: true,
-  terserOptions: {
-    format: {
-      comments: false,
-      ecma: 2018,
-    },
-  },
 };
 
 export default defineConfig([
   {
     ...COMMON_OPTIONS,
-    format: 'esm',
+    exports: {
+      devExports: true,
+    },
+    platform: 'node',
     dts: true,
   },
   {
     ...COMMON_OPTIONS,
     format: 'iife',
     platform: 'browser',
-    minify: 'terser',
+    noExternal: () => true,
+    minify: true,
     sourcemap: true,
   },
 ]);

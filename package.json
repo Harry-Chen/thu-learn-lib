@@ -2,36 +2,42 @@
   "name": "thu-learn-lib",
   "version": "4.2.1",
   "description": "a JavaScript library to provide a program-friendly interface to Web Learning (2018) of Tsinghua University",
-  "type": "module",
-  "module": "lib/index.js",
-  "types": "lib/index.d.ts",
-  "browser": "lib/index.global.js",
-  "unpkg": "lib/index.global.js",
-  "jsdelivr": "lib/index.global.js",
-  "files": [
-    "lib"
-  ],
-  "exports": {
-    ".": {
-      "types": "./lib/index.d.ts",
-      "import": "./lib/index.js"
-    }
-  },
-  "scripts": {
-    "build": "tsup",
-    "format": "prettier --write \"{src,test,demo}/**/*.{ts,html,json}\" \"*.{ts,md,json}\"",
-    "lint": "eslint",
-    "test": "vitest run"
-  },
   "keywords": [
     "tsinghua",
     "learn2018"
   ],
-  "author": "Harry Chen <harry-chen@outlook.com> (https://harrychen.xyz)",
-  "license": "MIT",
   "repository": {
     "type": "git",
     "url": "https://github.com/Harry-Chen/thu-learn-lib.git"
+  },
+  "license": "MIT",
+  "author": "Harry Chen <harry-chen@outlook.com> (https://harrychen.xyz)",
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts",
+    "./package.json": "./package.json"
+  },
+  "main": "./lib/index.js",
+  "jsdelivr": "lib/index.iife.js",
+  "unpkg": "lib/index.iife.js",
+  "module": "./lib/index.js",
+  "browser": "lib/index.iife.js",
+  "types": "./lib/index.d.ts",
+  "files": [
+    "lib"
+  ],
+  "scripts": {
+    "build": "tsdown",
+    "format": "prettier --write \"{src,test,demo}/**/*.{ts,html,json}\" \"*.{ts,md,json}\"",
+    "lint": "eslint",
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "cheerio": "^1.1.2",
+    "entities": "^7.0.0",
+    "js-base64": "^3.7.8",
+    "node-fetch-native": "^1.6.7",
+    "sm-crypto": "^0.3.13"
   },
   "devDependencies": {
     "@eslint/js": "^9.35.0",
@@ -41,28 +47,26 @@
     "dotenv": "^17.2.2",
     "eslint": "^9.35.0",
     "prettier": "^3.6.2",
-    "terser": "^5.44.0",
-    "tsup": "^8.5.0",
+    "tsdown": "^0.15.1",
     "typescript": "^5.9.2",
     "typescript-eslint": "^8.43.0",
     "vitest": "^3.2.4"
   },
-  "dependencies": {
-    "cheerio": "^1.1.2",
-    "entities": "^7.0.0",
-    "js-base64": "^3.7.8",
-    "node-fetch-native": "^1.6.7",
-    "sm-crypto": "^0.3.13"
+  "packageManager": "pnpm@10.16.0",
+  "publishConfig": {
+    "exports": {
+      ".": "./lib/index.js",
+      "./package.json": "./package.json"
+    }
   },
-  "packageManager": "pnpm@10.15.0",
   "pnpm": {
     "onlyBuiltDependencies": [
       "esbuild"
     ],
     "overrides": {
       "entities": "^7.0.0",
-      "parse5": "-",
-      "parse5-htmlparser2-tree-adapter": "-"
+      "parse5": "npm:fake-parse5",
+      "parse5-htmlparser2-tree-adapter": "npm:fake-parse5"
     }
   }
 }

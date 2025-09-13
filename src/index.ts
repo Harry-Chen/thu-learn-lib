@@ -169,7 +169,7 @@ export class Learn2018Helper {
     if (html.includes('二次认证')) {
       throw new ApiError(FailReason.DOUBLE_AUTH);
     }
-    if (html.includes('您的用户名或密码不正确，请重试！')) {
+    if (html.split('$("#c_note").show();').length - 1 > 3) {
       throw new ApiError(FailReason.BAD_CREDENTIAL);
     }
 

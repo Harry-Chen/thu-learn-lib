@@ -46,7 +46,7 @@ You can find the bundled library in `lib/`.
 
 - `index.js`: ES module entry
 - `index.d.ts`: definition file for TypeScript
-- `index.global.js{,.map}`: IIFE for use in browser (with source map for debugging)
+- `index.iife.js{,.map}`: IIFE for use in browser (with source map for debugging)
 
 ## Usage
 
@@ -146,6 +146,11 @@ It's ok if you meet `Timeout * Async callback was not invoked within the 5000ms 
 
 ## Changelog
 
+- v4.2.2
+  - Support login without username and password
+  - Support partial logout
+  - Switch build tool to [tsdown](https://tsdown.dev/)
+  - Add fail reason "captcha required"
 - v4.2.1
   - Support single login
   - Fix body being discarded on Firefox

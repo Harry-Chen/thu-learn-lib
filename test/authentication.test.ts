@@ -9,6 +9,13 @@ describe('helper authentication', () => {
     await helper.logout();
   });
 
+  it('should login only with fingerprint', async () => {
+    const helper = new Learn2018Helper();
+    await helper.login(U, P, F);
+    await helper.logout(false);
+    await helper.login(undefined, undefined, F);
+  });
+
   it('should failed to login if account is incorrect', async () => {
     const helper = new Learn2018Helper();
     await expect(helper.login('nouser', 'nopass', 'incorrect')).rejects.toHaveProperty(

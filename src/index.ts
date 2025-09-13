@@ -92,21 +92,17 @@ export class Learn2018Helper {
       return resp;
     }
 
-    if (!this.#provider) {
-      throw new ApiError(FailReason.NO_CREDENTIAL);
+    await this.login();
+    const resp2 = await this.#fetch(addCSRFTokenToUrl(url, this.#csrfToken), init);
+    if (noLogin(resp2)) {
+      throw new ApiError(FailReason.NOT_LOGGED_IN);
+    } else if (resp2.status !== 200) {
+      throw new ApiError(FailReason.UNEXPECTED_STATUS, {
+        code: resp2.status,
+        text: resp2.statusText,
+      });
     } else {
-      await this.login();
-      const resp = await this.#fetch(addCSRFTokenToUrl(url, this.#csrfToken), init);
-      if (noLogin(resp)) {
-        throw new ApiError(FailReason.NOT_LOGGED_IN);
-      } else if (resp.status !== 200) {
-        throw new ApiError(FailReason.UNEXPECTED_STATUS, {
-          code: resp.status,
-          text: resp.statusText,
-        });
-      } else {
-        return resp;
-      }
+      return resp2;
     }
   };
 
@@ -126,13 +122,25 @@ export class Learn2018Helper {
     this.#csrfToken = csrfToken;
   }
 
-  private async getRoamingTicket(
-    username: string,
-    password: string,
-    fingerPrint: string,
-    fingerGenPrint: string = '',
-    fingerGenPrint3: string = '',
-  ) {
+  /** login is necessary if you do not provide a `CredentialProvider` */
+  public async login(
+    username?: string,
+    password?: string,
+    fingerPrint?: string,
+    fingerGenPrint?: string,
+    fingerGenPrint3?: string,
+  ): Promise<void> {
+    if ((!username || !password || !fingerPrint || !fingerGenPrint || !fingerGenPrint3) && this.#provider) {
+      const credential = await this.#provider();
+      username ??= credential.username;
+      password ??= credential.password;
+      fingerPrint ??= credential.fingerPrint;
+      fingerGenPrint ??= credential.fingerGenPrint;
+      fingerGenPrint3 ??= credential.fingerGenPrint3;
+    }
+    // only fingerPrint is strictly necessary
+    if (!fingerPrint) throw new ApiError(FailReason.NO_CREDENTIAL);
+
     const loginForm = await this.#fetch(URLS.ID_LOGIN);
     const loginHtml = await loginForm.text();
 
@@ -148,6 +156,9 @@ export class Learn2018Helper {
         body: form,
       });
     } else {
+      if (!username || !password) {
+        throw new ApiError(FailReason.NO_CREDENTIAL);
+      }
       const sm2publicKey = $(loginHtml)('#sm2publicKey').text().trim();
 
       const form = new FormData();
@@ -178,33 +189,6 @@ export class Learn2018Helper {
     if (!redirectUrl) throw new ApiError(FailReason.ERROR_FETCH_FROM_ID);
 
     const ticket = redirectUrl.split('=').slice(-1)[0];
-    return ticket;
-  }
-
-  /** login is necessary if you do not provide a `CredentialProvider` */
-  public async login(
-    username?: string,
-    password?: string,
-    fingerPrint?: string,
-    fingerGenPrint?: string,
-    fingerGenPrint3?: string,
-  ): Promise<void> {
-    if (!username || !password || !fingerPrint) {
-      if (!this.#provider) throw new ApiError(FailReason.NO_CREDENTIAL);
-
-      const credential = await this.#provider();
-      username = credential.username;
-      password = credential.password;
-      fingerPrint = credential.fingerPrint;
-      fingerGenPrint = credential.fingerGenPrint;
-      fingerGenPrint3 = credential.fingerGenPrint3;
-      if (!username || !password || !fingerPrint) {
-        throw new ApiError(FailReason.NO_CREDENTIAL);
-      }
-    }
-
-    // check response from id.tsinghua.edu.cn
-    const ticket = await this.getRoamingTicket(username, password, fingerPrint, fingerGenPrint, fingerGenPrint3);
 
     const loginResponse = await this.#fetch(URLS.LEARN_AUTH_ROAM(ticket));
     if (loginResponse.ok !== true) throw new ApiError(FailReason.ERROR_ROAMING);
@@ -222,9 +206,9 @@ export class Learn2018Helper {
   }
 
   /** logout (to make everyone happy) */
-  public async logout(): Promise<void> {
+  public async logout(all: boolean = true): Promise<void> {
     await this.#fetch(URLS.LEARN_LOGOUT, { method: 'POST' });
-    await this.#fetch(URLS.ID_LOGOUT);
+    if (all) await this.#fetch(URLS.ID_LOGOUT);
   }
 
   /** get user's name and department */

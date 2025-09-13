@@ -2,7 +2,7 @@ import * as cheerio from 'cheerio';
 import type * as DOM from 'domhandler';
 import { Base64 } from 'js-base64';
 import { sm2 } from 'sm-crypto';
-
+import { makeFetch } from './cookie';
 import {
   ApiError,
   type CalendarEvent,
@@ -44,17 +44,16 @@ import {
 import * as URLS from './urls';
 import {
   CONTENT_TYPE_MAP_REVERSE,
-  GRADE_LEVEL_MAP,
-  JSONP_EXTRACTOR_NAME,
-  QNR_TYPE_MAP,
   decodeHTML,
   extractJSONPResult,
   formatFileSize,
+  GRADE_LEVEL_MAP,
+  JSONP_EXTRACTOR_NAME,
   parseSemesterType,
+  QNR_TYPE_MAP,
   trimAndDecode,
   trimAndDefine,
 } from './utils';
-import { makeFetch } from './cookie';
 
 const CHEERIO_CONFIG: cheerio.CheerioOptions = { xml: { decodeEntities: false } };
 
@@ -94,13 +93,13 @@ export class Learn2018Helper {
     }
 
     if (!this.#provider) {
-      throw new ApiError(FailReason.NOT_LOGGED_IN);
+      throw new ApiError(FailReason.NO_CREDENTIAL);
     } else {
       await this.login();
       const resp = await this.#fetch(addCSRFTokenToUrl(url, this.#csrfToken), init);
       if (noLogin(resp)) {
         throw new ApiError(FailReason.NOT_LOGGED_IN);
-      } else if (resp.status != 200) {
+      } else if (resp.status !== 200) {
         throw new ApiError(FailReason.UNEXPECTED_STATUS, {
           code: resp.status,
           text: resp.statusText,
@@ -137,7 +136,7 @@ export class Learn2018Helper {
     const loginForm = await this.#fetch(URLS.ID_LOGIN);
     const loginHtml = await loginForm.text();
 
-    let resp;
+    let resp: Response;
     if (loginHtml.includes('checkSingle')) {
       const form = new FormData();
       form.append('i_rememberme', 'on');
@@ -153,7 +152,7 @@ export class Learn2018Helper {
 
       const form = new FormData();
       form.append('i_user', username);
-      form.append('i_pass', '04' + sm2.doEncrypt(password, sm2publicKey));
+      form.append('i_pass', `04${sm2.doEncrypt(password, sm2publicKey)}`);
       form.append('singleLogin', 'on');
       form.append('fingerPrint', fingerPrint);
       form.append('fingerGenPrint', fingerGenPrint ?? '');

@@ -8,7 +8,7 @@
   ],
   "repository": {
     "type": "git",
-    "url": "https://github.com/Harry-Chen/thu-learn-lib.git"
+    "url": "git+https://github.com/Harry-Chen/thu-learn-lib.git"
   },
   "license": "MIT",
   "author": "Harry Chen <harry-chen@outlook.com> (https://harrychen.xyz)",

@@ -122,6 +122,19 @@ export class Learn2018Helper {
     this.#csrfToken = csrfToken;
   }
 
+  private async fetchCSRFToken(): Promise<void> {
+    const courseListPageSource: string = await (await this.#fetch(URLS.LEARN_STUDENT_COURSE_LIST_PAGE)).text();
+    const tokenRegex = /^.*&_csrf=(\S*)".*$/gm;
+    const tokenMatches = [...courseListPageSource.matchAll(tokenRegex)];
+    if (tokenMatches.length === 0)
+      throw new ApiError(FailReason.INVALID_RESPONSE, 'cannot fetch CSRF token from source');
+
+    this.#csrfToken = tokenMatches[0][1];
+    const langRegex = /<script src="\/f\/wlxt\/common\/languagejs\?lang=(zh|en)"><\/script>/g;
+    const langMatches = [...courseListPageSource.matchAll(langRegex)];
+    if (langMatches.length !== 0) this.#lang = langMatches[0][1] as Language;
+  }
+
   /** login is necessary if you do not provide a `CredentialProvider` */
   public async login(
     username?: string,
@@ -130,6 +143,11 @@ export class Learn2018Helper {
     fingerGenPrint?: string,
     fingerGenPrint3?: string,
   ): Promise<void> {
+    try {
+      await this.fetchCSRFToken();
+      return;
+    } catch (e) {}
+
     if ((!username || !password || !fingerPrint || !fingerGenPrint || !fingerGenPrint3) && this.#provider) {
       const credential = await this.#provider();
       username ??= credential.username;
@@ -196,16 +214,7 @@ export class Learn2018Helper {
     const loginResponse = await this.#fetch(URLS.LEARN_AUTH_ROAM(ticket));
     if (loginResponse.ok !== true) throw new ApiError(FailReason.ERROR_ROAMING);
 
-    const courseListPageSource: string = await (await this.#fetch(URLS.LEARN_STUDENT_COURSE_LIST_PAGE)).text();
-    const tokenRegex = /^.*&_csrf=(\S*)".*$/gm;
-    const tokenMatches = [...courseListPageSource.matchAll(tokenRegex)];
-    if (tokenMatches.length === 0)
-      throw new ApiError(FailReason.INVALID_RESPONSE, 'cannot fetch CSRF token from source');
-
-    this.#csrfToken = tokenMatches[0][1];
-    const langRegex = /<script src="\/f\/wlxt\/common\/languagejs\?lang=(zh|en)"><\/script>/g;
-    const langMatches = [...courseListPageSource.matchAll(langRegex)];
-    if (langMatches.length !== 0) this.#lang = langMatches[0][1] as Language;
+    await this.fetchCSRFToken();
   }
 
   /** logout (to make everyone happy) */

@@ -146,6 +146,8 @@ It's ok if you meet `Timeout * Async callback was not invoked within the 5000ms 
 
 ## Changelog
 
+- v4.2.5
+  - Fix empty homework description
 - v4.2.4
   - Support login without actual login, no credentials required (not even fingerprint!)
 - v4.2.3 (v4.2.2 was deleted)

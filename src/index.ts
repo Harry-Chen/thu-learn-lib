@@ -950,7 +950,7 @@ export class Learn2018Helper {
               studentHomeworkId: h.xszyid,
               baseId: h.zyid,
               title: decodeHTML(h.bt),
-              url: URLS.LEARN_HOMEWORK_DETAIL(h.wlkcid, h.xszyid),
+              url: URLS.LEARN_HOMEWORK_PAGE(h.wlkcid, h.xszyid),
               deadline: new Date(h.jzsj),
               lateSubmissionDeadline: h.bjjzsj ? new Date(h.bjjzsj) : undefined,
               isLateSubmission: h.sfbj === YES,
@@ -975,6 +975,7 @@ export class Learn2018Helper {
             ({
               ...h,
               ...(await this.parseHomeworkAtUrl(h.url)),
+              ...(await this.getHomeworkDetail(h.baseId)),
             }) satisfies Homework,
         ),
     );
@@ -1002,7 +1003,7 @@ export class Learn2018Helper {
                 id: h.xszyid,
                 baseId: h.zyid,
                 title: decodeHTML(h.bt),
-                url: URLS.LEARN_HOMEWORK_DETAIL_EXCELLENT(h.wlkcid, h.xszyid),
+                url: URLS.LEARN_HOMEWORK_EXCELLENT_PAGE(h.wlkcid, h.xszyid),
                 completionType: h.zywcfs,
                 author: {
                   id: h.cy?.split(' ')?.[0],
@@ -1016,6 +1017,7 @@ export class Learn2018Helper {
               ({
                 ...h,
                 ...(await this.parseHomeworkAtUrl(h.url)),
+                ...(await this.getHomeworkDetail(h.baseId)),
               }) satisfies ExcellentHomework,
           ),
       )
@@ -1083,6 +1085,21 @@ export class Learn2018Helper {
       answerAttachment: this.parseHomeworkFile(fileDivs[1]),
       submittedAttachment: this.parseHomeworkFile(fileDivs[2]),
       gradeAttachment: this.parseHomeworkFile(fileDivs[3]),
+    };
+  }
+
+  private async getHomeworkDetail(baseId: string): Promise<IHomeworkDetail> {
+    const json = await (
+      await this.#fetchWithToken(URLS.LEARN_HOMEWORK_DETAIL, {
+        method: 'POST',
+        body: URLS.LEARN_HOMEWORK_DETAIL_FORM_DATA(baseId),
+      })
+    ).json();
+    if (json.result !== 'success') {
+      throw new ApiError(FailReason.INVALID_RESPONSE, json);
+    }
+    return {
+      description: trimAndDecode(json.msg),
     };
   }
 

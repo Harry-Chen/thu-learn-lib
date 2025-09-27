@@ -124,11 +124,19 @@ export const LEARN_HOMEWORK_LIST_SOURCE = [
   },
 ];
 
-export const LEARN_HOMEWORK_DETAIL = (courseID: string, id: string) =>
+export const LEARN_HOMEWORK_PAGE = (courseID: string, id: string) =>
   `${LEARN_PREFIX}/f/wlxt/kczy/zy/student/viewCj?wlkcid=${courseID}&xszyid=${id}`;
 
-export const LEARN_HOMEWORK_DETAIL_EXCELLENT = (courseID: string, id: string) =>
+export const LEARN_HOMEWORK_EXCELLENT_PAGE = (courseID: string, id: string) =>
   `${LEARN_PREFIX}/f/wlxt/kczy/zy/student/viewYxzy?wlkcid=${courseID}&xszyid=${id}`;
+
+export const LEARN_HOMEWORK_DETAIL = `${LEARN_PREFIX}/b/wlxt/kczy/zy/student/detail`;
+
+export const LEARN_HOMEWORK_DETAIL_FORM_DATA = (baseId: string) => {
+  const form = new FormData();
+  form.append('id', baseId);
+  return form;
+};
 
 export const LEARN_HOMEWORK_DOWNLOAD = (courseID: string, attachmentID: string) =>
   `${LEARN_PREFIX}/b/wlxt/kczy/zy/student/downloadFile/${courseID}/${attachmentID}`;

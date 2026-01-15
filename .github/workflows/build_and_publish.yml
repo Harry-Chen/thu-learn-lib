@@ -25,8 +25,6 @@ jobs:
         run: pnpm lint
       - name: Build library
         run: pnpm build
-      - name: Show files to publish
-        run: pnpm publish --dry-run
 
       - name: Upload built library
         uses: actions/upload-artifact@v4

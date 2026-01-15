@@ -1,4 +1,3 @@
-gitChecks: false
 onlyBuiltDependencies:
   - esbuild
 overrides:

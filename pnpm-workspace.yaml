@@ -1,6 +1,6 @@
 onlyBuiltDependencies:
   - esbuild
 overrides:
-  entities: ^7.0.0
+  entities: ^7.0.1
   parse5: npm:fake-parse5
   parse5-htmlparser2-tree-adapter: npm:fake-parse5

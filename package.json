@@ -17,10 +17,8 @@
     ".": "./src/index.ts",
     "./package.json": "./package.json"
   },
-  "main": "./lib/index.js",
   "jsdelivr": "lib/index.iife.js",
   "unpkg": "lib/index.iife.js",
-  "module": "./lib/index.js",
   "browser": "lib/index.iife.js",
   "types": "./lib/index.d.ts",
   "files": [
@@ -33,29 +31,29 @@
     "test": "vitest run"
   },
   "dependencies": {
-    "cheerio": "^1.1.2",
-    "entities": "^7.0.0",
+    "cheerio": "^1.2.0",
+    "entities": "^7.0.1",
     "js-base64": "^3.7.8",
     "node-fetch-native": "^1.6.7",
     "sm-crypto": "^0.4.0"
   },
   "devDependencies": {
     "@eslint/js": "^9.39.2",
-    "@types/node": "^25.0.8",
+    "@types/node": "^25.2.1",
     "@types/sm-crypto": "^0.3.4",
     "domhandler": "^5.0.3",
     "dotenv": "^17.2.3",
     "eslint": "^9.39.2",
-    "prettier": "^3.8.0",
-    "tsdown": "^0.19.0",
+    "prettier": "^3.8.1",
+    "tsdown": "^0.20.3",
     "typescript": "^5.9.3",
-    "typescript-eslint": "^8.53.0",
-    "vitest": "^4.0.17"
+    "typescript-eslint": "^8.54.0",
+    "vitest": "^4.0.18"
   },
-  "packageManager": "pnpm@10.28.0",
+  "packageManager": "pnpm@10.28.2",
   "publishConfig": {
     "exports": {
-      ".": "./lib/index.js",
+      ".": "./lib/index.mjs",
       "./package.json": "./package.json"
     }
   }

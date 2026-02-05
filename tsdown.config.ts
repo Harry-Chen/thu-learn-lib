@@ -1,6 +1,6 @@
-import { type Options, defineConfig } from 'tsdown';
+import { type UserConfig, defineConfig } from 'tsdown';
 
-const COMMON_OPTIONS: Options = {
+const COMMON_OPTIONS: UserConfig = {
   globalName: 'LearnLib',
   entry: ['src/index.ts'],
   outDir: 'lib',
@@ -23,5 +23,6 @@ export default defineConfig([
     noExternal: () => true,
     minify: true,
     sourcemap: true,
+    inlineOnly: false,
   },
 ]);

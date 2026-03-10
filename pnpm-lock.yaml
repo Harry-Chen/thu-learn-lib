@@ -33,7 +33,7 @@ importers:
         specifier: ^10.0.1
         version: 10.0.1(eslint@10.0.3(jiti@2.6.1))
       '@types/node':
-        specifier: ^25.2.1
+        specifier: ^25.4.0
         version: 25.4.0
       '@types/sm-crypto':
         specifier: ^0.3.4
@@ -42,7 +42,7 @@ importers:
         specifier: ^5.0.3
         version: 5.0.3
       dotenv:
-        specifier: ^17.2.3
+        specifier: ^17.3.1
         version: 17.3.1
       eslint:
         specifier: ^10.0.3
@@ -57,7 +57,7 @@ importers:
         specifier: ^5.9.3
         version: 5.9.3
       typescript-eslint:
-        specifier: ^8.54.0
+        specifier: ^8.57.0
         version: 8.57.0(eslint@10.0.3(jiti@2.6.1))(typescript@5.9.3)
       vitest:
         specifier: ^4.0.18

@@ -1048,7 +1048,7 @@ export class Learn2018Helper {
     /// parsed from HTML
     const response = await this.#fetchWithToken(URLS.LEARN_NOTIFICATION_DETAIL(courseID, id, courseType));
     const result = $(await response.text());
-    let path = '';
+    let path;
     if (courseType === CourseType.STUDENT) {
       path = result('.ml-10').attr('href')!;
     } else {

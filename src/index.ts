@@ -117,6 +117,11 @@ export class Learn2018Helper {
     return this.#csrfToken;
   }
 
+  /** fetch any url using CSRF token and cookie from helper */
+  public fetchWithToken(input: string | URL | Request, init?: RequestInit | undefined): Promise<Response> {
+    return this.#fetchWithToken(input, init);
+  }
+
   /** manually set CSRF token (useful when you want to reuse previous token) */
   public setCSRFToken(csrfToken: string): void {
     this.#csrfToken = csrfToken;
@@ -146,7 +151,7 @@ export class Learn2018Helper {
     try {
       await this.fetchCSRFToken();
       return;
-    } catch (e) {}
+    } catch (e) { }
 
     if ((!username || !password || !fingerPrint || !fingerGenPrint || !fingerGenPrint3) && this.#provider) {
       const credential = await this.#provider();
@@ -316,7 +321,7 @@ export class Learn2018Helper {
         try {
           // see https://github.com/Harry-Chen/Learn-Helper/issues/145
           timeAndLocation = await (await this.#fetchWithToken(URLS.LEARN_COURSE_TIME_LOCATION(c.wlkcid))).json();
-        } catch (e) {}
+        } catch (e) { }
         return {
           id: c.wlkcid,
           name: decodeHTML(c.zywkcm),

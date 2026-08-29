@@ -276,8 +276,8 @@ export class Learn2018Helper {
     }));
   }
 
-  public async getSemesterIdList(): Promise<string[]> {
-    const json = await (await this.#fetchWithToken(URLS.LEARN_SEMESTER_LIST)).json();
+  public async getSemesterIdList(courseType: CourseType = CourseType.STUDENT): Promise<string[]> {
+    const json = await (await this.#fetchWithToken(URLS.LEARN_SEMESTER_LIST(courseType))).json();
     if (!Array.isArray(json)) {
       throw new ApiError(FailReason.INVALID_RESPONSE, json);
     }

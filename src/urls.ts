@@ -37,7 +37,8 @@ export const LEARN_HOMEPAGE = (courseType: CourseType) => {
 
 export const LEARN_STUDENT_COURSE_LIST_PAGE = `${LEARN_PREFIX}/f/wlxt/index/course/student/`;
 
-export const LEARN_SEMESTER_LIST = `${LEARN_PREFIX}/b/wlxt/kc/v_wlkc_xs_xktjb_coassb/queryxnxq`;
+export const LEARN_SEMESTER_LIST = (courseType: CourseType) =>
+  courseType == CourseType.TEACHER ? `${LEARN_PREFIX}/b/kc/v_wlkc_jsb_jbxxb/queryxnxq` : `${LEARN_PREFIX}/b/wlxt/kc/v_wlkc_xs_xktjb_coassb/queryxnxq`;
 
 export const LEARN_CURRENT_SEMESTER = `${LEARN_PREFIX}/b/kc/zhjw_v_code_xnxq/getCurrentAndNextSemester`;
 

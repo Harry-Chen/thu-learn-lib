@@ -20,9 +20,11 @@ export default defineConfig([
     ...COMMON_OPTIONS,
     format: 'iife',
     platform: 'browser',
-    noExternal: () => true,
+    deps: {
+      alwaysBundle: () => true,
+      onlyBundle: false,
+    },
     minify: true,
     sourcemap: true,
-    inlineOnly: false,
   },
 ]);

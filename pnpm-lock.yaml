@@ -26,8 +26,8 @@ importers:
         specifier: ^1.6.7
         version: 1.6.7
       sm-crypto:
-        specifier: ^0.4.0
-        version: 0.4.0
+        specifier: ^0.5.0
+        version: 0.5.0
     devDependencies:
       '@eslint/js':
         specifier: ^10.0.1
@@ -1155,8 +1155,8 @@ packages:
   siginfo@2.0.0:
     resolution: {integrity: sha512-ybx0WO1/8bSBLEWXZvEd7gMW3Sn3JFlW3TvX1nREbDLRNQNaeNN8WK0meBwPdAaOI7TtRRRJn/Es1zhrrCHu7g==}
 
-  sm-crypto@0.4.0:
-    resolution: {integrity: sha512-OexH2V1EqmhXuOIPGoCl55OjMF0wwPUM/zhUjT0Q6vHBeopSRvTNRy76/1eRoFs3VBKt39hdFnxwpFmooHYa2A==}
+  sm-crypto@0.5.0:
+    resolution: {integrity: sha512-oTfBsCOoUBdORtqXxsOF1yGL0LlOJk9U6wvGTjpS9wfM4H3pLfz9B7RORQSztTuFtjv3sTP4IN82R/nQJ9o8mA==}
 
   source-map-js@1.2.1:
     resolution: {integrity: sha512-UXWMKhLOwVKb728IUtQPXxfYU+usdybtUrK/8uGE8CQMvrhOpwvzDBwj0QhSL7MQc7vIsISBG8VQ8+IDQxpfQA==}
@@ -2364,7 +2364,7 @@ snapshots:
 
   siginfo@2.0.0: {}
 
-  sm-crypto@0.4.0:
+  sm-crypto@0.5.0:
     dependencies:
       jsbn: 1.1.0
 

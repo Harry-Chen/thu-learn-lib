@@ -32,7 +32,7 @@
   },
   "dependencies": {
     "cheerio": "^1.2.0",
-    "entities": "^7.0.1",
+    "entities": "^8.0.0",
     "js-base64": "^3.9.3",
     "node-fetch-native": "^1.6.7",
     "sm-crypto": "^0.5.7"

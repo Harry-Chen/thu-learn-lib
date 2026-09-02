@@ -5,3 +5,7 @@ overrides:
   entities: ^7.0.1
   parse5: npm:fake-parse5
   parse5-htmlparser2-tree-adapter: npm:fake-parse5
+  # typescript 7.0 ships no compiler API; tooling (typescript-eslint, tsdown dts)
+  # needs the TS 6 API, so force it onto the @typescript/typescript6 compat package
+  # while the project's direct dependency stays on typescript v7 (see TS 7.0 side-by-side).
+  typescript: "npm:@typescript/typescript6@^6.0.2"

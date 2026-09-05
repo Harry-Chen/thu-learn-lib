@@ -319,6 +319,13 @@ interface IQuestion extends IDiscussionBase {
 
 export type Question = IQuestion;
 
+interface IDiscussionBoard {
+  boardId: string;
+  title: string;
+}
+
+export type DiscussionBoard = IDiscussionBoard;
+
 export enum QuestionnaireDetailType {
   SINGLE = 'dnx',
   MULTI = 'dox',

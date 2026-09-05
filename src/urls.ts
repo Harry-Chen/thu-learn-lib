@@ -171,6 +171,15 @@ export const LEARN_HOMEWORK_DETAIL_TEACHER = (courseID: string, homeworkID: stri
 export const LEARN_DISCUSSION_LIST = (courseID: string, courseType: CourseType) =>
   `${LEARN_PREFIX}/b/wlxt/bbs/bbs_tltb/${courseType}/kctlList?wlkcid=${courseID}&size=${MAX_SIZE}`;
 
+export const LEARN_DISCUSSION_BOARD_LIST = (courseID: string, courseType: CourseType) =>
+  `${LEARN_PREFIX}/b/wlxt/bbs/bbs_bqb/${courseType}/bqListByWlkcid?wlkcid=${courseID}`;
+
+export const LEARN_DISCUSSION_BOARD_LIST_FORM_DATA = (courseID?: string) => {
+  const form = new FormData();
+  form.append('wlkcid', courseID);
+  return form;
+};
+
 export const LEARN_DISCUSSION_DETAIL = (
   courseID: string,
   boardID: string,

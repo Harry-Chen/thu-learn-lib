@@ -14,6 +14,7 @@ import {
   CourseType,
   type CredentialProvider,
   type Discussion,
+  type DiscussionBoard,
   type ExcellentHomework,
   FailReason,
   type FavoriteItem,
@@ -680,6 +681,21 @@ export class Learn2018Helper {
           boardId: d.bqid,
           url: URLS.LEARN_DISCUSSION_DETAIL(d.wlkcid, d.bqid, d.id, courseType),
         }) satisfies Discussion,
+    );
+  }
+
+  /** Get all discussion boards（课程讨论区）of the specified course. */
+  public async getDiscussionBoardList(courseID: string, courseType: CourseType = CourseType.STUDENT): Promise<DiscussionBoard[]> {
+    const json = await (await this.#fetchWithToken(URLS.LEARN_DISCUSSION_BOARD_LIST(courseID, courseType), { method: 'POST', body: URLS.LEARN_DISCUSSION_BOARD_LIST_FORM_DATA(courseID) })).json();
+
+    const result = (json ?? []) as any[];
+
+    return result.map(
+      (d) =>
+        ({
+          boardId: d.bqid,
+          title: d.title,
+        }) satisfies DiscussionBoard,
     );
   }
 

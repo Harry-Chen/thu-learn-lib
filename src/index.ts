@@ -313,7 +313,7 @@ export class Learn2018Helper {
   public async getCourseList(semesterID: string, courseType: CourseType = CourseType.STUDENT): Promise<CourseInfo[]> {
     /* For teachers, consider both 助教课程 and 合教课程 */
     const coCourseIndexCount = (courseType === CourseType.STUDENT) ? 1 : 2;
-    let promises: Promise<CourseInfo>[] = [];
+    const promises: Promise<CourseInfo>[] = [];
     for (let coCourseIndex = 0; coCourseIndex < coCourseIndexCount; coCourseIndex++) {
       const json = await (await this.#fetchWithToken(URLS.LEARN_COURSE_LIST(semesterID, courseType, this.#lang, coCourseIndex))).json();
       if (json.message !== 'success' || !Array.isArray(json.resultList)) {

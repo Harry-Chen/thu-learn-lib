@@ -311,14 +311,17 @@ export class Learn2018Helper {
 
   /** get all courses in the specified semester */
   public async getCourseList(semesterID: string, courseType: CourseType = CourseType.STUDENT): Promise<CourseInfo[]> {
-    const json = await (await this.#fetchWithToken(URLS.LEARN_COURSE_LIST(semesterID, courseType, this.#lang))).json();
-    if (json.message !== 'success' || !Array.isArray(json.resultList)) {
-      throw new ApiError(FailReason.INVALID_RESPONSE, json);
-    }
-    const result = (json.resultList ?? []) as any[];
+    /* For teachers, consider both 助教课程 and 合教课程 */
+    const coCourseIndexCount = (courseType === CourseType.STUDENT) ? 1 : 2;
+    let promises: Promise<CourseInfo>[] = [];
+    for (let coCourseIndex = 0; coCourseIndex < coCourseIndexCount; coCourseIndex++) {
+      const json = await (await this.#fetchWithToken(URLS.LEARN_COURSE_LIST(semesterID, courseType, this.#lang, coCourseIndex))).json();
+      if (json.message !== 'success' || !Array.isArray(json.resultList)) {
+        throw new ApiError(FailReason.INVALID_RESPONSE, json);
+      }
 
-    return Promise.all(
-      result.map(async (c) => {
+      const result = (json.resultList ?? []) as any[];
+      promises.push(...result.map(async (c) => {
         let timeAndLocation: string[] = [];
         try {
           // see https://github.com/Harry-Chen/Learn-Helper/issues/145
@@ -336,9 +339,10 @@ export class Learn2018Helper {
           courseNumber: c.kch,
           courseIndex: Number(c.kxh), // c.kxh could be string (teacher mode) or number (student mode)
           courseType,
-        } satisfies CourseInfo;
-      }),
-    );
+        } as CourseInfo;
+      }));
+    }
+    return Promise.all(promises);
   }
 
   /**

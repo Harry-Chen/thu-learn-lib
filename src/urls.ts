@@ -42,10 +42,10 @@ export const LEARN_SEMESTER_LIST = (courseType: CourseType) =>
 
 export const LEARN_CURRENT_SEMESTER = `${LEARN_PREFIX}/b/kc/zhjw_v_code_xnxq/getCurrentAndNextSemester`;
 
-export const LEARN_COURSE_LIST = (semester: string, courseType: CourseType, lang: Language) =>
+export const LEARN_COURSE_LIST = (semester: string, courseType: CourseType, lang: Language, coCourseIndex: number) =>
   courseType === CourseType.STUDENT
     ? `${LEARN_PREFIX}/b/wlxt/kc/v_wlkc_xs_xkb_kcb_extend/student/loadCourseBySemesterId/${semester}/${lang}`
-    : `${LEARN_PREFIX}/b/kc/v_wlkc_kcb/queryAsorCoCourseList/${semester}/0`;
+    : `${LEARN_PREFIX}/b/kc/v_wlkc_kcb/queryAsorCoCourseList/${semester}/${coCourseIndex}`;
 
 export const LEARN_COURSE_PAGE = (courseID: string, courseType: CourseType) =>
   `${LEARN_PREFIX}/f/wlxt/index/course/${courseType}/course?wlkcid=${courseID}`;

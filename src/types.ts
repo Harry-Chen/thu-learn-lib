@@ -370,6 +370,20 @@ export interface IQuestionnaire {
 
 export type Questionnaire = IQuestionnaire;
 
+interface IStudent {
+  student_id: string;
+  real_name: string;
+  gender: string;
+  class_name: string;
+  student_type: string;
+  department: string;
+  phone_number: string;
+  email: string;
+  nationality: string;
+}
+
+export type Student = IStudent;
+
 export type ContentTypeMap = {
   [ContentType.NOTIFICATION]: Notification;
   [ContentType.FILE]: File;

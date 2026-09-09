@@ -40,6 +40,7 @@ import {
   QuestionnaireType,
   type RemoteFile,
   type SemesterInfo,
+  Student,
   type UserInfo,
 } from './types';
 import * as URLS from './urls';
@@ -786,6 +787,38 @@ export class Learn2018Helper {
             title: decodeHTML(o.xxbt),
           })),
         }) satisfies QuestionnaireDetail,
+    );
+  }
+
+  /**
+   * Get all students（学生信息） of the specified course.
+   */
+  public async getStudentList(
+    courseID: string,
+  ): Promise<Student[]> {
+    const json = await (await this.#fetchWithToken(URLS.LEARN_STUDENT_LIST, {
+      method: 'POST',
+      body: URLS.LEARN_STUDENT_LIST_FORM_DATA(courseID),
+    })).json();
+    if (json.result !== 'success') {
+      throw new ApiError(FailReason.INVALID_RESPONSE, json);
+    }
+
+    const result = (json.object?.aaData ?? []) as any[];
+
+    return result.map(
+      (q) =>
+        ({
+          student_id: q.ryh,
+          real_name: q.xm,
+          gender: q.xbmc,
+          class_name: q.bm,
+          student_type: q.xslb,
+          department: q.dwmc,
+          phone_number: q.lxdhsj,
+          email: q.email2,
+          nationality: q.gbmc
+        }) satisfies Student,
     );
   }
 

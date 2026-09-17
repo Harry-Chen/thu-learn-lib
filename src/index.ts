@@ -649,7 +649,7 @@ export class Learn2018Helper {
             id: d.zyid,
             index: d.wz,
             title: decodeHTML(d.bt),
-            description: decodeHTML(Base64.decode(d.nr)),
+            description: d.nr ? decodeHTML(Base64.decode(d.nr)) : '',
             publisherId: d.fbr,
             publishTime: new Date(d.fbsj),
             startTime: new Date(d.kssj),

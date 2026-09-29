@@ -51,7 +51,7 @@
     "vite": "^8.2.2",
     "vitest": "^4.1.11"
   },
-  "packageManager": "pnpm@10.32.0",
+  "packageManager": "pnpm@12.6.0",
   "publishConfig": {
     "exports": {
       ".": "./lib/index.mjs",

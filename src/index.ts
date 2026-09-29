@@ -271,7 +271,10 @@ export class Learn2018Helper {
       throw new ApiError(FailReason.INVALID_RESPONSE);
     }
 
-    const result = extractJSONPResult(await response.text()) as any[];
+    const result = extractJSONPResult(await response.text());
+    if (!Array.isArray(result)) {
+      throw new ApiError(FailReason.INVALID_RESPONSE, result);
+    }
 
     return result.map<CalendarEvent>((i) => ({
       location: i.dd,

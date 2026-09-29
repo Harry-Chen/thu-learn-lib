@@ -82,13 +82,17 @@ export const GRADE_LEVEL_MAP = new Map([
 
 export const JSONP_EXTRACTOR_NAME = 'thu_learn_lib_jsonp_extractor';
 
-export function extractJSONPResult(jsonp: string): any {
-  // check jsonp format
-  if (!jsonp.startsWith(JSONP_EXTRACTOR_NAME)) {
+export function extractJSONPResult(body: string) {
+  const prefix = `${JSONP_EXTRACTOR_NAME}(`;
+  const end = body.lastIndexOf(')');
+  if (!body.startsWith(prefix) || end < prefix.length) {
     throw FailReason.INVALID_RESPONSE;
   }
-  // evaluate the result
-  return Function(`"use strict";const ${JSONP_EXTRACTOR_NAME}=(s)=>s;return ${jsonp};`)();
+  try {
+    return JSON.parse(body.slice(prefix.length, end));
+  } catch {
+    throw FailReason.INVALID_RESPONSE;
+  }
 }
 
 export function formatFileSize(size: number): string {

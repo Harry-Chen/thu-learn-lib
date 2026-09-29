@@ -120,7 +120,7 @@ export class Learn2018Helper {
   }
 
   /** fetch any url using CSRF token and cookie from helper */
-  public fetchWithToken(input: string | URL | Request, init?: RequestInit | undefined): Promise<Response> {
+  public fetchWithToken(input: string | URL | Request, init?: RequestInit): Promise<Response> {
     return this.#fetchWithToken(input, init);
   }
 
@@ -153,7 +153,7 @@ export class Learn2018Helper {
     try {
       await this.fetchCSRFToken();
       return;
-    } catch (e) { }
+    } catch {}
 
     if ((!username || !password || !fingerPrint || !fingerGenPrint || !fingerGenPrint3) && this.#provider) {
       const credential = await this.#provider();
@@ -315,35 +315,39 @@ export class Learn2018Helper {
   /** get all courses in the specified semester */
   public async getCourseList(semesterID: string, courseType: CourseType = CourseType.STUDENT): Promise<CourseInfo[]> {
     /* For teachers, consider both 助教课程 and 合教课程 */
-    const coCourseIndexCount = (courseType === CourseType.STUDENT) ? 1 : 2;
+    const coCourseIndexCount = courseType === CourseType.STUDENT ? 1 : 2;
     const promises: Promise<CourseInfo>[] = [];
     for (let coCourseIndex = 0; coCourseIndex < coCourseIndexCount; coCourseIndex++) {
-      const json = await (await this.#fetchWithToken(URLS.LEARN_COURSE_LIST(semesterID, courseType, this.#lang, coCourseIndex))).json();
+      const json = await (
+        await this.#fetchWithToken(URLS.LEARN_COURSE_LIST(semesterID, courseType, this.#lang, coCourseIndex))
+      ).json();
       if (json.message !== 'success' || !Array.isArray(json.resultList)) {
         throw new ApiError(FailReason.INVALID_RESPONSE, json);
       }
 
       const result = (json.resultList ?? []) as any[];
-      promises.push(...result.map(async (c) => {
-        let timeAndLocation: string[] = [];
-        try {
-          // see https://github.com/Harry-Chen/Learn-Helper/issues/145
-          timeAndLocation = await (await this.#fetchWithToken(URLS.LEARN_COURSE_TIME_LOCATION(c.wlkcid))).json();
-        } catch (e) { }
-        return {
-          id: c.wlkcid,
-          name: decodeHTML(c.zywkcm),
-          chineseName: decodeHTML(c.kcm),
-          englishName: decodeHTML(c.ywkcm),
-          timeAndLocation,
-          url: URLS.LEARN_COURSE_PAGE(c.wlkcid, courseType),
-          teacherName: c.jsm ?? '', // teacher can not fetch this
-          teacherNumber: c.jsh,
-          courseNumber: c.kch,
-          courseIndex: Number(c.kxh), // c.kxh could be string (teacher mode) or number (student mode)
-          courseType,
-        } as CourseInfo;
-      }));
+      promises.push(
+        ...result.map(async (c) => {
+          let timeAndLocation: string[] = [];
+          try {
+            // see https://github.com/Harry-Chen/Learn-Helper/issues/145
+            timeAndLocation = await (await this.#fetchWithToken(URLS.LEARN_COURSE_TIME_LOCATION(c.wlkcid))).json();
+          } catch {}
+          return {
+            id: c.wlkcid,
+            name: decodeHTML(c.zywkcm),
+            chineseName: decodeHTML(c.kcm),
+            englishName: decodeHTML(c.ywkcm),
+            timeAndLocation,
+            url: URLS.LEARN_COURSE_PAGE(c.wlkcid, courseType),
+            teacherName: c.jsm ?? '', // teacher can not fetch this
+            teacherNumber: c.jsh,
+            courseNumber: c.kch,
+            courseIndex: Number(c.kxh), // c.kxh could be string (teacher mode) or number (student mode)
+            courseType,
+          } as CourseInfo;
+        }),
+      );
     }
     return Promise.all(promises);
   }
@@ -693,8 +697,16 @@ export class Learn2018Helper {
   }
 
   /** Get all discussion boards（课程讨论区）of the specified course. */
-  public async getDiscussionBoardList(courseID: string, courseType: CourseType = CourseType.STUDENT): Promise<DiscussionBoard[]> {
-    const json = await (await this.#fetchWithToken(URLS.LEARN_DISCUSSION_BOARD_LIST(courseID, courseType), { method: 'POST', body: URLS.LEARN_DISCUSSION_BOARD_LIST_FORM_DATA(courseID) })).json();
+  public async getDiscussionBoardList(
+    courseID: string,
+    courseType: CourseType = CourseType.STUDENT,
+  ): Promise<DiscussionBoard[]> {
+    const json = await (
+      await this.#fetchWithToken(URLS.LEARN_DISCUSSION_BOARD_LIST(courseID, courseType), {
+        method: 'POST',
+        body: URLS.LEARN_DISCUSSION_BOARD_LIST_FORM_DATA(courseID),
+      })
+    ).json();
 
     const result = (json ?? []) as any[];
 
@@ -800,13 +812,13 @@ export class Learn2018Helper {
   /**
    * Get all students（学生信息） of the specified course.
    */
-  public async getStudentList(
-    courseID: string,
-  ): Promise<Student[]> {
-    const json = await (await this.#fetchWithToken(URLS.LEARN_STUDENT_LIST, {
-      method: 'POST',
-      body: URLS.LEARN_STUDENT_LIST_FORM_DATA(courseID),
-    })).json();
+  public async getStudentList(courseID: string): Promise<Student[]> {
+    const json = await (
+      await this.#fetchWithToken(URLS.LEARN_STUDENT_LIST, {
+        method: 'POST',
+        body: URLS.LEARN_STUDENT_LIST_FORM_DATA(courseID),
+      })
+    ).json();
     if (json.result !== 'success') {
       throw new ApiError(FailReason.INVALID_RESPONSE, json);
     }
@@ -824,7 +836,7 @@ export class Learn2018Helper {
           department: q.dwmc,
           phone_number: q.lxdhsj,
           email: q.email2,
-          nationality: q.gbmc
+          nationality: q.gbmc,
         }) satisfies Student,
     );
   }
@@ -998,7 +1010,7 @@ export class Learn2018Helper {
     let excellentHomeworkListByHomework: { [id: string]: ExcellentHomework[] } = {};
     try {
       excellentHomeworkListByHomework = await this.getExcellentHomeworkListByHomework(courseID);
-    } catch (e) {
+    } catch {
       // Don't block the whole process if excellent homework list cannot be fetched
     }
 

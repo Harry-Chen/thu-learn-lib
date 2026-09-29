@@ -19,9 +19,11 @@ jobs:
           cache: true
 
       - name: Lint
-        run: pnpm lint
+        run: pnpm run lint
+      - name: Check format
+        run: pnpm run fmt:check
       - name: Build library
-        run: pnpm build
+        run: pnpm run build
 
       - name: Upload built library
         uses: actions/upload-artifact@v7

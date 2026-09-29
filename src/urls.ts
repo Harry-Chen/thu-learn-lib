@@ -38,7 +38,9 @@ export const LEARN_HOMEPAGE = (courseType: CourseType) => {
 export const LEARN_STUDENT_COURSE_LIST_PAGE = `${LEARN_PREFIX}/f/wlxt/index/course/student/`;
 
 export const LEARN_SEMESTER_LIST = (courseType: CourseType) =>
-  courseType == CourseType.TEACHER ? `${LEARN_PREFIX}/b/kc/v_wlkc_jsb_jbxxb/queryxnxq` : `${LEARN_PREFIX}/b/wlxt/kc/v_wlkc_xs_xktjb_coassb/queryxnxq`;
+  courseType == CourseType.TEACHER
+    ? `${LEARN_PREFIX}/b/kc/v_wlkc_jsb_jbxxb/queryxnxq`
+    : `${LEARN_PREFIX}/b/wlxt/kc/v_wlkc_xs_xktjb_coassb/queryxnxq`;
 
 export const LEARN_CURRENT_SEMESTER = `${LEARN_PREFIX}/b/kc/zhjw_v_code_xnxq/getCurrentAndNextSemester`;
 
@@ -174,7 +176,7 @@ export const LEARN_DISCUSSION_LIST = (courseID: string, courseType: CourseType) 
 export const LEARN_DISCUSSION_BOARD_LIST = (courseID: string, courseType: CourseType) =>
   `${LEARN_PREFIX}/b/wlxt/bbs/bbs_bqb/${courseType}/bqListByWlkcid?wlkcid=${courseID}`;
 
-export const LEARN_DISCUSSION_BOARD_LIST_FORM_DATA = (courseID?: string) => {
+export const LEARN_DISCUSSION_BOARD_LIST_FORM_DATA = (courseID: string) => {
   const form = new FormData();
   form.append('wlkcid', courseID);
   return form;
@@ -211,17 +213,11 @@ export const LEARN_QNR_DETAIL_FORM = (courseID: string, qnrID: string) => {
   return form;
 };
 
-export const LEARN_STUDENT_LIST =
-  `${LEARN_PREFIX}/b/wlxt/qz/v_wlkc_qzcyb/xsxx/teacher/pageXsList`;
+export const LEARN_STUDENT_LIST = `${LEARN_PREFIX}/b/wlxt/qz/v_wlkc_qzcyb/xsxx/teacher/pageXsList`;
 
 export const LEARN_STUDENT_LIST_FORM_DATA = (courseID: string) => {
   const form = new FormData();
-  form.append(
-    'aoData',
-    JSON.stringify([
-      { name: 'wlkcid', value: courseID },
-    ]),
-  );
+  form.append('aoData', JSON.stringify([{ name: 'wlkcid', value: courseID }]));
   return form;
 };
 
@@ -283,5 +279,6 @@ export const REGISTRAR_TICKET = `${LEARN_PREFIX}/b/wlxt/common/auth/gnt`;
 export const REGISTRAR_AUTH = (ticket: string) => `${REGISTRAR_PREFIX}/j_acegi_login.do?url=/&ticket=${ticket}`;
 
 export const REGISTRAR_CALENDAR = (startDate: string, endDate: string, graduate = false, callbackName = 'unknown') =>
-  `${REGISTRAR_PREFIX}/jxmh_out.do?m=${graduate ? 'yjs' : 'bks'
+  `${REGISTRAR_PREFIX}/jxmh_out.do?m=${
+    graduate ? 'yjs' : 'bks'
   }_jxrl_all&p_start_date=${startDate}&p_end_date=${endDate}&jsoncallback=${callbackName}`;

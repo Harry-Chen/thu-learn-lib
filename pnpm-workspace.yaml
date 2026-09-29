@@ -5,7 +5,8 @@ overrides:
   entities: ^7.0.1
   parse5: npm:fake-parse5
   parse5-htmlparser2-tree-adapter: npm:fake-parse5
-  # typescript 7.0 ships no compiler API; tooling (typescript-eslint, tsdown dts)
-  # needs the TS 6 API, so force it onto the @typescript/typescript6 compat package
-  # while the project's direct dependency stays on typescript v7 (see TS 7.0 side-by-side).
-  typescript: "npm:@typescript/typescript6@^6.0.2"
+update:
+  # FIXME: remove this on cheerio next release which should depends on domhandler 6.x and htmlparser2 12.x -> entities 8.x
+  ignoreDeps:
+    - domhandler
+    - entities

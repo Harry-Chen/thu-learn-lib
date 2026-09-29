@@ -1,4 +1,6 @@
 {
+  "editor.defaultFormatter": "oxc.oxc-vscode",
+  "editor.formatOnSave": true,
   "vitest.nodeEnv": {
     "OPENSSL_CONF": "./openssl.cnf"
   }

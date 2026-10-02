@@ -48,9 +48,9 @@
   "devDependencies": {
     "@types/node": "^26.6.3",
     "@types/sm-crypto": "^0.3.4",
-    "domhandler": "^5.0.3",
+    "domhandler": "^6.0.1",
     "dotenv": "^18.0.4",
-    "oxfmt": "^0.70.0",
+    "oxfmt": "^0.71.0",
     "oxlint": "^1.85.0",
     "oxlint-tsgolint": "^7.0.2003",
     "tsdown": "^0.23.0",

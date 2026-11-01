@@ -179,13 +179,13 @@ importers:
         version: 7.0.1
       js-base64:
         specifier: ^3.9.4
-        version: 3.9.4
+        version: 3.9.5
       node-fetch-native:
         specifier: ^1.6.7
         version: 1.6.7
       sm-crypto:
         specifier: ^0.5.7
-        version: 0.5.7
+        version: 0.5.8
     devDependencies:
       '@types/node':
         specifier: ^26.6.3
@@ -1026,8 +1026,8 @@ packages:
     resolution: {integrity: sha512-vXoV9PjKHEednCUu01e98TkImxy67e3BJXbTIOmIq4Hyzw3IAwYRcuPkfeTzJzwyyts4kjuA73x+pWJLc4f86A==}
     engines: {node: ^22.18.0 || >=24.0.0}
 
-  js-base64@3.9.4:
-    resolution: {integrity: sha512-PtOMXpEGuP0RRiRXsjzHzl44dMHxSu2CPvAhinupR1tBa88me+1DPqsobl7eupn5UukjLkln1ZnAOAOXOrYG0Q==}
+  js-base64@3.9.5:
+    resolution: {integrity: sha512-u0CFDUca8BbBRkMkF/fDcuoLCx9nTNbXdVtbjVnBqySA9E221u0uYKbACiYGOEk1heY69qM4caeX3OwjSyxevw==}
 
   jsbn@1.1.0:
     resolution: {integrity: sha512-4bYVV3aAMtDTTu4+xsDYa6sy9GyJ69/amsu9sYF2zqjiEoZA5xJi3BrfX3uY+/IekIu7MwdObdbDWpoZdBv3/A==}
@@ -1208,8 +1208,8 @@ packages:
   safer-buffer@2.1.2:
     resolution: {integrity: sha512-YZo3K82SD7Riyi0E1EQPojLz7kpepnSQI9IyPbHHg1XXXevb5dJI7tpyN2ADxGcQbHG7vcyRHk0cbwqcQriUtg==}
 
-  sm-crypto@0.5.7:
-    resolution: {integrity: sha512-Bxz1jWGtI7t/bn6Vbf4iGKcntslKVYAi6oBTtboTL+0WhqBTwsDFinIxIezjkBidxt8aNnEF1V3ZYU6TI0V1gQ==}
+  sm-crypto@0.5.8:
+    resolution: {integrity: sha512-bpz1/PthgZHcLHyIl28mbYZHmeuTDrdWpwHZ7BGzFjQuB7OOhjlbcPEMt44aqUfZ2S5YJXM8v20xYO1j9CC45Q==}
 
   source-map-js@1.2.1:
     resolution: {integrity: sha512-UXWMKhLOwVKb728IUtQPXxfYU+usdybtUrK/8uGE8CQMvrhOpwvzDBwj0QhSL7MQc7vIsISBG8VQ8+IDQxpfQA==}
@@ -1876,7 +1876,7 @@ snapshots:
 
   import-without-cache@0.4.1: {}
 
-  js-base64@3.9.4: {}
+  js-base64@3.9.5: {}
 
   jsbn@1.1.0: {}
 
@@ -2056,7 +2056,7 @@ snapshots:
 
   safer-buffer@2.1.2: {}
 
-  sm-crypto@0.5.7:
+  sm-crypto@0.5.8:
     dependencies:
       jsbn: 1.1.0
 
